@@ -2,7 +2,7 @@ export class CataMeshCoreError extends Error {
 
     private _status: number | null;
 
-    constructor(status: number, message: string) {
+    constructor(status: number | null, message: string) {
         super(message);
         this._status = status;
     }

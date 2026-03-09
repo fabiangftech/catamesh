@@ -6,11 +6,13 @@ import {PlanFacade} from "./application/facade/PlanFacade";
 import {ApplyFacade} from "./application/facade/ApplyFacade";
 import {GetFacade} from "./application/facade/GetFacade";
 import {CataMeshCoreError} from "./core/exception/CataMeshCoreError";
+import {ColorConfig} from "./infrastructure/config/ColorConfig";
 
 const SUCCESS = 0;
 const FAILURE = 1;
 
 if (require.main === module) {
+    const originalCommand: string[] = process.argv.slice(2);
     let command: string[] = process.argv.slice(2);
     try {
         switch (command[0]) {
@@ -37,8 +39,15 @@ if (require.main === module) {
         }
         process.exit(SUCCESS)
     } catch (e: unknown) {
+        const executedCommand = originalCommand.length > 0 ? originalCommand.join(" ") : "(none)";
         if (e instanceof CataMeshCoreError) {
-            console.error(e.status + e.message);
+            console.error(
+                `${ColorConfig.white}Command failed\nStatus: ${e.status}\nCommand: ${executedCommand}\nError: ${e.message.trim()}`
+            );
+        } else if (e instanceof Error) {
+            console.error(`Error: ${e.message}`);
+        } else {
+            console.error(`Error: ${String(e)}`);
         }
         process.exit(FAILURE)
     }
