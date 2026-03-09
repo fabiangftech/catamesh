@@ -16,6 +16,7 @@ dependencies {
     implementation("com.networknt:json-schema-validator:3.0.0")
 
     implementation("com.h2database:h2:2.4.240")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -23,4 +24,32 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Builds an executable fat JAR for the core CLI.'
+    archiveFileName = 'catamesh-core-cli.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes(
+                'Main-Class': 'dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCliCommand'
+        )
+    }
+
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+
+    from {
+        configurations.runtimeClasspath.collect { dependency ->
+            dependency.isDirectory() ? dependency : zipTree(dependency)
+        }
+    }
+}
+
+tasks.named('assemble') {
+    dependsOn tasks.named('fatJar')
 }

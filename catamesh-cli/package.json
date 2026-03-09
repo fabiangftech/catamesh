@@ -11,10 +11,12 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "npm run clean && tsc -p tsconfig.json && chmod 755 dist/cli.js",
+    "build": "node build.js",
+    "install:global": "npm install -g .",
     "prepare": "npm run build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test": "npm run build && node --test test/**/*.test.js",
+    "uninstall:global": "npm uninstall -g catamesh-cli"
   },
   "devDependencies": {
     "@types/node": "^22.15.31",
