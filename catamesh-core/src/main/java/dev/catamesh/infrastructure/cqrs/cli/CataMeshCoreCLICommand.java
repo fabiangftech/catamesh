@@ -12,7 +12,7 @@ public class CataMeshCoreCLICommand {
                 plan(command);
                 break;
             case "apply":
-                System.out.println("Not implemented apply yet!");
+                apply(command);
                 break;
             case "get":
                 System.out.println("Not implemented get yet!");
@@ -26,6 +26,11 @@ public class CataMeshCoreCLICommand {
     }
 
     private static void plan(String[] command) {
+        //todo check if schema is data-product/v1
+        DataProductCLICommand.main(command);
+    }
+
+    private static void apply(String[] command) {
         //todo check if schema is data-product/v1
         DataProductCLICommand.main(command);
     }

@@ -19,6 +19,8 @@ public class DataProductCLICommand {
                 System.out.println(jsonMapper.writeValueAsString(plan));
                 break;
             case "apply":
+                dataProductFacade.apply(yaml);
+                System.out.println("Data product created successfully!");
                 break;
             case "get":
                 break;
