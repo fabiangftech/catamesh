@@ -14,6 +14,7 @@ public class DefaultTemplateFacade implements TemplateFacade {
     @Override
     public String initDataProduct(String dataProductName) {
         String yaml = getFileFromResourceQuery.execute("templates/data-product.v1.template.yaml");
-        return yaml.replace("${NAME}", dataProductName);
+        return yaml.replace("${NAME}", dataProductName)
+                .replace("${DISPLAY_NAME}", dataProductName);
     }
 }

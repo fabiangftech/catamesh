@@ -29,12 +29,12 @@ test {
 tasks.register('fatJar', Jar) {
     group = 'build'
     description = 'Builds an executable fat JAR for the core CLI.'
-    archiveFileName = 'catamesh-core-cli.jar'
+    archiveFileName = 'catamesh-core.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
         attributes(
-                'Main-Class': 'dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCliCommand'
+                'Main-Class': 'dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand'
         )
     }
 
