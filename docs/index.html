@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weave Docs</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Weave documentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'catamesh',
+      repo: 'https://github.com/fabiangftech/catamesh',
+      homepage: '/en/README.md',
+      loadSidebar: true,
+      subMaxLevel: 0,
+      maxLevel: 0,
+      mermaidConfig: {
+        querySelector: '.mermaid'
+      }
+    };
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid@10.9.5/dist/mermaid.min.js"></script>
+  <script>
+    window.mermaid.initialize({ startOnLoad: false });
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
+  <!-- Docsify v4 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+</body>
+</html>
