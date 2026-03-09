@@ -30,32 +30,9 @@ const resolveGradleCommand = () => (
   process.platform === "win32" ? "gradlew.bat" : "./gradlew"
 );
 
-const resolveGradleJavaHome = () => {
-  const override = process.env.CATAMESH_CORE_BUILD_JAVA_HOME;
-  if (override) {
-    return override;
-  }
-
-  if (process.platform !== "darwin") {
-    return process.env.JAVA_HOME;
-  }
-
-  for (const version of ["21", "17", "11"]) {
-    const result = spawnSync("/usr/libexec/java_home", ["-v", version], {
-      encoding: "utf8",
-    });
-
-    if (result.status === 0) {
-      return result.stdout.trim();
-    }
-  }
-
-  return process.env.JAVA_HOME;
-};
-
 const createGradleEnv = () => {
   const env = {...process.env};
-  const javaHome = resolveGradleJavaHome();
+  const javaHome = env.JAVA_HOME?.trim();
 
   if (!javaHome) {
     return env;
