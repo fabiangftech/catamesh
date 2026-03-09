@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 
-import {NewTemplateQuery} from "./infrastructure/cqrs/NewTemplateQuery";
+import {CataMeshCoreCommand} from "./infrastructure/cqrs/CataMeshCoreCommand";
 import {Query} from "./core/cqrs/Query";
 import {TemplateFacade} from "./core/facade/TemplateFacade";
 import {DefaultTemplateFacade} from "./application/facade/DefaultTemplateFacade";
+import {DefaultPlanFacade} from "./application/facade/DefaultPlanFacade";
+import {PlanFacade} from "./core/facade/PlanFacade";
 
 const SUCCESS = 0;
 const FAILURE = 1;
 
 if (require.main === module) {
-    const command: string[] = process.argv.slice(2);
+    let command: string[] = process.argv.slice(2);
     try {
-        console.log(command)
         switch (command[0]) {
             case "new":
                 const templateFacade: TemplateFacade = new DefaultTemplateFacade();
                 templateFacade.newTemplate(command);
+                break
+            case "plan":
+                const planFacade: PlanFacade = new DefaultPlanFacade();
+                planFacade.plan(command)
                 break
             default:
                 break

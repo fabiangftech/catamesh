@@ -4,7 +4,7 @@ import {
 import {Query} from "../../core/cqrs/Query";
 import {CataMeshCoreConfig, SpawnProcess} from "../config/CataMeshCoreConfig";
 
-export class NewTemplateQuery implements Query<string[], string> {
+export class CataMeshCoreCommand implements Query<string[], string> {
     constructor(private readonly spawnProcess: SpawnProcess = spawnSync) {
     }
 

@@ -2,14 +2,14 @@ package dev.catamesh.infrastructure.cqrs.cli;
 
 public class CataMeshCoreCLICommand {
 
-    public static void main(String[] args) {
-        String verb = args[0];
+    public static void main(String[] command) {
+        String verb = command[0];
         switch (verb) {
             case "new":
-                NewTemplateCLICommand.main(args);
+                NewTemplateCLICommand.main(command);
                 break;
             case "plan":
-                System.out.println("Not implemented plan yet!");
+                plan(command);
                 break;
             case "apply":
                 System.out.println("Not implemented apply yet!");
@@ -23,5 +23,10 @@ public class CataMeshCoreCLICommand {
             default:
                 break;
         }
+    }
+
+    private static void plan(String[] command) {
+        //todo check if schema is data-product/v1
+        DataProductCLICommand.main(command);
     }
 }

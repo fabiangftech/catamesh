@@ -2,6 +2,7 @@ package dev.catamesh.infrastructure.cqrs;
 
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
+import dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand;
 import dev.catamesh.infrastructure.cqrs.cli.DataProductCLICommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,6 @@ class NewDataProductCLICommandTest {
     void testPlanDataProduct() {
         String yaml = getFileFromResourceQuery.execute("examples/data-product.example.yaml");
         String[] command = {"plan", yaml};
-        Assertions.assertDoesNotThrow(() -> DataProductCLICommand.main(command));
+        Assertions.assertDoesNotThrow(() -> CataMeshCoreCLICommand.main(command));
     }
 }

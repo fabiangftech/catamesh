@@ -1,15 +1,15 @@
 import {TemplateFacade} from "../../core/facade/TemplateFacade";
 import {Query} from "../../core/cqrs/Query";
-import {NewTemplateQuery} from "../../infrastructure/cqrs/NewTemplateQuery";
+import {CataMeshCoreCommand} from "../../infrastructure/cqrs/CataMeshCoreCommand";
 import * as fs from "node:fs";
 
 export class DefaultTemplateFacade implements TemplateFacade {
 
-    private newTemplateQuery: Query<string[], string> = new NewTemplateQuery();
+    private cataMeshCoreCommand: Query<string[], string> = new CataMeshCoreCommand();
 
     newTemplate(command: string[]): void {
         //todo validate input
-        const yaml: string = this.newTemplateQuery.execute(command);
+        const yaml: string = this.cataMeshCoreCommand.execute(command);
         fs.writeFileSync(command[2] + ".yaml", yaml, "utf8");
     }
 }
