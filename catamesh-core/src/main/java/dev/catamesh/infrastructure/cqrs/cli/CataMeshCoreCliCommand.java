@@ -1,14 +1,14 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
-import dev.catamesh.application.facade.DefaultTemplateFacade;
-import dev.catamesh.core.facade.TemplateFacade;
-import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
+import dev.catamesh.infrastructure.config.ApplicationConfig;
 
 public class CataMeshCoreCliCommand {
-    private static final TemplateFacade templateFacade = new DefaultTemplateFacade(new GetFileFromResourceQuery());
+
+    private static final ApplicationConfig applicationConfig = new ApplicationConfig();
+
     public static void main(String[] args) {
         String dataProductName = args[0];
-        String yaml = templateFacade.initDataProduct(dataProductName);
+        String yaml = applicationConfig.templateFacade().initDataProduct(dataProductName);
         System.out.println(yaml);
     }
 }

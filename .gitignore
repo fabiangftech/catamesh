@@ -5,7 +5,7 @@ dist
 bin
 *.iml
 *-local.properties
-db-file-weave
+db-file-catamesh
 node_modules
 *.tgz
 Thumbs.db
