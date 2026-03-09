@@ -8,8 +8,8 @@ spec:
   kind: source-aligned
   resources:
     -
-      name: my-first-component
-      displayName: My First component
+      name: ${COMPONENT_NAME}
+      displayName: ${COMPONENT_DISPLAY_NAME}
       kind: bucket
       definition:
         schemaVersion: bucket/v1

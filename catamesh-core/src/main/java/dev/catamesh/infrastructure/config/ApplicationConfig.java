@@ -60,160 +60,43 @@ import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class ApplicationConfig {
 
     private static final String CATAMESH = "catamesh";
-    private DataSource dataSource;
-    private StartApplicationFacade startApplicationFacade;
-    private DataProductFacade dataProductFacade;
-    private TemplateFacade templateFacade;
+    private static final String DEFAULT_H2_URL =
+            "jdbc:h2:file:./db-file-catamesh/catamesh_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+
+    private final DataSource dataSource;
+    private final StartApplicationFacade startApplicationFacade;
+    private final DataProductFacade dataProductFacade;
+    private final TemplateFacade templateFacade;
 
     public ApplicationConfig() {
-        JdbcDataSource jdbcDataSource = new JdbcDataSource();
-        jdbcDataSource.setURL("jdbc:h2:file:./db-file-catamesh/catamesh_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1");
-        jdbcDataSource.setUser(CATAMESH);
-        jdbcDataSource.setPassword(CATAMESH);
-        init(jdbcDataSource);
+        this(createDefaultDataSource());
     }
 
     public ApplicationConfig(DataSource dataSource) {
-        init(dataSource);
-    }
-
-    public void init(DataSource dataSource) {
         this.dataSource = Objects.requireNonNull(dataSource, "dataSource is required");
-        JSONConfig jsonConfig = new JSONConfig();
-        YAMLConfig yamlConfig = new YAMLConfig();
-        ObjectMapper jsonMapper = jsonConfig.jsonMapper();
-        ObjectMapper yamlMapper = yamlConfig.yamlMapper();
-        Schema dataProductSchema = jsonConfig.dataProductSchema();
-        Schema resourceSchema = jsonConfig.resourceSchema();
-        Schema bucketSchema = jsonConfig.bucketSchema();
 
-        GetFileFromResourceQuery getFileFromResourceQuery = new GetFileFromResourceQuery();
+        JsonYamlContext serialization = createSerializationContext();
+        QueryCommandContext qc = createQueryCommandContext(this.dataSource, serialization.jsonMapper());
+        PipelineContext pipelines = createPipelineContext(serialization, qc);
 
-        CreateDataProductCommand createDataProductCommand = new CreateDataProductCommand(this.dataSource);
-        CreateResourceCommand createResourceCommand = new CreateResourceCommand(this.dataSource);
-        CreateResourceDefinitionCommand createResourceDefinitionCommand =
-                new CreateResourceDefinitionCommand(this.dataSource, jsonMapper);
-        DeactivateResourceDefinitionsByResourceIdCommand deactivateResourceDefinitionsByResourceIdCommand =
-                new DeactivateResourceDefinitionsByResourceIdCommand(this.dataSource);
-        DeleteDataProductCommand deleteDataProductCommand = new DeleteDataProductCommand(this.dataSource);
-        DeleteResourceCommand deleteResourceCommand = new DeleteResourceCommand(this.dataSource);
-        DeleteResourceDefinitionCommand deleteResourceDefinitionCommand =
-                new DeleteResourceDefinitionCommand(this.dataSource);
-        OptionalDataProductQuery optionalDataProductQuery = new OptionalDataProductQuery(this.dataSource);
-        OptionalResourceQuery optionalResourceQuery = new OptionalResourceQuery(this.dataSource);
-        OptionalResourceDefinitionQuery optionalResourceDefinitionQuery =
-                new OptionalResourceDefinitionQuery(this.dataSource);
-        AllResourcesQuery allResourcesQuery = new AllResourcesQuery(this.dataSource);
-        CountResourceDefinitionsByResourceIdQuery countResourceDefinitionsByResourceIdQuery =
-                new CountResourceDefinitionsByResourceIdQuery(this.dataSource);
-        GetResourceDefinitionQuery getResourceDefinitionQuery =
-                new GetResourceDefinitionQuery(this.dataSource, jsonMapper);
-        InitTablesDBCommand initTablesDBCommand =
-                new InitTablesDBCommand(this.dataSource, getFileFromResourceQuery);
-
-        ApplyDataProductPipelineFactory applyDataProductPipelineFactory = new ApplyDataProductPipelineFactory(
-                new YAMLToDataProductHandler(yamlMapper),
-                new ValidateDataProductSchemaHandler(dataProductSchema, jsonMapper),
-                new ValidateResourceSchemaHandler(resourceSchema, jsonMapper),
-                new ValidateBucketDefinitionSchemaHandler(bucketSchema, jsonMapper),
-                new CheckIfExistDataProductHandler(optionalDataProductQuery),
-                new CreateDataProductHandler(createDataProductCommand),
-                new CheckIfExistResourcesHandler(optionalResourceQuery),
-                new CreateResourcesHandler(createResourceCommand),
-                new CheckIfExistResourceDefinitionVersionHandler(optionalResourceDefinitionQuery, optionalResourceQuery),
-                new CreateResourceDefinitionsHandler(
-                        deactivateResourceDefinitionsByResourceIdCommand,
-                        createResourceDefinitionCommand
-                )
-        );
-
-        PlanDataProductPipelineFactory planDataProductPipelineFactory = new PlanDataProductPipelineFactory(
-                new YAMLToDataProductHandler(yamlMapper),
-                new ValidateDataProductSchemaHandler(dataProductSchema, jsonMapper),
-                new ValidateResourceSchemaHandler(resourceSchema, jsonMapper),
-                new ValidateBucketDefinitionSchemaHandler(bucketSchema, jsonMapper),
-                new CheckIfExistDataProductHandler(optionalDataProductQuery),
-                new CheckIfExistResourcesHandler(optionalResourceQuery),
-                new PlanCheckResourceDefinitionVersionHandler(optionalResourceDefinitionQuery, optionalResourceQuery)
-        );
-
-        DiffComparisonSupport diffComparisonSupport = new DiffComparisonSupport();
-        DiffDataProductPipelineFactory diffDataProductPipelineFactory = new DiffDataProductPipelineFactory(
-                new YAMLToDataProductHandler(yamlMapper),
-                new ValidateDataProductSchemaHandler(dataProductSchema, jsonMapper),
-                new ValidateResourceSchemaHandler(resourceSchema, jsonMapper),
-                new ValidateBucketDefinitionSchemaHandler(bucketSchema, jsonMapper),
-                new CheckIfExistDataProductHandler(optionalDataProductQuery),
-                new CheckIfExistResourcesHandler(optionalResourceQuery),
-                new PlanCheckResourceDefinitionVersionHandler(optionalResourceDefinitionQuery, optionalResourceQuery),
-                new LoadCurrentDataProductForDiffHandler(
-                        optionalDataProductQuery,
-                        allResourcesQuery,
-                        getResourceDefinitionQuery
-                ),
-                new BuildDataProductDiffSectionHandler(diffComparisonSupport),
-                new BuildResourceDiffSectionsHandler(diffComparisonSupport),
-                new BuildDiffSummaryHandler(),
-                new BuildDiffResultHandler()
-        );
-
-        PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory =
-                new PlanDestroyDataProductPipelineFactory(
-                        new YAMLToDestroyDataProductHandler(yamlMapper),
-                        new ValidateDestroyDataProductSchemaHandler(dataProductSchema, jsonMapper),
-                        new ValidateDestroyResourceSchemaHandler(resourceSchema, jsonMapper),
-                        new ValidateDestroyBucketDefinitionSchemaHandler(bucketSchema, jsonMapper),
-                        new ValidateDestroyDefinitionVersionHandler(),
-                        new GetOptionalDataProductForDestroyHandler(optionalDataProductQuery),
-                        new GetResourcesForDestroyHandler(allResourcesQuery),
-                        new PlanDestroyDataProductHandler(
-                                optionalResourceDefinitionQuery,
-                                countResourceDefinitionsByResourceIdQuery
-                        ),
-                        new PlanDestroyTerminalHandler()
-                );
-
-        ApplyDestroyDataProductPipelineFactory applyDestroyDataProductPipelineFactory =
-                new ApplyDestroyDataProductPipelineFactory(
-                        new YAMLToDestroyDataProductHandler(yamlMapper),
-                        new ValidateDestroyDataProductSchemaHandler(dataProductSchema, jsonMapper),
-                        new ValidateDestroyResourceSchemaHandler(resourceSchema, jsonMapper),
-                        new ValidateDestroyBucketDefinitionSchemaHandler(bucketSchema, jsonMapper),
-                        new ValidateDestroyDefinitionVersionHandler(),
-                        new GetOptionalDataProductForDestroyHandler(optionalDataProductQuery),
-                        new GetResourcesForDestroyHandler(allResourcesQuery),
-                        new PlanDestroyDataProductHandler(
-                                optionalResourceDefinitionQuery,
-                                countResourceDefinitionsByResourceIdQuery
-                        ),
-                        new DestroyDataProductHandler(deleteDataProductCommand, allResourcesQuery),
-                        new DestroyResourceHandler(deleteResourceCommand),
-                        new DestroyResourceDefinitionHandler(deleteResourceDefinitionCommand)
-                );
-
-        this.startApplicationFacade = new DefaultStartApplicationFacade(initTablesDBCommand);
-        this.templateFacade = new DefaultTemplateFacade(getFileFromResourceQuery);
+        this.startApplicationFacade = new DefaultStartApplicationFacade(qc.initTablesDBCommand());
+        this.templateFacade = new DefaultTemplateFacade(qc.getFileFromResourceQuery());
         this.dataProductFacade = new DefaultDataProductFacade(
-                applyDataProductPipelineFactory,
-                planDataProductPipelineFactory,
-                diffDataProductPipelineFactory,
-                planDestroyDataProductPipelineFactory,
-                applyDestroyDataProductPipelineFactory,
-                optionalDataProductQuery,
-                allResourcesQuery,
-                getResourceDefinitionQuery
+                pipelines.applyDataProductPipelineFactory(),
+                pipelines.planDataProductPipelineFactory(),
+                pipelines.diffDataProductPipelineFactory(),
+                pipelines.planDestroyDataProductPipelineFactory(),
+                pipelines.applyDestroyDataProductPipelineFactory(),
+                qc.optionalDataProductQuery(),
+                qc.allResourcesQuery(),
+                qc.getResourceDefinitionQuery()
         );
+
         this.startApplicationFacade.start();
     }
 
@@ -229,63 +112,182 @@ public class ApplicationConfig {
         return templateFacade;
     }
 
-    private static final class DriverManagerDataSource implements DataSource {
-        private final String url;
-        private final String user;
-        private final String password;
+    private static DataSource createDefaultDataSource() {
+        JdbcDataSource dataSource = new JdbcDataSource();
+        dataSource.setURL(DEFAULT_H2_URL);
+        dataSource.setUser(CATAMESH);
+        dataSource.setPassword(CATAMESH);
+        return dataSource;
+    }
 
-        private DriverManagerDataSource(String url, String user, String password) {
-            this.url = Objects.requireNonNull(url, "url is required");
-            this.user = user;
-            this.password = password;
-        }
+    private JsonYamlContext createSerializationContext() {
+        JSONConfig jsonConfig = new JSONConfig();
+        YAMLConfig yamlConfig = new YAMLConfig();
 
-        @Override
-        public Connection getConnection() throws SQLException {
-            return DriverManager.getConnection(url, user, password);
-        }
+        return new JsonYamlContext(
+                jsonConfig.jsonMapper(),
+                yamlConfig.yamlMapper(),
+                jsonConfig.dataProductSchema(),
+                jsonConfig.resourceSchema(),
+                jsonConfig.bucketSchema()
+        );
+    }
 
-        @Override
-        public Connection getConnection(String username, String pwd) throws SQLException {
-            return DriverManager.getConnection(url, username, pwd);
-        }
+    private QueryCommandContext createQueryCommandContext(DataSource dataSource, ObjectMapper jsonMapper) {
+        GetFileFromResourceQuery getFileFromResourceQuery = new GetFileFromResourceQuery();
 
-        @Override
-        public PrintWriter getLogWriter() throws SQLException {
-            return DriverManager.getLogWriter();
-        }
+        return new QueryCommandContext(
+                getFileFromResourceQuery,
+                new CreateDataProductCommand(dataSource),
+                new CreateResourceCommand(dataSource),
+                new CreateResourceDefinitionCommand(dataSource, jsonMapper),
+                new DeactivateResourceDefinitionsByResourceIdCommand(dataSource),
+                new DeleteDataProductCommand(dataSource),
+                new DeleteResourceCommand(dataSource),
+                new DeleteResourceDefinitionCommand(dataSource),
+                new OptionalDataProductQuery(dataSource),
+                new OptionalResourceQuery(dataSource),
+                new OptionalResourceDefinitionQuery(dataSource),
+                new AllResourcesQuery(dataSource),
+                new CountResourceDefinitionsByResourceIdQuery(dataSource),
+                new GetResourceDefinitionQuery(dataSource, jsonMapper),
+                new InitTablesDBCommand(dataSource, getFileFromResourceQuery)
+        );
+    }
 
-        @Override
-        public void setLogWriter(PrintWriter out) throws SQLException {
-            DriverManager.setLogWriter(out);
-        }
+    private PipelineContext createPipelineContext(JsonYamlContext ctx, QueryCommandContext qc) {
+        ApplyDataProductPipelineFactory applyDataProductPipelineFactory = new ApplyDataProductPipelineFactory(
+                new YAMLToDataProductHandler(ctx.yamlMapper()),
+                new ValidateDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
+                new ValidateResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
+                new ValidateBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
+                new CheckIfExistDataProductHandler(qc.optionalDataProductQuery()),
+                new CreateDataProductHandler(qc.createDataProductCommand()),
+                new CheckIfExistResourcesHandler(qc.optionalResourceQuery()),
+                new CreateResourcesHandler(qc.createResourceCommand()),
+                new CheckIfExistResourceDefinitionVersionHandler(
+                        qc.optionalResourceDefinitionQuery(),
+                        qc.optionalResourceQuery()
+                ),
+                new CreateResourceDefinitionsHandler(
+                        qc.deactivateResourceDefinitionsByResourceIdCommand(),
+                        qc.createResourceDefinitionCommand()
+                )
+        );
 
-        @Override
-        public void setLoginTimeout(int seconds) throws SQLException {
-            DriverManager.setLoginTimeout(seconds);
-        }
+        PlanDataProductPipelineFactory planDataProductPipelineFactory = new PlanDataProductPipelineFactory(
+                new YAMLToDataProductHandler(ctx.yamlMapper()),
+                new ValidateDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
+                new ValidateResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
+                new ValidateBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
+                new CheckIfExistDataProductHandler(qc.optionalDataProductQuery()),
+                new CheckIfExistResourcesHandler(qc.optionalResourceQuery()),
+                new PlanCheckResourceDefinitionVersionHandler(
+                        qc.optionalResourceDefinitionQuery(),
+                        qc.optionalResourceQuery()
+                )
+        );
 
-        @Override
-        public int getLoginTimeout() throws SQLException {
-            return DriverManager.getLoginTimeout();
-        }
+        DiffComparisonSupport diffComparisonSupport = new DiffComparisonSupport();
+        DiffDataProductPipelineFactory diffDataProductPipelineFactory = new DiffDataProductPipelineFactory(
+                new YAMLToDataProductHandler(ctx.yamlMapper()),
+                new ValidateDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
+                new ValidateResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
+                new ValidateBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
+                new CheckIfExistDataProductHandler(qc.optionalDataProductQuery()),
+                new CheckIfExistResourcesHandler(qc.optionalResourceQuery()),
+                new PlanCheckResourceDefinitionVersionHandler(
+                        qc.optionalResourceDefinitionQuery(),
+                        qc.optionalResourceQuery()
+                ),
+                new LoadCurrentDataProductForDiffHandler(
+                        qc.optionalDataProductQuery(),
+                        qc.allResourcesQuery(),
+                        qc.getResourceDefinitionQuery()
+                ),
+                new BuildDataProductDiffSectionHandler(diffComparisonSupport),
+                new BuildResourceDiffSectionsHandler(diffComparisonSupport),
+                new BuildDiffSummaryHandler(),
+                new BuildDiffResultHandler()
+        );
 
-        @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-        }
+        PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory =
+                new PlanDestroyDataProductPipelineFactory(
+                        new YAMLToDestroyDataProductHandler(ctx.yamlMapper()),
+                        new ValidateDestroyDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyDefinitionVersionHandler(),
+                        new GetOptionalDataProductForDestroyHandler(qc.optionalDataProductQuery()),
+                        new GetResourcesForDestroyHandler(qc.allResourcesQuery()),
+                        new PlanDestroyDataProductHandler(
+                                qc.optionalResourceDefinitionQuery(),
+                                qc.countResourceDefinitionsByResourceIdQuery()
+                        ),
+                        new PlanDestroyTerminalHandler()
+                );
 
-        @Override
-        public <T> T unwrap(Class<T> iface) throws SQLException {
-            if (iface.isInstance(this)) {
-                return iface.cast(this);
-            }
-            throw new SQLException("No wrapper for " + iface.getName());
-        }
+        ApplyDestroyDataProductPipelineFactory applyDestroyDataProductPipelineFactory =
+                new ApplyDestroyDataProductPipelineFactory(
+                        new YAMLToDestroyDataProductHandler(ctx.yamlMapper()),
+                        new ValidateDestroyDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
+                        new ValidateDestroyDefinitionVersionHandler(),
+                        new GetOptionalDataProductForDestroyHandler(qc.optionalDataProductQuery()),
+                        new GetResourcesForDestroyHandler(qc.allResourcesQuery()),
+                        new PlanDestroyDataProductHandler(
+                                qc.optionalResourceDefinitionQuery(),
+                                qc.countResourceDefinitionsByResourceIdQuery()
+                        ),
+                        new DestroyDataProductHandler(qc.deleteDataProductCommand(), qc.allResourcesQuery()),
+                        new DestroyResourceHandler(qc.deleteResourceCommand()),
+                        new DestroyResourceDefinitionHandler(qc.deleteResourceDefinitionCommand())
+                );
 
-        @Override
-        public boolean isWrapperFor(Class<?> iface) {
-            return iface.isInstance(this);
-        }
+        return new PipelineContext(
+                applyDataProductPipelineFactory,
+                planDataProductPipelineFactory,
+                diffDataProductPipelineFactory,
+                planDestroyDataProductPipelineFactory,
+                applyDestroyDataProductPipelineFactory
+        );
+    }
+
+    private record JsonYamlContext(
+            ObjectMapper jsonMapper,
+            ObjectMapper yamlMapper,
+            Schema dataProductSchema,
+            Schema resourceSchema,
+            Schema bucketSchema
+    ) {
+    }
+
+    private record QueryCommandContext(
+            GetFileFromResourceQuery getFileFromResourceQuery,
+            CreateDataProductCommand createDataProductCommand,
+            CreateResourceCommand createResourceCommand,
+            CreateResourceDefinitionCommand createResourceDefinitionCommand,
+            DeactivateResourceDefinitionsByResourceIdCommand deactivateResourceDefinitionsByResourceIdCommand,
+            DeleteDataProductCommand deleteDataProductCommand,
+            DeleteResourceCommand deleteResourceCommand,
+            DeleteResourceDefinitionCommand deleteResourceDefinitionCommand,
+            OptionalDataProductQuery optionalDataProductQuery,
+            OptionalResourceQuery optionalResourceQuery,
+            OptionalResourceDefinitionQuery optionalResourceDefinitionQuery,
+            AllResourcesQuery allResourcesQuery,
+            CountResourceDefinitionsByResourceIdQuery countResourceDefinitionsByResourceIdQuery,
+            GetResourceDefinitionQuery getResourceDefinitionQuery,
+            InitTablesDBCommand initTablesDBCommand
+    ) {
+    }
+
+    private record PipelineContext(
+            ApplyDataProductPipelineFactory applyDataProductPipelineFactory,
+            PlanDataProductPipelineFactory planDataProductPipelineFactory,
+            DiffDataProductPipelineFactory diffDataProductPipelineFactory,
+            PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory,
+            ApplyDestroyDataProductPipelineFactory applyDestroyDataProductPipelineFactory
+    ) {
     }
 }

@@ -7,7 +7,7 @@ public class CataMeshCoreCliCommandTest {
 
     @Test
     void testInitDataProduct() {
-        String[] args = {"my-first-data-product"};
-        Assertions.assertDoesNotThrow(() -> CataMeshCoreCliCommand.main(args));
+        String[] command = {"init", "data-product", "my-first-data-product"};
+        Assertions.assertDoesNotThrow(() -> CataMeshCoreCliCommand.main(command));
     }
 }
