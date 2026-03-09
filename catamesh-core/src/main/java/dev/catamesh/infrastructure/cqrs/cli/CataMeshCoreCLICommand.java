@@ -27,7 +27,7 @@ public class CataMeshCoreCLICommand {
                     break;
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getCause().getMessage());
             System.exit(1);
         }
     }
