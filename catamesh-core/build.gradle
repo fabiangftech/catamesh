@@ -10,8 +10,13 @@ repositories {
 }
 
 dependencies {
+
     implementation("tools.jackson.core:jackson-databind:3.1.0")
     implementation("tools.jackson.dataformat:jackson-dataformat-yaml:3.1.0")
+    implementation("com.networknt:json-schema-validator:3.0.0")
+
+    runtimeOnly("com.h2database:h2:2.4.240")
+
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

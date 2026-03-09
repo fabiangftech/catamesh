@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "data-product/v1",
+  "type": "object",
+  "required": ["schemaVersion", "metadata", "spec"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "domain"],
+      "properties": {
+        "name": { "type": "string" },
+        "displayName": { "type": ["string"] },
+        "domain": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "spec": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["source-aligned", "aggregate", "consumer-aligned"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

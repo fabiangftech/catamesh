@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "resource/v1",
+  "type": "object",
+  "required": [
+    "name",
+    "displayName",
+    "kind",
+    "definition"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 150
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    }
+  },
+  "additionalProperties": true
+}

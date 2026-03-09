@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bucket/v1",
+  "type": "object",
+  "required": ["schemaVersion", "version", "config"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "bucket/v1"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Version of the bucket resource definition"
+    },
+    "config": {
+      "type": "object",
+      "required": ["lifecycleDays"],
+      "properties": {
+        "lifecycleDays": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of days before objects expire"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
