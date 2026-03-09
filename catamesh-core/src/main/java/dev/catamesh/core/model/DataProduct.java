@@ -12,7 +12,7 @@ public class DataProduct {
     private Spec spec;
 
     public DataProduct() {
-
+        // do nothing
     }
 
     public DataProduct(SchemaVersion schemaVersion, Metadata metadata, Spec spec) {

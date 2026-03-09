@@ -1,7 +1,8 @@
 import {PlanResource} from "./PlanResource";
+import {PlanAction} from "./PlanAction";
 
 export interface Plan {
-    action: string;
+    action: PlanAction;
     dataProductName: string;
     requestId: string;
     resources: PlanResource[];

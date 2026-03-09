@@ -4,6 +4,7 @@ import {TemplateFacade} from "./application/facade/TemplateFacade";
 import {Facade} from "./core/facade/Facade";
 import {PlanFacade} from "./application/facade/PlanFacade";
 import {ApplyFacade} from "./application/facade/ApplyFacade";
+import {GetFacade} from "./application/facade/GetFacade";
 
 const SUCCESS = 0;
 const FAILURE = 1;
@@ -13,7 +14,7 @@ if (require.main === module) {
     try {
         switch (command[0]) {
             case "new":
-                const templateFacade: Facade<string[],void> = new TemplateFacade();
+                const templateFacade: Facade<string[], void> = new TemplateFacade();
                 templateFacade.run(command);
                 break
             case "plan":
@@ -25,6 +26,8 @@ if (require.main === module) {
                 applyFacade.run(command);
                 break
             case "get":
+                const getFacade: Facade<string[], void> = new GetFacade();
+                getFacade.run(command);
                 break
             case "diff":
                 break
@@ -33,6 +36,7 @@ if (require.main === module) {
         }
         process.exit(SUCCESS)
     } catch (e) {
+        console.log(e)
         process.exit(FAILURE)
     }
 }
