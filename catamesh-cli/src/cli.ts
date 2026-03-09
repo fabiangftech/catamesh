@@ -2,6 +2,8 @@
 
 import {NewTemplateQuery} from "./infrastructure/cqrs/NewTemplateQuery";
 import {Query} from "./core/cqrs/Query";
+import {TemplateFacade} from "./core/facade/TemplateFacade";
+import {DefaultTemplateFacade} from "./application/facade/DefaultTemplateFacade";
 
 const SUCCESS = 0;
 const FAILURE = 1;
@@ -9,10 +11,15 @@ const FAILURE = 1;
 if (require.main === module) {
     const command: string[] = process.argv.slice(2);
     try {
-        const  newTemplateQuery: Query<string[], string> = new NewTemplateQuery();
-        const output = newTemplateQuery.execute(command);
-        console.log('hello world')
-        console.log(output)
+        console.log(command)
+        switch (command[0]) {
+            case "new":
+                const templateFacade: TemplateFacade = new DefaultTemplateFacade();
+                templateFacade.newTemplate(command);
+                break
+            default:
+                break
+        }
         process.exit(SUCCESS)
     } catch (e) {
         console.log(e)

@@ -11,7 +11,7 @@ export class NewTemplateQuery implements Query<string[], string> {
     execute(args: string[]): string {
         const child = this.spawnProcess(
             "java",
-            ["-jar", CataMeshCoreConfig.CORE_JAR_PATH, "new", ...args],
+            ["-jar", CataMeshCoreConfig.CORE_JAR_PATH, args[0], ...args.slice(1)],
             {encoding: "utf8"},
         );
         return child.stdout;
