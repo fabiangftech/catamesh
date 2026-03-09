@@ -5,6 +5,7 @@ import {Facade} from "./core/facade/Facade";
 import {PlanFacade} from "./application/facade/PlanFacade";
 import {ApplyFacade} from "./application/facade/ApplyFacade";
 import {GetFacade} from "./application/facade/GetFacade";
+import {CataMeshCoreError} from "./core/exception/CataMeshCoreError";
 
 const SUCCESS = 0;
 const FAILURE = 1;
@@ -35,8 +36,10 @@ if (require.main === module) {
                 break
         }
         process.exit(SUCCESS)
-    } catch (e) {
-        console.log(e)
+    } catch (e: unknown) {
+        if (e instanceof CataMeshCoreError) {
+            console.error(e.status + e.message);
+        }
         process.exit(FAILURE)
     }
 }
