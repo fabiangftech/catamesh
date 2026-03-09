@@ -3,10 +3,12 @@ package dev.catamesh.infrastructure.cqrs.cli;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.Plan;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
+import tools.jackson.databind.ObjectMapper;
 
 public class DataProductCLICommand {
     private static final ApplicationConfig applicationConfig = new ApplicationConfig();
     private static final DataProductFacade dataProductFacade = applicationConfig.dataProductFacade();
+    private static final ObjectMapper jsonMapper = applicationConfig.jsonMapper();
 
     public static void main(String[] args) {
         String verb = args[0];  // plan - apply - get - diff
@@ -14,7 +16,7 @@ public class DataProductCLICommand {
         switch (verb) {
             case "plan":
                 Plan plan = dataProductFacade.plan(yaml);
-                System.out.println(plan.toString());
+                System.out.println(jsonMapper.writeValueAsString(plan));
                 break;
             case "apply":
                 break;

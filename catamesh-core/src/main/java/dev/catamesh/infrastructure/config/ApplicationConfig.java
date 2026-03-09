@@ -38,6 +38,7 @@ import dev.catamesh.application.handler.ValidateDestroyResourceSchemaHandler;
 import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
 import dev.catamesh.application.handler.YAMLToDataProductHandler;
 import dev.catamesh.application.handler.YAMLToDestroyDataProductHandler;
+import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
 import dev.catamesh.core.facade.TemplateFacade;
@@ -69,6 +70,8 @@ public class ApplicationConfig {
             "jdbc:h2:file:./db-file-catamesh/catamesh_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
 
     private final DataSource dataSource;
+
+    private final ObjectMapper objectMapper;
     private final StartApplicationFacade startApplicationFacade;
     private final DataProductFacade dataProductFacade;
     private final TemplateFacade templateFacade;
@@ -79,7 +82,7 @@ public class ApplicationConfig {
 
     public ApplicationConfig(DataSource dataSource) {
         this.dataSource = Objects.requireNonNull(dataSource, "dataSource is required");
-
+        this.objectMapper = createSerializationContext().jsonMapper();
         JsonYamlContext serialization = createSerializationContext();
         QueryCommandContext qc = createQueryCommandContext(this.dataSource, serialization.jsonMapper());
         PipelineContext pipelines = createPipelineContext(serialization, qc);
@@ -110,6 +113,14 @@ public class ApplicationConfig {
 
     public TemplateFacade templateFacade() {
         return templateFacade;
+    }
+
+    public ObjectMapper jsonMapper() {
+        return objectMapper;
+    }
+
+    public Query<String, String> getFileFromResourceQuery() {
+        return new GetFileFromResourceQuery();
     }
 
     private static DataSource createDefaultDataSource() {

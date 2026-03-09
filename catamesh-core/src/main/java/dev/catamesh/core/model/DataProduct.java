@@ -7,9 +7,13 @@ import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DataProduct {
-    private final SchemaVersion schemaVersion;
-    private final Metadata metadata;
-    private final Spec spec;
+    private SchemaVersion schemaVersion;
+    private Metadata metadata;
+    private Spec spec;
+
+    public DataProduct() {
+
+    }
 
     public DataProduct(SchemaVersion schemaVersion, Metadata metadata, Spec spec) {
         this.schemaVersion = schemaVersion;
@@ -29,7 +33,7 @@ public class DataProduct {
         return spec;
     }
 
-    public  void setResources(List<Resource> resources){
+    public void setResources(List<Resource> resources) {
         this.spec.setResources(resources);
     }
 

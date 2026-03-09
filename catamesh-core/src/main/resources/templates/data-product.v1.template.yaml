@@ -3,16 +3,16 @@ metadata:
   name: ${NAME}
   displayName: ${DISPLAY_NAME}
   domain: ${DOMAIN}
-  description: this is a data product!
+  description: ${DESCRIPTION}
 spec:
-  kind: source-aligned
+  kind: ${KIND} # source-aligned/aggregate/consumer-aligned
   resources:
     -
       name: ${COMPONENT_NAME}
       displayName: ${COMPONENT_DISPLAY_NAME}
-      kind: bucket
+      kind: ${COMPONENT_KIND} # bucket
       definition:
-        schemaVersion: bucket/v1
-        version: 0.0.1
+        schemaVersion: ${COMPONENT_SCHEMA} # bucket/v1
+        version: ${COMPONENT_VERSION} #  0.0.1
         config:
-          lifecycleDays: 30
+          lifecycleDays: ${COMPONENT_LIFECYCLE_DAYS} # bucket=30

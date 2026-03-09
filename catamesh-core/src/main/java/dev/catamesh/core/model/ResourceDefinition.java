@@ -6,9 +6,14 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceDefinition {
-    private final SchemaVersion schemaVersion;
-    private final String version;
-    private final Map<String, Object> config;
+    private SchemaVersion schemaVersion;
+    private String version;
+    private Map<String, Object> config;
+
+    public ResourceDefinition() {
+
+    }
+
     public ResourceDefinition(SchemaVersion schemaVersion, String version, Map<String, Object> config) {
         this.schemaVersion = schemaVersion;
         this.version = version;
@@ -22,6 +27,7 @@ public class ResourceDefinition {
     public String getVersion() {
         return version;
     }
+
     public Map<String, Object> getConfig() {
         return config;
     }

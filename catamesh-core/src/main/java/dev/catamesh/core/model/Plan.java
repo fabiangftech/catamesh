@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class Plan {
-    private final Key requestId;
-    private final String dataProductName;
+    private Key requestId;
+    private String dataProductName;
     private PlanAction action = PlanAction.NOOP;
     private PlanSummary summary;
-    private final List<PlanResource> resources;
+    private List<PlanResource> resources;
+
+    public Plan() {
+        // do nothing
+    }
 
     public Plan(String dataProductName) {
         this.requestId = Key.newId();
@@ -20,9 +24,11 @@ public class Plan {
     public String getRequestId() {
         return this.requestId.value();
     }
+
     public String getDataProductName() {
         return dataProductName;
     }
+
     public PlanAction getAction() {
         return action;
     }

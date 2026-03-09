@@ -4,9 +4,11 @@ import java.util.List;
 
 public class Spec {
 
-    private final DataProductKind kind;
+    private DataProductKind kind;
     private List<Resource> resources;
+    public Spec() {
 
+    }
     public Spec(DataProductKind kind, List<Resource> resources) {
         this.kind = kind;
         this.resources = resources;
