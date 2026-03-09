@@ -42,7 +42,10 @@ if (require.main === module) {
         const executedCommand = originalCommand.length > 0 ? originalCommand.join(" ") : "(none)";
         if (e instanceof CataMeshCoreError) {
             console.error(
-                `${ColorConfig.white}Command failed\nStatus: ${e.status}\nCommand: ${executedCommand}\nError: ${e.message.trim()}`
+                `${ColorConfig.red}Command failed${ColorConfig.reset}\n` +
+                `${ColorConfig.red}Status:${ColorConfig.reset} ${ColorConfig.white}${e.status}${ColorConfig.reset}\n` +
+                `${ColorConfig.red}Command:${ColorConfig.reset} ${ColorConfig.white}cata ${executedCommand}${ColorConfig.reset}\n` +
+                `${ColorConfig.red}Message:${ColorConfig.reset} ${ColorConfig.white}${e.message.trim()}${ColorConfig.reset}`
             );
         } else if (e instanceof Error) {
             console.error(`Error: ${e.message}`);
