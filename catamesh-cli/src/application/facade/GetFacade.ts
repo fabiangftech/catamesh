@@ -13,7 +13,6 @@ export class GetFacade implements Facade<string[], void> {
     private dataProductPrintCommand: Command<DataProduct, void> = new DataProductPrintCommand();
 
     run(command: string[]): void {
-        console.log(command)
         if (ModelType.data_product.includes(command[1])) {
             const dataProduct: DataProduct = JSON.parse(this.cataMeshCoreCommand.execute(command));
             this.dataProductPrintCommand.execute(dataProduct);
