@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> yaml_to_data_product
+    yaml_to_data_product --> validate_data_product_schema
+    validate_data_product_schema --> validate_resource_schema
+    validate_resource_schema --> validate_bucket_definition_schema
+    validate_bucket_definition_schema --> check_if_exist_data_product
+    check_if_exist_data_product --> check_if_exist_resources
+    check_if_exist_resources --> check_resource_definition_versions
+    check_resource_definition_versions --> return_plan
+    return_plan --> [*]

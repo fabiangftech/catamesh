@@ -1,22 +1,19 @@
 stateDiagram-v2
-    state if_exist <<choice>>
-    state if_exist_r <<choice>>
-    state if_exist_rd <<choice>>
+    state data_product_action <<choice>>
+    state definition_action <<choice>>
 
-    [*] --> yml_to_data_product
-    yml_to_data_product --> validate_data_product_schema
+    [*] --> yaml_to_data_product
+    yaml_to_data_product --> validate_data_product_schema
     validate_data_product_schema --> validate_resource_schema
     validate_resource_schema --> validate_bucket_definition_schema
     validate_bucket_definition_schema --> check_if_exist_data_product
-    check_if_exist_data_product --> if_exist
-    if_exist --> check_if_exist_resources: No
-    if_exist --> create_data_product : Yes
+    check_if_exist_data_product --> data_product_action
+    data_product_action --> create_data_product: create
     create_data_product --> check_if_exist_resources
-    check_if_exist_resources --> if_exist_r
-    if_exist_r --> check_if_exist_resource_definition_version : No
-    if_exist_r --> create_resources : Yes
-    create_resources --> check_if_exist_resource_definition_version
-    check_if_exist_resource_definition_version -->  if_exist_rd
-    if_exist_rd --> [*] : No
-    if_exist_rd --> create_resource_definition : yes
-    create_resource_definition --> [*]
+    data_product_action --> check_if_exist_resources: update/noop
+    check_if_exist_resources --> create_resources
+    create_resources --> check_resource_definition_versions
+    check_resource_definition_versions --> definition_action
+    definition_action --> create_resource_definitions: create versions
+    create_resource_definitions --> [*]
+    definition_action --> [*]: all versions exist

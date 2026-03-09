@@ -1,0 +1,13 @@
+stateDiagram-v2
+    state template_kind <<choice>>
+
+    [*] --> route_template_kind
+    route_template_kind --> template_kind
+    template_kind --> load_data_product_template: data-product
+    load_data_product_template --> replace_name_placeholders
+    replace_name_placeholders --> return_yaml
+    return_yaml --> [*]
+    template_kind --> not_implemented_deploy: deploy
+    not_implemented_deploy --> [*]
+    template_kind --> not_implemented_env: env
+    not_implemented_env --> [*]

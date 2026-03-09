@@ -1,0 +1,10 @@
+stateDiagram-v2
+    state if_found <<choice>>
+
+    [*] --> query_data_product_by_name
+    query_data_product_by_name --> if_found
+    if_found --> load_resources: found
+    load_resources --> load_active_resource_definitions
+    load_active_resource_definitions --> return_data_product
+    return_data_product --> [*]
+    if_found --> [*]: not found / exception
