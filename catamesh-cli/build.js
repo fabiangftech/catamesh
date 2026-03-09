@@ -9,7 +9,7 @@ const repoDir = path.resolve(cliDir, "..");
 const coreDir = path.join(repoDir, "catamesh-core");
 const distDir = path.join(cliDir, "dist");
 const embeddedCoreDir = path.join(distDir, "core");
-const coreJarPath = path.join(coreDir, "build", "libs", "catamesh-core-cli.jar");
+const coreJarPath = path.join(coreDir, "build", "libs", "catamesh-core.jar");
 
 const run = (command, args, options = {}) => {
   const result = spawnSync(command, args, {
