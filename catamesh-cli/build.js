@@ -61,5 +61,5 @@ if (!fs.existsSync(coreJarPath)) {
 }
 
 fs.mkdirSync(embeddedCoreDir, {recursive: true});
-fs.copyFileSync(coreJarPath, path.join(embeddedCoreDir, "catamesh-core-cli.jar"));
+fs.copyFileSync(coreJarPath, path.join(embeddedCoreDir, "catamesh-core.jar"));
 fs.chmodSync(path.join(distDir, "cli.js"), 0o755);

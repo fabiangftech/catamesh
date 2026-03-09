@@ -5,7 +5,7 @@ const path = require("node:path");
 const {runCli} = require("../dist/cli.js");
 const {InitQuery} = require("../dist/infrastructure/cqrs/InitQuery.js");
 
-test("InitQuery invokes embedded core jar with new command", () => {
+test("NewTemplateQuery invokes embedded core jar with new command", () => {
   const invocations = [];
   const query = new InitQuery((command, args, options) => {
     invocations.push({command, args: [...args], options});
