@@ -1,4 +1,4 @@
-package dev.catamesh.infrastructure.cqrs;
+package dev.catamesh.infrastructure.cqrs.db;
 
 import dev.catamesh.core.cqrs.Command;
 import dev.catamesh.core.exception.DependencyException;
