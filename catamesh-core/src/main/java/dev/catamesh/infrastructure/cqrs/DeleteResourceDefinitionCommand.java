@@ -1,23 +1,19 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Command;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.infrastructure.dto.GetResourceDefinitionDTO;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@Singleton
-@Named("deleteResourceDefinitionCommand")
 public class DeleteResourceDefinitionCommand implements Command<GetResourceDefinitionDTO, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteResourceDefinitionCommand.class);
+    private static final Logger logger = Logger.getLogger(DeleteResourceDefinitionCommand.class.getName());
 
     private static final String SQL_DELETE = """
             DELETE FROM resource_definition
@@ -47,7 +43,7 @@ public class DeleteResourceDefinitionCommand implements Command<GetResourceDefin
                     dto.version()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

@@ -1,21 +1,19 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Command;
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.AlreadyExistsException;
-import cl.guaman.weave.core.exception.DependencyException;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.AlreadyExistsException;
+import dev.catamesh.core.exception.DependencyException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Singleton
 public class InitTablesDBCommand implements Command<Void, Void> {
-    private static final Logger logger = LoggerFactory.getLogger(InitTablesDBCommand.class);
+    private static final Logger logger = Logger.getLogger(InitTablesDBCommand.class.getName());
     private static final String SCHEMA_DB = "sql/000-schema.sql";
     private static final String DUPLICATE_KEY_SQL_STATE = "23505";
     private final DataSource dataSource;
@@ -45,14 +43,14 @@ public class InitTablesDBCommand implements Command<Void, Void> {
                         Clean duplicated rows before starting Weave.
                         """;
 
-                logger.error(message, e);
+                logger.log(Level.SEVERE, message, e);
 
                 throw new AlreadyExistsException(message);
             }
 
             String message = "Database error initializing Weave schema";
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
 
@@ -60,7 +58,7 @@ public class InitTablesDBCommand implements Command<Void, Void> {
 
             String message = "Unexpected error initializing Weave database schema";
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

@@ -1,20 +1,18 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.exception.NotFoundException;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.exception.NotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@Singleton
 public class GetFileFromResourceQuery implements Query<String, String> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GetFileFromResourceQuery.class);
+    private static final Logger logger = Logger.getLogger(GetFileFromResourceQuery.class.getName());
 
     @Override
     public String execute(String path) {
@@ -36,7 +34,7 @@ public class GetFileFromResourceQuery implements Query<String, String> {
                     path
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

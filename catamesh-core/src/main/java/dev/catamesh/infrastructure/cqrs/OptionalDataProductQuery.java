@@ -1,12 +1,11 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.model.DataProduct;
-import cl.guaman.weave.infrastructure.adapter.DataProductAdapter;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.infrastructure.adapter.DataProductAdapter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -15,10 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@Singleton
 public class OptionalDataProductQuery implements Query<String, Optional<DataProduct>> {
 
-    private static final Logger logger = LoggerFactory.getLogger(OptionalDataProductQuery.class);
+    private static final Logger logger = Logger.getLogger(OptionalDataProductQuery.class.getName());
 
     private static final String SQL_QUERY_BY_NAME = """
             SELECT id, schema_version, name, display_name, kind, domain, description
@@ -52,7 +50,7 @@ public class OptionalDataProductQuery implements Query<String, Optional<DataProd
                     name
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

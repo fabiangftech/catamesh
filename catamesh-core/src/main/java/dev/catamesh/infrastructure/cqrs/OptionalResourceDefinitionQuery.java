@@ -1,11 +1,10 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.infrastructure.dto.GetResourceDefinitionDTO;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -14,9 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@Singleton
 public class OptionalResourceDefinitionQuery implements Query<GetResourceDefinitionDTO, Optional<String>> {
-    private static final Logger logger = LoggerFactory.getLogger(OptionalResourceDefinitionQuery.class);
+    private static final Logger logger = Logger.getLogger(OptionalResourceDefinitionQuery.class.getName());
     private static final String SQL_QUERY_BY_RESOURCE_AND_SCHEMA_AND_VERSION = """
             SELECT id
             FROM resource_definition
@@ -51,7 +49,7 @@ public class OptionalResourceDefinitionQuery implements Query<GetResourceDefinit
                     dto.version()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

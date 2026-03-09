@@ -1,13 +1,12 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.model.*;
-import cl.guaman.weave.infrastructure.adapter.ResourceAdapter;
-import cl.guaman.weave.infrastructure.dto.GetResourceDTO;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.model.*;
+import dev.catamesh.infrastructure.adapter.ResourceAdapter;
+import dev.catamesh.infrastructure.dto.GetResourceDTO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -16,9 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@Singleton
 public class OptionalResourceQuery implements Query<GetResourceDTO, Optional<Resource>> {
-    private static final Logger logger = LoggerFactory.getLogger(OptionalResourceQuery.class);
+    private static final Logger logger = Logger.getLogger(OptionalResourceQuery.class.getName());
 
     private static final String SQL_QUERY_BY_NAME_AND_DATA_PRODUCT_ID = """
                 SELECT id, data_product_id, name, display_name, kind
@@ -54,7 +52,7 @@ public class OptionalResourceQuery implements Query<GetResourceDTO, Optional<Res
                     getResourceDTO.dataProductId()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
             throw new DependencyException(message);
         }
     }

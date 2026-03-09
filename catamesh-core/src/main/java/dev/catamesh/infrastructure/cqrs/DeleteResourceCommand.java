@@ -1,23 +1,19 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Command;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.model.Key;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.model.Key;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@Singleton
-@Named("deleteResourceCommand")
 public class DeleteResourceCommand implements Command<Key, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteResourceCommand.class);
+    private static final Logger logger = Logger.getLogger(DeleteResourceCommand.class.getName());
 
     private static final String SQL_DELETE = """
             DELETE FROM resource
@@ -45,7 +41,7 @@ public class DeleteResourceCommand implements Command<Key, Void> {
                     key.value()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

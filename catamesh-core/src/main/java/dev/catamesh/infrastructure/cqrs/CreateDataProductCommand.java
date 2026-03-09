@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CreateDataProductCommand implements Command<DataProduct, DataProduct> {
@@ -39,7 +40,7 @@ public class CreateDataProductCommand implements Command<DataProduct, DataProduc
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             String message = String.format("Error saving data product(name=%s)", dataProduct.getMetadata().getName());
-            logger.severe(String.format(message, e));
+            logger.log(Level.SEVERE, message, e);
             throw new DependencyException(message);
         }
         dataProduct.getMetadata().setId(key);

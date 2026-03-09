@@ -1,22 +1,18 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Command;
-import cl.guaman.weave.core.exception.DependencyException;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.exception.DependencyException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-@Singleton
-@Named("deleteDataProductCommand")
 public class DeleteDataProductCommand implements Command<String, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteDataProductCommand.class);
+    private static final Logger logger = Logger.getLogger(DeleteDataProductCommand.class.getName());
 
     private static final String SQL_DELETE = """
             DELETE FROM data_product
@@ -45,7 +41,7 @@ public class DeleteDataProductCommand implements Command<String, Void> {
                     name
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
         }

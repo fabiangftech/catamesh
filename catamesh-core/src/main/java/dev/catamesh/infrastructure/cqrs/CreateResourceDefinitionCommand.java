@@ -1,15 +1,13 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Command;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.exception.MappingException;
-import cl.guaman.weave.core.model.Key;
-import cl.guaman.weave.core.model.Resource;
-import cl.guaman.weave.core.model.ResourceDefinition;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.exception.MappingException;
+import dev.catamesh.core.model.Key;
+import dev.catamesh.core.model.Resource;
+import dev.catamesh.core.model.ResourceDefinition;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -19,10 +17,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Objects;
 
-@Singleton
-@Named("createResourceDefinitionCommand")
 public class CreateResourceDefinitionCommand implements Command<Resource, Resource> {
-    private static final Logger logger = LoggerFactory.getLogger(CreateResourceDefinitionCommand.class);
+    private static final Logger logger = Logger.getLogger(CreateResourceDefinitionCommand.class.getName());
     private static final String SQL_INSERT = """
             INSERT INTO resource_definition
             (id, schema_version, resource_id, version, active, config)
@@ -37,7 +33,7 @@ public class CreateResourceDefinitionCommand implements Command<Resource, Resour
     private final DataSource dataSource;
     private final ObjectMapper jsonMapper;
 
-    public CreateResourceDefinitionCommand(DataSource dataSource, @Named("jsonMapper") ObjectMapper jsonMapper) {
+    public CreateResourceDefinitionCommand(DataSource dataSource, ObjectMapper jsonMapper) {
         this.dataSource = dataSource;
         this.jsonMapper = jsonMapper;
     }
@@ -60,11 +56,11 @@ public class CreateResourceDefinitionCommand implements Command<Resource, Resour
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             String message = String.format("Error saving resource definition for resource(name=%s)", resource.getName());
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
             throw new DependencyException(message);
         } catch (JacksonException e) {
             String message = String.format("Error mapping resource definition to JSON for resource(name=%s)", resource.getName());
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
             throw new MappingException(message);
         }
         return resource;

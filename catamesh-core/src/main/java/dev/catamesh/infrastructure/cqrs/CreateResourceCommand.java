@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CreateResourceCommand implements Command<Resource, Void> {
@@ -38,7 +39,7 @@ public class CreateResourceCommand implements Command<Resource, Void> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             String message = String.format("Error saving resource(name=%s)", resource.getName());
-            logger.severe(String.format(message,e));
+            logger.log(Level.SEVERE, message, e);
             throw new DependencyException(message);
         }
         resource.setId(resourceId);

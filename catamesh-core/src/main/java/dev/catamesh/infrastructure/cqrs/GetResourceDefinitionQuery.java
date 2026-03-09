@@ -1,16 +1,14 @@
 package dev.catamesh.infrastructure.cqrs;
 
-import cl.guaman.weave.core.cqrs.Query;
-import cl.guaman.weave.core.exception.DependencyException;
-import cl.guaman.weave.core.exception.MappingException;
-import cl.guaman.weave.core.exception.NotFoundException;
-import cl.guaman.weave.core.model.Key;
-import cl.guaman.weave.core.model.ResourceDefinition;
-import cl.guaman.weave.infrastructure.adapter.ResourceDefinitionAdapter;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.exception.DependencyException;
+import dev.catamesh.core.exception.MappingException;
+import dev.catamesh.core.exception.NotFoundException;
+import dev.catamesh.core.model.Key;
+import dev.catamesh.core.model.ResourceDefinition;
+import dev.catamesh.infrastructure.adapter.ResourceDefinitionAdapter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -20,11 +18,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Singleton
-@Named("getResourceDefinitionQuery")
 public class GetResourceDefinitionQuery implements Query<Key, ResourceDefinition> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GetResourceDefinitionQuery.class);
+    private static final Logger logger = Logger.getLogger(GetResourceDefinitionQuery.class.getName());
 
     private static final String SQL_QUERY_ACTIVE_BY_RESOURCE_ID = """
             SELECT schema_version, version, config
@@ -38,7 +34,7 @@ public class GetResourceDefinitionQuery implements Query<Key, ResourceDefinition
     private final ObjectMapper jsonMapper;
 
     public GetResourceDefinitionQuery(DataSource dataSource,
-                                      @Named("jsonMapper") ObjectMapper jsonMapper) {
+                                      ObjectMapper jsonMapper) {
         this.dataSource = dataSource;
         this.jsonMapper = jsonMapper;
     }
@@ -69,7 +65,7 @@ public class GetResourceDefinitionQuery implements Query<Key, ResourceDefinition
                     resourceId.value()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new DependencyException(message);
 
@@ -79,7 +75,7 @@ public class GetResourceDefinitionQuery implements Query<Key, ResourceDefinition
                     resourceId.value()
             );
 
-            logger.error(message, e);
+            logger.log(Level.SEVERE, message, e);
 
             throw new MappingException(message);
         }
