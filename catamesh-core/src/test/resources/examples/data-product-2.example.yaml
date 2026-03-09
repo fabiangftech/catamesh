@@ -1,0 +1,18 @@
+schemaVersion: data-product/v1
+metadata:
+  name: my-first-data-product
+  displayName: Test
+  domain: test
+  description: this is a data product!
+spec:
+  kind: source-aligned
+  resources:
+    -
+      name: my-first-component
+      displayName: My First component
+      kind: bucket
+      definition:
+        schemaVersion: bucket/v1
+        version: 0.0.1
+        config:
+          lifecycleDays: 40

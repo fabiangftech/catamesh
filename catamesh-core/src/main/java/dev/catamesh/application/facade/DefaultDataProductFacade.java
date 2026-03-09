@@ -45,11 +45,14 @@ public class DefaultDataProductFacade implements DataProductFacade {
 
     @Override
     public Plan plan(String yaml) {
-        return validateAndMapForPlan(yaml).getPlan();
+        Handler<ApplyDataProductContext> chain = planDataProductPipelineFactory.create();
+        ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
+        chain.handle(context);
+        return context.getPlan();
     }
 
     @Override
-    public DiffResult diff(String yaml) {
+    public Diff diff(String yaml) {
         Handler<ApplyDataProductContext> chain = diffDataProductPipelineFactory.create();
         ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
         chain.handle(context);
@@ -64,8 +67,18 @@ public class DefaultDataProductFacade implements DataProductFacade {
 
     @Override
     public DataProduct get(String name) {
-        DataProduct dataProduct = loadCurrentDataProduct(name)
-                .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_DATA_PRODUCT, name)));
+        Optional<DataProduct> optionalDataProduct = optionalDataProductQuery.execute(name);
+        if (optionalDataProduct.isEmpty()) {
+            throw new NotFoundException(String.format(NOT_FOUND_DATA_PRODUCT, name));
+        }
+
+        DataProduct dataProduct = optionalDataProduct.get();
+        List<Resource> resources = allResourcesQuery.execute(name);
+        resources.forEach(resource -> {
+            ResourceDefinition resourceDefinition = getResourceDefinitionQuery.execute(resource.getKey());
+            resource.setDefinition(resourceDefinition);
+        });
+        dataProduct.setResources(resources);
         return dataProduct;
     }
 
@@ -81,28 +94,5 @@ public class DefaultDataProductFacade implements DataProductFacade {
     public void applyDestroy(String yaml) {
         Handler<DestroyDataProductContext> chain = applyDestroyDataProductPipelineFactory.create();
         chain.handle(DestroyDataProductContext.createForApply(yaml));
-    }
-
-    private ApplyDataProductContext validateAndMapForPlan(String yaml) {
-        Handler<ApplyDataProductContext> chain = planDataProductPipelineFactory.create();
-        ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
-        chain.handle(context);
-        return context;
-    }
-
-    private Optional<DataProduct> loadCurrentDataProduct(String name) {
-        Optional<DataProduct> optionalDataProduct = optionalDataProductQuery.execute(name);
-        if (optionalDataProduct.isEmpty()) {
-            return Optional.empty();
-        }
-
-        DataProduct dataProduct = optionalDataProduct.get();
-        List<Resource> resources = allResourcesQuery.execute(name);
-        resources.forEach(resource -> {
-            ResourceDefinition resourceDefinition = getResourceDefinitionQuery.execute(resource.getKey());
-            resource.setDefinition(resourceDefinition);
-        });
-        dataProduct.setResources(resources);
-        return Optional.of(dataProduct);
     }
 }

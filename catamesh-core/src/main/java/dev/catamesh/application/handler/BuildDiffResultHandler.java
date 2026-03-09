@@ -2,7 +2,7 @@ package dev.catamesh.application.handler;
 
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.model.DiffResult;
+import dev.catamesh.core.model.Diff;
 import dev.catamesh.core.model.DiffSection;
 import dev.catamesh.core.model.DiffSummary;
 
@@ -19,6 +19,6 @@ public class BuildDiffResultHandler extends Handler<ApplyDataProductContext> {
         DiffSummary summary = context.getDiffSummary() == null
                 ? new DiffSummary()
                 : context.getDiffSummary();
-        context.setDiffResult(new DiffResult(context.getDataProductName(), summary, sections));
+        context.setDiffResult(new Diff(context.getDataProductName(), summary, sections));
     }
 }

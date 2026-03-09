@@ -7,6 +7,7 @@ import {ApplyFacade} from "./application/facade/ApplyFacade";
 import {GetFacade} from "./application/facade/GetFacade";
 import {CataMeshCoreError} from "./core/exception/CataMeshCoreError";
 import {ColorConfig} from "./infrastructure/config/ColorConfig";
+import {DiffFacade} from "./application/facade/DiffFacade";
 
 const SUCCESS = 0;
 const FAILURE = 1;
@@ -33,7 +34,11 @@ if (require.main === module) {
                 getFacade.run(command);
                 break
             case "diff":
+                const diffFacade: Facade<string[], void>=new DiffFacade();
+                diffFacade.run(command);
                 break
+            case "help":
+                break;
             default:
                 break
         }

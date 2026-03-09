@@ -10,7 +10,7 @@ public class ApplyDataProductContext {
     private DataProduct dataProduct;
     private DataProduct currentDataProduct;
     private Plan plan;
-    private DiffResult diffResult;
+    private Diff diff;
     private List<DiffSection> diffSections;
     private DiffSummary diffSummary;
 
@@ -58,12 +58,12 @@ public class ApplyDataProductContext {
         this.plan = plan;
     }
 
-    public DiffResult getDiffResult() {
-        return diffResult;
+    public Diff getDiffResult() {
+        return diff;
     }
 
-    public void setDiffResult(DiffResult diffResult) {
-        this.diffResult = diffResult;
+    public void setDiffResult(Diff diff) {
+        this.diff = diff;
     }
 
     public List<DiffSection> getDiffSections() {

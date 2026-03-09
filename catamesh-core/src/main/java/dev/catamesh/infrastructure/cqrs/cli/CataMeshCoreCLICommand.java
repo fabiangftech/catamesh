@@ -20,6 +20,9 @@ public class CataMeshCoreCLICommand {
                 case "get":
                     get(command);
                     break;
+                case "diff":
+                    diff(command);
+                    break;
                 case "destroy":
                     System.out.println("Not implemented destroy yet!");
                     break;
@@ -47,5 +50,10 @@ public class CataMeshCoreCLICommand {
         if (ModelType.DATA_PRODUCT.getValue().equals(type)) {
             DataProductCLICommand.main(command);
         }
+    }
+
+    private static void diff(String[] command){
+        //todo check if schema is data-product/v1
+        DataProductCLICommand.main(command);
     }
 }

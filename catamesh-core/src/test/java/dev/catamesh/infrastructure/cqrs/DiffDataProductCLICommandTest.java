@@ -6,7 +6,7 @@ import dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class GetDataProductCLICommandTest {
+class DiffDataProductCLICommandTest {
 
     private final ApplicationConfig applicationConfig = new ApplicationConfig();
     private final Query<String, String> getFileFromResourceQuery = applicationConfig.getFileFromResourceQuery();
@@ -17,8 +17,8 @@ class GetDataProductCLICommandTest {
         String[] command = {"apply", yaml};
         Assertions.assertDoesNotThrow(() -> CataMeshCoreCLICommand.main(command));
 
-        String dataProductName = "my-first-data-product";
-        String[] commandTwo = {"get", "data-product", dataProductName};
+        String yamlTwo = getFileFromResourceQuery.execute("examples/data-product-2.example.yaml");
+        String[] commandTwo = {"diff", yamlTwo};
         Assertions.assertDoesNotThrow(() -> CataMeshCoreCLICommand.main(commandTwo));
 
     }

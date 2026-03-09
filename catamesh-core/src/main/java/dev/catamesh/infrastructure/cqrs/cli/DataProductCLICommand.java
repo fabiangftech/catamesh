@@ -2,6 +2,7 @@ package dev.catamesh.infrastructure.cqrs.cli;
 
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.core.model.Diff;
 import dev.catamesh.core.model.Plan;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
 import tools.jackson.databind.ObjectMapper;
@@ -32,6 +33,9 @@ public class DataProductCLICommand {
                 System.out.println(jsonMapper.writeValueAsString(dataProduct));
                 break;
             case "diff":
+                yaml = args[1];
+                Diff diff= dataProductFacade.diff(yaml);
+                System.out.println(jsonMapper.writeValueAsString(diff));
                 break;
         }
     }
