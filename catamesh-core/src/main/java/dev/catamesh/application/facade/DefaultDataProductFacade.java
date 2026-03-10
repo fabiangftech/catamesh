@@ -60,9 +60,11 @@ public class DefaultDataProductFacade implements DataProductFacade {
     }
 
     @Override
-    public void apply(String yaml) {
+    public ApplyResult apply(String yaml) {
         Handler<ApplyDataProductContext> chain = applyDataProductPipelineFactory.create();
-        chain.handle(ApplyDataProductContext.create(yaml));
+        ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
+        chain.handle(context);
+        return new ApplyResult(context.getPlan(), get(context.getDataProductName()));
     }
 
     @Override

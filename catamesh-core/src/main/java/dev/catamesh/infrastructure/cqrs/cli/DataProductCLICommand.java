@@ -1,6 +1,7 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
 import dev.catamesh.core.facade.DataProductFacade;
+import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Diff;
 import dev.catamesh.core.model.Plan;
@@ -24,8 +25,8 @@ public class DataProductCLICommand {
                 break;
             case "apply":
                 yaml = args[1];
-                dataProductFacade.apply(yaml);
-                System.out.println("Data product created successfully!");
+                ApplyResult applyResult = dataProductFacade.apply(yaml);
+                System.out.println(jsonMapper.writeValueAsString(applyResult));
                 break;
             case "get":
                 dataProductName = args[2];
