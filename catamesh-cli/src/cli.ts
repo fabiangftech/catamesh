@@ -12,51 +12,88 @@ import {DiffFacade} from "./application/facade/DiffFacade";
 const SUCCESS = 0;
 const FAILURE = 1;
 
-if (require.main === module) {
-    const originalCommand: string[] = process.argv.slice(2);
-    let command: string[] = process.argv.slice(2);
+type FacadeFactory = () => Facade<string[], void>;
+
+export interface RunCliDependencies {
+    applyFacadeFactory?: FacadeFactory;
+    diffFacadeFactory?: FacadeFactory;
+    getFacadeFactory?: FacadeFactory;
+    planFacadeFactory?: FacadeFactory;
+    templateFacadeFactory?: FacadeFactory;
+    writeError?: (message: string) => void;
+}
+
+export function runCli(
+    originalCommand: string[],
+    dependencies: RunCliDependencies = {},
+): number {
+    const command: string[] = [...originalCommand];
+    const writeError = dependencies.writeError ?? ((message: string) => console.error(message));
+
     try {
         switch (command[0]) {
             case "new":
-                const templateFacade: Facade<string[], void> = new TemplateFacade();
-                templateFacade.run(command);
+                (dependencies.templateFacadeFactory ?? (() => new TemplateFacade()))().run(command);
                 break
             case "plan":
-                const planFacade: Facade<string[], void> = new PlanFacade();
-                planFacade.run(command);
+                (dependencies.planFacadeFactory ?? (() => new PlanFacade()))().run(command);
                 break
             case "apply":
-                const applyFacade: Facade<string[], void> = new ApplyFacade();
-                applyFacade.run(command);
+                (dependencies.applyFacadeFactory ?? (() => new ApplyFacade()))().run(command);
                 break
             case "get":
-                const getFacade: Facade<string[], void> = new GetFacade();
-                getFacade.run(command);
+                (dependencies.getFacadeFactory ?? (() => new GetFacade()))().run(command);
                 break
             case "diff":
-                const diffFacade: Facade<string[], void>=new DiffFacade();
-                diffFacade.run(command);
+                (dependencies.diffFacadeFactory ?? (() => new DiffFacade()))().run(command);
                 break
             case "help":
                 break;
             default:
                 break
         }
-        process.exit(SUCCESS)
+        return SUCCESS;
     } catch (e: unknown) {
         const executedCommand = originalCommand.length > 0 ? originalCommand.join(" ") : "(none)";
         if (e instanceof CataMeshCoreError) {
-            console.error(
+            writeError(
                 `${ColorConfig.red}Command failed${ColorConfig.reset}\n` +
-                `${ColorConfig.red}Status:${ColorConfig.reset} ${ColorConfig.white}${e.status}${ColorConfig.reset}\n` +
+                `${ColorConfig.red}Code:${ColorConfig.reset} ${ColorConfig.white}${e.errorCode} (${e.status})${ColorConfig.reset}\n` +
                 `${ColorConfig.red}Command:${ColorConfig.reset} ${ColorConfig.white}cata ${executedCommand}${ColorConfig.reset}\n` +
-                `${ColorConfig.red}Message:${ColorConfig.reset} ${ColorConfig.white}${e.message.trim()}${ColorConfig.reset}`
+                `${ColorConfig.red}Reason:${ColorConfig.reset} ${ColorConfig.white}${e.title}${ColorConfig.reset}\n` +
+                `${ColorConfig.red}Message:${ColorConfig.reset} ${ColorConfig.white}${e.message.trim()}${ColorConfig.reset}` +
+                renderHint(e) +
+                renderDetails(e)
             );
+            return e.status ?? FAILURE;
         } else if (e instanceof Error) {
-            console.error(`Error: ${e.message}`);
+            writeError(`Error: ${e.message}`);
         } else {
-            console.error(`Error: ${String(e)}`);
+            writeError(`Error: ${String(e)}`);
         }
-        process.exit(FAILURE)
+        return FAILURE;
     }
+}
+
+function renderHint(error: CataMeshCoreError): string {
+    if (!error.hint) {
+        return "";
+    }
+    return `\n${ColorConfig.red}Hint:${ColorConfig.reset} ${ColorConfig.white}${error.hint}${ColorConfig.reset}`;
+}
+
+function renderDetails(error: CataMeshCoreError): string {
+    if (error.details.length === 0) {
+        return "";
+    }
+
+    const renderedDetails = error.details
+        .map((detail) => `${ColorConfig.white}- ${detail}${ColorConfig.reset}`)
+        .join("\n");
+
+    return `\n${ColorConfig.red}Details:${ColorConfig.reset}\n${renderedDetails}`;
+}
+
+if (require.main === module) {
+    process.exit(runCli(process.argv.slice(2)));
 }

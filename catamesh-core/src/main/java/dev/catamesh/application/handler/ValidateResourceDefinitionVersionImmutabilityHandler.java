@@ -1,7 +1,7 @@
 package dev.catamesh.application.handler;
 
 import dev.catamesh.core.cqrs.Query;
-import dev.catamesh.core.exception.ConflictException;
+import dev.catamesh.core.exception.ImmutableResourceDefinitionVersionException;
 import dev.catamesh.core.exception.InvariantException;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
@@ -42,12 +42,10 @@ public class ValidateResourceDefinitionVersionImmutabilityHandler extends Handle
             ));
 
             if (!ResourceDefinition.isSameVersionContent(currentDefinition, resource.getDefinition())) {
-                throw new ConflictException(
-                        String.format(
-                                "Resource definition version %s for resource=%s is immutable. Bump the version to apply definition changes.",
-                                resource.getDefinition().getVersion(),
-                                resource.getName()
-                        )
+                throw new ImmutableResourceDefinitionVersionException(
+                        resource.getName(),
+                        resource.getDefinition().getVersion(),
+                        ResourceDefinition.immutableDifferences(currentDefinition, resource.getDefinition())
                 );
             }
         }
