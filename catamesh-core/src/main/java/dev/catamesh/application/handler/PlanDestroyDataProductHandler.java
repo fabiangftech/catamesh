@@ -25,78 +25,160 @@ public class PlanDestroyDataProductHandler extends Handler<DestroyDataProductCon
 
     @Override
     protected void doHandle(DestroyDataProductContext context) {
+        Plan plan = initializePlan(context);
+        buildResourcePlans(context, plan);
+        resolvePlanAction(context, plan);
+    }
+
+    private Plan initializePlan(DestroyDataProductContext context) {
         Plan plan = new Plan(context.getName());
         context.setPlan(plan);
+        return plan;
+    }
 
-        Map<String, LinkedHashSet<String>> requestedDefinitionVersionsByResource =
-                DestroyRequestAdapter.requestedDefinitionVersionsByResource(context.getRequestedResources());
-        requestedDefinitionVersionsByResource.forEach((resourceName, definitionVersions) ->
+    private void buildResourcePlans(DestroyDataProductContext context, Plan plan) {
+        requestedDefinitionVersionsByResource(context).forEach((resourceName, definitionVersions) ->
                 appendResourcePlan(context, plan, resourceName, definitionVersions)
         );
+    }
 
-        boolean hasDeletes = plan.getResources().stream()
-                .anyMatch(planResource -> planResource.getAction().equals(PlanAction.DELETE));
-        if (!hasDeletes) {
-            plan.setAction(PlanAction.NOOP);
-            context.plusNoopSummary();
+    private Map<String, LinkedHashSet<String>> requestedDefinitionVersionsByResource(DestroyDataProductContext context) {
+        return DestroyRequestAdapter.requestedDefinitionVersionsByResource(context.getRequestedResources());
+    }
+
+    private void resolvePlanAction(DestroyDataProductContext context, Plan plan) {
+        if (!hasDeleteActions(plan)) {
+            markNoop(plan, context);
             return;
         }
+        if (removesAllResources(context, plan)) {
+            markDelete(plan, context);
+            return;
+        }
+        markNoop(plan, context);
+    }
 
-        long deleteResources = plan.getResources().stream()
+    private boolean hasDeleteActions(Plan plan) {
+        return plan.getResources().stream()
+                .anyMatch(planResource -> planResource.getAction().equals(PlanAction.DELETE));
+    }
+
+    private boolean removesAllResources(DestroyDataProductContext context, Plan plan) {
+        return remainingResources(context, plan) <= 0;
+    }
+
+    private int remainingResources(DestroyDataProductContext context, Plan plan) {
+        return context.getResources().size() - (int) deletedResources(plan);
+    }
+
+    private long deletedResources(Plan plan) {
+        return plan.getResources().stream()
                 .filter(planResource -> planResource.getType().equals(PlanResourceType.RESOURCE))
                 .filter(planResource -> planResource.getAction().equals(PlanAction.DELETE))
                 .count();
-
-        int remainingResources = context.getResources().size() - (int) deleteResources;
-        if (remainingResources <= 0) {
-            plan.setAction(PlanAction.DELETE);
-            context.plusDeleteSummary();
-            return;
-        }
-        plan.setAction(PlanAction.NOOP);
-        context.plusNoopSummary();
     }
 
     private void appendResourcePlan(DestroyDataProductContext context,
                                     Plan plan,
                                     String resourceName,
                                     LinkedHashSet<String> definitionVersions) {
-        Optional<Resource> currentResource = context.getResources().stream()
-                .filter(resource -> resource.getName().equals(resourceName))
-                .findFirst();
+        Optional<Resource> currentResource = findCurrentResource(context, resourceName);
         if (currentResource.isEmpty()) {
-            definitionVersions.forEach(version -> {
-                plan.addResource(PlanResource.resourceDefinition(resourceName, version, PlanAction.NOOP));
-                context.plusNoopSummary();
-            });
-            plan.addResource(PlanResource.resource(resourceName, PlanAction.NOOP));
-            context.plusNoopSummary();
+            appendMissingResourcePlan(context, plan, resourceName, definitionVersions);
             return;
         }
 
-        Resource existingResource = currentResource.get();
+        appendExistingResourcePlan(context, plan, currentResource.get(), resourceName, definitionVersions);
+    }
+
+    private Optional<Resource> findCurrentResource(DestroyDataProductContext context, String resourceName) {
+        return context.getResources().stream()
+                .filter(resource -> resource.getName().equals(resourceName))
+                .findFirst();
+    }
+
+    private void appendMissingResourcePlan(DestroyDataProductContext context,
+                                           Plan plan,
+                                           String resourceName,
+                                           LinkedHashSet<String> definitionVersions) {
+        for (String definitionVersion : definitionVersions) {
+            appendDefinitionPlan(plan, context, resourceName, definitionVersion, PlanAction.NOOP);
+        }
+        appendResourceEntry(plan, context, resourceName, PlanAction.NOOP);
+    }
+
+    private void appendExistingResourcePlan(DestroyDataProductContext context,
+                                            Plan plan,
+                                            Resource existingResource,
+                                            String resourceName,
+                                            LinkedHashSet<String> definitionVersions) {
         int definitionCount = countResourceDefinitionsByResourceIdQuery.execute(existingResource.getKey());
+        int definitionDeletes = appendDefinitionPlans(plan, context, existingResource, resourceName, definitionVersions);
+        appendResourceEntry(plan, context, resourceName, resourceAction(definitionCount, definitionDeletes));
+    }
+
+    private int appendDefinitionPlans(Plan plan,
+                                      DestroyDataProductContext context,
+                                      Resource existingResource,
+                                      String resourceName,
+                                      LinkedHashSet<String> definitionVersions) {
         int definitionDeletes = 0;
         for (String definitionVersion : definitionVersions) {
-            boolean exists = optionalResourceDefinitionQuery.execute(
-                    GetResourceDefinitionDTO.create(existingResource.getId(), definitionVersion)
-            ).isPresent();
-            if (exists) {
-                plan.addResource(PlanResource.resourceDefinition(resourceName, definitionVersion, PlanAction.DELETE));
-                context.plusDeleteSummary();
+            PlanAction action = definitionAction(existingResource, definitionVersion);
+            appendDefinitionPlan(plan, context, resourceName, definitionVersion, action);
+            if (PlanAction.DELETE.equals(action)) {
                 definitionDeletes++;
-                continue;
             }
-            plan.addResource(PlanResource.resourceDefinition(resourceName, definitionVersion, PlanAction.NOOP));
-            context.plusNoopSummary();
         }
+        return definitionDeletes;
+    }
 
+    private PlanAction definitionAction(Resource existingResource, String definitionVersion) {
+        boolean exists = optionalResourceDefinitionQuery.execute(
+                GetResourceDefinitionDTO.create(existingResource.getId(), definitionVersion)
+        ).isPresent();
+        return exists ? PlanAction.DELETE : PlanAction.NOOP;
+    }
+
+    private PlanAction resourceAction(int definitionCount, int definitionDeletes) {
         if (definitionDeletes > 0 && (definitionCount - definitionDeletes) <= 0) {
-            plan.addResource(PlanResource.resource(resourceName, PlanAction.DELETE));
+            return PlanAction.DELETE;
+        }
+        return PlanAction.NOOP;
+    }
+
+    private void appendDefinitionPlan(Plan plan,
+                                      DestroyDataProductContext context,
+                                      String resourceName,
+                                      String definitionVersion,
+                                      PlanAction action) {
+        plan.addResource(PlanResource.resourceDefinition(resourceName, definitionVersion, action));
+        updateSummary(context, action);
+    }
+
+    private void appendResourceEntry(Plan plan,
+                                     DestroyDataProductContext context,
+                                     String resourceName,
+                                     PlanAction action) {
+        plan.addResource(PlanResource.resource(resourceName, action));
+        updateSummary(context, action);
+    }
+
+    private void updateSummary(DestroyDataProductContext context, PlanAction action) {
+        if (PlanAction.DELETE.equals(action)) {
             context.plusDeleteSummary();
             return;
         }
-        plan.addResource(PlanResource.resource(resourceName, PlanAction.NOOP));
+        context.plusNoopSummary();
+    }
+
+    private void markDelete(Plan plan, DestroyDataProductContext context) {
+        plan.setAction(PlanAction.DELETE);
+        context.plusDeleteSummary();
+    }
+
+    private void markNoop(Plan plan, DestroyDataProductContext context) {
+        plan.setAction(PlanAction.NOOP);
         context.plusNoopSummary();
     }
 }

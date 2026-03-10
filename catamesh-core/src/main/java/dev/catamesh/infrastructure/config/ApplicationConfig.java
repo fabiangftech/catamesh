@@ -22,7 +22,6 @@ import dev.catamesh.application.handler.CreateResourcesHandler;
 import dev.catamesh.application.handler.DestroyDataProductHandler;
 import dev.catamesh.application.handler.DestroyResourceDefinitionHandler;
 import dev.catamesh.application.handler.DestroyResourceHandler;
-import dev.catamesh.application.handler.DiffComparisonSupport;
 import dev.catamesh.application.handler.GetOptionalDataProductForDestroyHandler;
 import dev.catamesh.application.handler.GetResourcesForDestroyHandler;
 import dev.catamesh.application.handler.LoadCurrentDataProductForDiffHandler;
@@ -42,6 +41,8 @@ import dev.catamesh.application.handler.ValidateDestroyResourceSchemaHandler;
 import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
 import dev.catamesh.application.handler.YAMLToDataProductHandler;
 import dev.catamesh.application.handler.YAMLToDestroyDataProductHandler;
+import dev.catamesh.application.strategy.DataProductDiffStrategy;
+import dev.catamesh.application.strategy.ResourceDiffStrategy;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
@@ -219,7 +220,6 @@ public class ApplicationConfig {
                 )
         );
 
-        DiffComparisonSupport diffComparisonSupport = new DiffComparisonSupport();
         DiffDataProductPipelineFactory diffDataProductPipelineFactory = new DiffDataProductPipelineFactory(
                 new YAMLToDataProductHandler(ctx.yamlMapper()),
                 new ValidateDataProductSchemaHandler(ctx.dataProductSchema(), ctx.jsonMapper()),
@@ -236,8 +236,8 @@ public class ApplicationConfig {
                         qc.allResourcesQuery(),
                         qc.getResourceDefinitionQuery()
                 ),
-                new BuildDataProductDiffSectionHandler(diffComparisonSupport),
-                new BuildResourceDiffSectionsHandler(diffComparisonSupport),
+                new BuildDataProductDiffSectionHandler(new DataProductDiffStrategy()),
+                new BuildResourceDiffSectionsHandler(new ResourceDiffStrategy()),
                 new BuildDiffSummaryHandler(),
                 new BuildDiffResultHandler()
         );

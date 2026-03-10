@@ -1,13 +1,12 @@
 package dev.catamesh.application.handler;
 
+import dev.catamesh.application.support.ResourceDefinitionPlanSupport;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.exception.ImmutableResourceDefinitionVersionException;
 import dev.catamesh.core.exception.InvariantException;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.PlanAction;
-import dev.catamesh.core.model.PlanResource;
-import dev.catamesh.core.model.PlanResourceType;
 import dev.catamesh.core.model.Resource;
 import dev.catamesh.core.model.ResourceDefinition;
 import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
@@ -26,44 +25,48 @@ public class ValidateResourceDefinitionVersionImmutabilityHandler extends Handle
     @Override
     protected void doHandle(ApplyDataProductContext context) {
         for (Resource resource : context.getResources()) {
-            PlanAction definitionAction = getDefinitionAction(context, resource);
-            if (!PlanAction.NOOP.equals(definitionAction)) {
-                continue;
-            }
-
-            ResourceDefinition currentDefinition = optionalResourceDefinitionVersionQuery.execute(
-                    GetResourceDefinitionDTO.create(resource.getId(), resource.getDefinition().getVersion())
-            ).orElseThrow(() -> new InvariantException(
-                    String.format(
-                            "Resource definition version=%s does not exist for resource=%s",
-                            resource.getDefinition().getVersion(),
-                            resource.getName()
-                    )
-            ));
-
-            if (!ResourceDefinition.isSameVersionContent(currentDefinition, resource.getDefinition())) {
-                throw new ImmutableResourceDefinitionVersionException(
-                        resource.getName(),
-                        resource.getDefinition().getVersion(),
-                        ResourceDefinition.immutableDifferences(currentDefinition, resource.getDefinition())
-                );
-            }
+            validateResourceDefinition(context, resource);
         }
     }
 
-    private PlanAction getDefinitionAction(ApplyDataProductContext context, Resource resource) {
-        return context.getPlan().getResources().stream()
-                .filter(planResource -> planResource.getType().equals(PlanResourceType.RESOURCE_DEFINITION))
-                .filter(planResource -> planResource.getName().equals(resource.getName()))
-                .filter(planResource -> planResource.getVersion().equals(resource.getDefinition().getVersion()))
-                .map(PlanResource::getAction)
-                .findFirst()
-                .orElseThrow(() -> new InvariantException(
-                        String.format(
-                                "Resource definition action was not calculated for resource=%s version=%s",
-                                resource.getName(),
-                                resource.getDefinition().getVersion()
-                        )
-                ));
+    private void validateResourceDefinition(ApplyDataProductContext context, Resource resource) {
+        if (!shouldValidate(context, resource)) {
+            return;
+        }
+
+        ResourceDefinition currentDefinition = loadCurrentDefinition(resource);
+        ensureImmutableContent(resource, currentDefinition);
+    }
+
+    private boolean shouldValidate(ApplyDataProductContext context, Resource resource) {
+        return PlanAction.NOOP.equals(ResourceDefinitionPlanSupport.getDefinitionAction(context, resource));
+    }
+
+    private ResourceDefinition loadCurrentDefinition(Resource resource) {
+        return optionalResourceDefinitionVersionQuery.execute(
+                GetResourceDefinitionDTO.create(resource.getId(), resource.getDefinition().getVersion())
+        ).orElseThrow(() -> missingDefinition(resource));
+    }
+
+    private InvariantException missingDefinition(Resource resource) {
+        return new InvariantException(
+                String.format(
+                        "Resource definition version=%s does not exist for resource=%s",
+                        resource.getDefinition().getVersion(),
+                        resource.getName()
+                )
+        );
+    }
+
+    private void ensureImmutableContent(Resource resource, ResourceDefinition currentDefinition) {
+        if (ResourceDefinition.isSameVersionContent(currentDefinition, resource.getDefinition())) {
+            return;
+        }
+
+        throw new ImmutableResourceDefinitionVersionException(
+                resource.getName(),
+                resource.getDefinition().getVersion(),
+                ResourceDefinition.immutableDifferences(currentDefinition, resource.getDefinition())
+        );
     }
 }

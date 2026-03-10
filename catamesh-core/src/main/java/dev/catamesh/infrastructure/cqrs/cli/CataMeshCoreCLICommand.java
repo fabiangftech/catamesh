@@ -6,6 +6,8 @@ import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
 import dev.catamesh.infrastructure.dto.CLIErrorPayloadDTO;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -14,6 +16,14 @@ import java.util.logging.Logger;
 @SuppressWarnings("java:S106")
 public class CataMeshCoreCLICommand {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final Map<String, Consumer<String[]>> COMMAND_HANDLERS = Map.of(
+            "new", NewTemplateCLICommand::main,
+            "plan", CataMeshCoreCLICommand::runDataProductCommand,
+            "apply", CataMeshCoreCLICommand::runDataProductCommand,
+            "get", CataMeshCoreCLICommand::get,
+            "diff", CataMeshCoreCLICommand::runDataProductCommand,
+            "destroy", CataMeshCoreCLICommand::destroy
+    );
 
     public static void main(String[] command) {
         int status = execute(command);
@@ -25,29 +35,7 @@ public class CataMeshCoreCLICommand {
     public static int execute(String[] command) {
         configureCliLogging();
         try {
-            String verb = command[0];
-            switch (verb) {
-                case "new":
-                    NewTemplateCLICommand.main(command);
-                    break;
-                case "plan":
-                    plan(command);
-                    break;
-                case "apply":
-                    apply(command);
-                    break;
-                case "get":
-                    get(command);
-                    break;
-                case "diff":
-                    diff(command);
-                    break;
-                case "destroy":
-                    System.out.println("Not implemented destroy yet!");
-                    break;
-                default:
-                    break;
-            }
+            dispatch(command[0], command);
             return 0;
         } catch (Throwable error) {
             CLIErrorPayloadDTO payload = CLIErrorAdapter.map(error);
@@ -56,26 +44,29 @@ public class CataMeshCoreCLICommand {
         }
     }
 
-    private static void plan(String[] command) {
-        //todo check if schema is data-product/v1
-        DataProductCLICommand.main(command);
+    private static void dispatch(String verb, String[] command) {
+        Consumer<String[]> handler = COMMAND_HANDLERS.get(verb);
+        if (handler == null) {
+            return;
+        }
+        handler.accept(command);
     }
 
-    private static void apply(String[] command) {
+    private static void runDataProductCommand(String[] command) {
         //todo check if schema is data-product/v1
         DataProductCLICommand.main(command);
     }
 
     private static void get(String[] command) {
         String type = command[1]; // data-product/deploy/env
-        if (ModelType.DATA_PRODUCT.getValue().equals(type)) {
-            DataProductCLICommand.main(command);
+        if (!ModelType.DATA_PRODUCT.getValue().equals(type)) {
+            return;
         }
+        DataProductCLICommand.main(command);
     }
 
-    private static void diff(String[] command){
-        //todo check if schema is data-product/v1
-        DataProductCLICommand.main(command);
+    private static void destroy(String[] command) {
+        System.out.println("Not implemented destroy yet!");
     }
 
     private static void configureCliLogging() {
