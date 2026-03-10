@@ -15,7 +15,8 @@
     "install:local:global": "npm install -g .",
     "prepare": "npm run build",
     "prepack": "npm run build",
-    "test": "npm run build && node --test test/**/*.test.js",
+    "test": "npm run test:coverage",
+    "test:coverage": "npm run build && node --test --experimental-test-coverage --test-coverage-lines=90 test/**/*.test.js",
     "uninstall:local:global": "npm uninstall -g catamesh-cli"
   },
   "devDependencies": {
