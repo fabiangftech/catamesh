@@ -13,11 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AllResourcesQuery implements Query<String, List<Resource>> {
-    private static final Logger logger = Logger.getLogger(AllResourcesQuery.class.getName());
     private static final String SQL_QUERY_ALL_BY_DATA_PRODUCT_NAME = """
             SELECT r.id, r.data_product_id, r.name, r.display_name, r.kind
             FROM resource r
@@ -49,8 +46,7 @@ public class AllResourcesQuery implements Query<String, List<Resource>> {
             String message = String.format("Error getting all resources for data product=%s with message=%s",
                     dataProductName,
                     e.getMessage());
-            logger.log(Level.SEVERE, message, e);
-            throw new DependencyException(message, e);
+            throw new DependencyException(message);
         }
     }
 }

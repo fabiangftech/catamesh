@@ -3,6 +3,7 @@ package dev.catamesh.infrastructure.cqrs.cli;
 import dev.catamesh.core.facade.TemplateFacade;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
 
+@SuppressWarnings("java:S106")
 public class NewTemplateCLICommand {
     private static final ApplicationConfig applicationConfig = new ApplicationConfig();
     private static final TemplateFacade templateFacade = applicationConfig.templateFacade();

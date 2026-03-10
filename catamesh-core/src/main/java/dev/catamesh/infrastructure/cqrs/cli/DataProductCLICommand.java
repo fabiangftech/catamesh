@@ -7,11 +7,12 @@ import dev.catamesh.core.model.Diff;
 import dev.catamesh.core.model.Plan;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
 import tools.jackson.databind.ObjectMapper;
-
+@SuppressWarnings("java:S106")
 public class DataProductCLICommand {
     private static final ApplicationConfig applicationConfig = new ApplicationConfig();
     private static final DataProductFacade dataProductFacade = applicationConfig.dataProductFacade();
     private static final ObjectMapper jsonMapper = applicationConfig.jsonMapper();
+
 
     public static void main(String[] args) {
         String verb = args[0];  // plan - apply - get - diff

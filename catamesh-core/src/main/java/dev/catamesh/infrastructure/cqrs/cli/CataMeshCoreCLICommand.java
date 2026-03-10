@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+@SuppressWarnings("java:S106")
 public class CataMeshCoreCLICommand {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
