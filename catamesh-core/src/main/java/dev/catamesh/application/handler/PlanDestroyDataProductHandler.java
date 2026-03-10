@@ -34,9 +34,7 @@ public class PlanDestroyDataProductHandler extends Handler<DestroyDataProductCon
         );
 
         boolean hasDeletes = plan.getResources().stream()
-                .filter(planResource -> planResource.getAction().equals(PlanAction.DELETE))
-                .findAny()
-                .isPresent();
+                .anyMatch(planResource -> planResource.getAction().equals(PlanAction.DELETE));
         if (!hasDeletes) {
             plan.setAction(PlanAction.NOOP);
             context.plusNoopSummary();

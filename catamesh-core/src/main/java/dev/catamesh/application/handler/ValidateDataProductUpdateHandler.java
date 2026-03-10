@@ -2,6 +2,7 @@ package dev.catamesh.application.handler;
 
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.PlanAction;
 
 public class ValidateDataProductUpdateHandler extends Handler<ApplyDataProductContext> {
@@ -16,7 +17,7 @@ public class ValidateDataProductUpdateHandler extends Handler<ApplyDataProductCo
             return;
         }
 
-        context.getCurrentDataProduct().validateMutableUpdate(
+        DataProduct.validateMutableUpdate(
                 context.getCurrentDataProduct(),
                 context.getDataProduct()
         );
