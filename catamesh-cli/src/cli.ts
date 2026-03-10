@@ -5,6 +5,7 @@ import {Facade} from "./core/facade/Facade";
 import {PlanFacade} from "./application/facade/PlanFacade";
 import {ApplyFacade} from "./application/facade/ApplyFacade";
 import {GetFacade} from "./application/facade/GetFacade";
+import {CataMeshCliError} from "./core/exception/CataMeshCliError";
 import {CataMeshCoreError} from "./core/exception/CataMeshCoreError";
 import {ColorConfig} from "./infrastructure/config/ColorConfig";
 import {DiffFacade} from "./application/facade/DiffFacade";
@@ -55,7 +56,7 @@ export function runCli(
         return SUCCESS;
     } catch (e: unknown) {
         const executedCommand = originalCommand.length > 0 ? originalCommand.join(" ") : "(none)";
-        if (e instanceof CataMeshCoreError) {
+        if (e instanceof CataMeshCliError) {
             writeError(
                 `${ColorConfig.red}Command failed${ColorConfig.reset}\n` +
                 `${ColorConfig.red}Code:${ColorConfig.reset} ${ColorConfig.white}${e.errorCode} (${e.status})${ColorConfig.reset}\n` +

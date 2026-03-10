@@ -4,24 +4,19 @@ import * as fs from "node:fs";
 import {Plan} from "../../core/model/Plan";
 import {PlanPrintCommand} from "../../infrastructure/cqrs/PlanPrintCommand";
 import {Command} from "../../core/cqrs/Command";
-import {Schema} from "../../core/model/Schema";
-import {ColorConfig} from "../../infrastructure/config/ColorConfig";
 import {Facade} from "../../core/facade/Facade";
+import {assertDataProductSchema, resolveYamlFileName} from "./DataProductYamlSupport";
 
 export class PlanFacade implements Facade<string[], void> {
     private cataMeshCoreCommand: Query<string[], string> = new CataMeshCoreCommand();
     private planPrintCommand: Command<Plan, void> = new PlanPrintCommand();
 
     run(command: string[]): void {
-        const fileName: string = command[1].includes(".yml") ? command[1] : command[1] + ".yaml";
-        console.log(fileName)
+        const fileName = resolveYamlFileName(command[1]);
         //todo check if file exist
-        const yaml: string = fs.readFileSync(fileName, "utf8");
-        if (yaml.includes(Schema.data_product_v1)) {
-            this.planDataProduct(command, yaml);
-        } else {
-            console.log(`${ColorConfig.white}Invalid schema version in ${command[1]}.yaml`);
-        }
+        const yaml = fs.readFileSync(fileName, "utf8");
+        assertDataProductSchema("plan", fileName, yaml);
+        this.planDataProduct(command, yaml);
     }
 
     private planDataProduct(command: string[], yaml: string): void {

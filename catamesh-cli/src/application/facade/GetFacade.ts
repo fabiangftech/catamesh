@@ -1,7 +1,7 @@
 import {Facade} from "../../core/facade/Facade";
 import {Query} from "../../core/cqrs/Query";
 import {CataMeshCoreCommand} from "../../infrastructure/cqrs/CataMeshCoreCommand";
-import {ColorConfig} from "../../infrastructure/config/ColorConfig";
+import {invalidGetModelType} from "../../core/exception/CataMeshCliValidationErrors";
 import {ModelType} from "../../core/model/ModelType";
 import {DataProduct} from "../../core/model/DataProduct";
 import {DataProductPrintCommand} from "../../infrastructure/cqrs/DataProductPrintCommand";
@@ -17,7 +17,7 @@ export class GetFacade implements Facade<string[], void> {
             const dataProduct: DataProduct = JSON.parse(this.cataMeshCoreCommand.execute(command));
             this.dataProductPrintCommand.execute(dataProduct);
         } else {
-            console.log(`${ColorConfig.white}Invalid type in ${command[1]}`);
+            throw invalidGetModelType(command[1]);
         }
         return undefined;
     }
