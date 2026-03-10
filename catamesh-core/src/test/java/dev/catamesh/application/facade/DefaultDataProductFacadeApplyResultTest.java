@@ -1,8 +1,10 @@
 package dev.catamesh.application.facade;
 
+import dev.catamesh.core.exception.ConflictException;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.core.model.Plan;
 import dev.catamesh.core.model.PlanAction;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
 import org.h2.jdbcx.JdbcDataSource;
@@ -51,6 +53,51 @@ class DefaultDataProductFacadeApplyResultTest {
     }
 
     @Test
+    void applyMetadataUpdatePersistsAndNextApplyReturnsNoop() {
+        ApplicationConfig applicationConfig = newApplicationConfig();
+        DataProductFacade facade = applicationConfig.dataProductFacade();
+        String yaml = applicationConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        String yamlWithMetadataChange = yaml
+                .replace("displayName: Test", "displayName: Test Updated")
+                .replace("description: this is a data product!", "description: updated description");
+
+        facade.apply(yaml);
+        ApplyResult result = facade.apply(yamlWithMetadataChange);
+        ApplyResult noopResult = facade.apply(yamlWithMetadataChange);
+
+        Assertions.assertEquals(PlanAction.UPDATE, result.getPlan().getAction());
+        Assertions.assertTrue(result.getPlan().getSummary().getUpdate() >= 1);
+        Assertions.assertEquals("Test Updated", result.getDataProduct().getMetadata().getDisplayName());
+        Assertions.assertEquals("updated description", result.getDataProduct().getMetadata().getDescription());
+        Assertions.assertEquals(PlanAction.NOOP, noopResult.getPlan().getAction());
+        Assertions.assertEquals(0, noopResult.getPlan().getSummary().getUpdate());
+    }
+
+    @Test
+    void applyResourceDisplayNameUpdatePersistsAndNextApplyReturnsNoop() {
+        ApplicationConfig applicationConfig = newApplicationConfig();
+        DataProductFacade facade = applicationConfig.dataProductFacade();
+        String yaml = applicationConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        String yamlWithResourceDisplayNameChange = yaml.replace(
+                "displayName: My First component",
+                "displayName: My Updated component"
+        );
+
+        facade.apply(yaml);
+        ApplyResult result = facade.apply(yamlWithResourceDisplayNameChange);
+        ApplyResult noopResult = facade.apply(yamlWithResourceDisplayNameChange);
+
+        Assertions.assertEquals(PlanAction.NOOP, result.getPlan().getAction());
+        Assertions.assertTrue(result.getPlan().getSummary().getUpdate() >= 1);
+        Assertions.assertEquals(
+                "My Updated component",
+                result.getDataProduct().getSpec().getResources().get(0).getDisplayName()
+        );
+        Assertions.assertEquals(PlanAction.NOOP, noopResult.getPlan().getAction());
+        Assertions.assertEquals(0, noopResult.getPlan().getSummary().getUpdate());
+    }
+
+    @Test
     void applyNewDefinitionVersionReturnsFinalStateWithNewActiveVersion() {
         ApplicationConfig applicationConfig = newApplicationConfig();
         DataProductFacade facade = applicationConfig.dataProductFacade();
@@ -66,21 +113,39 @@ class DefaultDataProductFacadeApplyResultTest {
     }
 
     @Test
-    void applyUpdateLikeReturnsPlanButKeepsPersistedStateImplementedToday() {
+    void applyFailsWhenDefinitionConfigChangesWithoutVersionBump() {
         ApplicationConfig applicationConfig = newApplicationConfig();
         DataProductFacade facade = applicationConfig.dataProductFacade();
         String yaml = applicationConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
-        String yamlWithMetadataChange = yaml
-                .replace("displayName: Test", "displayName: Test Updated")
-                .replace("description: this is a data product!", "description: updated description");
+        String yamlWithDefinitionDrift = yaml.replace("lifecycleDays: 30", "lifecycleDays: 40");
 
         facade.apply(yaml);
-        ApplyResult result = facade.apply(yamlWithMetadataChange);
 
-        Assertions.assertEquals(PlanAction.UPDATE, result.getPlan().getAction());
-        Assertions.assertTrue(result.getPlan().getSummary().getUpdate() >= 1);
-        Assertions.assertEquals("Test", result.getDataProduct().getMetadata().getDisplayName());
-        Assertions.assertEquals("this is a data product!", result.getDataProduct().getMetadata().getDescription());
+        Assertions.assertThrows(ConflictException.class, () -> facade.apply(yamlWithDefinitionDrift));
+    }
+
+    @Test
+    void planFailsWhenDefinitionConfigChangesWithoutVersionBump() {
+        ApplicationConfig applicationConfig = newApplicationConfig();
+        DataProductFacade facade = applicationConfig.dataProductFacade();
+        String yaml = applicationConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        String yamlWithDefinitionDrift = yaml.replace("lifecycleDays: 30", "lifecycleDays: 40");
+
+        facade.apply(yaml);
+
+        Assertions.assertThrows(ConflictException.class, () -> facade.plan(yamlWithDefinitionDrift));
+    }
+
+    @Test
+    void applyStillFailsOnResourceKindChange() {
+        ApplicationConfig applicationConfig = newApplicationConfig();
+        DataProductFacade facade = applicationConfig.dataProductFacade();
+        String yaml = applicationConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        String yamlWithResourceKindChange = yaml.replace("kind: bucket", "kind: flink");
+
+        facade.apply(yaml);
+
+        Assertions.assertThrows(ConflictException.class, () -> facade.apply(yamlWithResourceKindChange));
     }
 
     private ApplicationConfig newApplicationConfig() {

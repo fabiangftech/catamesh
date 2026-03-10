@@ -3,6 +3,7 @@ package dev.catamesh.core.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceDefinition {
@@ -30,5 +31,10 @@ public class ResourceDefinition {
 
     public Map<String, Object> getConfig() {
         return config;
+    }
+
+    public static boolean isSameVersionContent(ResourceDefinition current, ResourceDefinition candidate) {
+        return Objects.equals(current.getSchemaVersion(), candidate.getSchemaVersion())
+               && Objects.equals(current.getConfig(), candidate.getConfig());
     }
 }

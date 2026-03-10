@@ -23,6 +23,7 @@ public class CheckIfExistDataProductHandler extends Handler<ApplyDataProductCont
             context.getPlan().setAction(PlanAction.CREATE);
             return;
         }
+        context.setCurrentDataProduct(existing.get());
         context.getDataProduct().getMetadata().setId(existing.get().getMetadata().getId());
         if (DataProduct.isSame(existing.get(), context.getDataProduct())) {
             context.plusNoopSummary();

@@ -1,6 +1,7 @@
 package dev.catamesh.core.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import dev.catamesh.core.exception.ConflictException;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,5 +50,19 @@ public class DataProduct {
                && Objects.equals(cm.getDisplayName(), nm.getDisplayName())
                && Objects.equals(cm.getDomain(), nm.getDomain())
                && Objects.equals(cs.getKind(), ns.getKind());
+    }
+
+    public static void validateMutableUpdate(DataProduct current, DataProduct candidate) {
+        if (!Objects.equals(current.getMetadata().getName(), candidate.getMetadata().getName())) {
+            throw new ConflictException("Data product name cannot be changed in-place. Create a new data product.");
+        }
+
+        if (!Objects.equals(current.getSchemaVersion(), candidate.getSchemaVersion())) {
+            throw new ConflictException("Data product schema version cannot be changed in-place.");
+        }
+
+        if (!Objects.equals(current.getSpec().getKind(), candidate.getSpec().getKind())) {
+            throw new ConflictException("Data product kind cannot be changed in-place.");
+        }
     }
 }

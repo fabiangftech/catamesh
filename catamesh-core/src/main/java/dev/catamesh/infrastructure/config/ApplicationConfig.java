@@ -29,11 +29,15 @@ import dev.catamesh.application.handler.LoadCurrentDataProductForDiffHandler;
 import dev.catamesh.application.handler.PlanCheckResourceDefinitionVersionHandler;
 import dev.catamesh.application.handler.PlanDestroyDataProductHandler;
 import dev.catamesh.application.handler.PlanDestroyTerminalHandler;
+import dev.catamesh.application.handler.UpdateDataProductHandler;
+import dev.catamesh.application.handler.UpdateResourcesHandler;
+import dev.catamesh.application.handler.ValidateDataProductUpdateHandler;
 import dev.catamesh.application.handler.ValidateBucketDefinitionSchemaHandler;
 import dev.catamesh.application.handler.ValidateDataProductSchemaHandler;
 import dev.catamesh.application.handler.ValidateDestroyBucketDefinitionSchemaHandler;
 import dev.catamesh.application.handler.ValidateDestroyDataProductSchemaHandler;
 import dev.catamesh.application.handler.ValidateDestroyDefinitionVersionHandler;
+import dev.catamesh.application.handler.ValidateResourceDefinitionVersionImmutabilityHandler;
 import dev.catamesh.application.handler.ValidateDestroyResourceSchemaHandler;
 import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
 import dev.catamesh.application.handler.YAMLToDataProductHandler;
@@ -55,7 +59,10 @@ import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
 import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
 import dev.catamesh.infrastructure.cqrs.db.OptionalResourceDefinitionQuery;
+import dev.catamesh.infrastructure.cqrs.db.OptionalResourceDefinitionVersionQuery;
 import dev.catamesh.infrastructure.cqrs.db.OptionalResourceQuery;
+import dev.catamesh.infrastructure.cqrs.db.UpdateDataProductCommand;
+import dev.catamesh.infrastructure.cqrs.db.UpdateResourceCommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
@@ -150,7 +157,9 @@ public class ApplicationConfig {
         return new QueryCommandContext(
                 getFileFromResourceQuery,
                 new CreateDataProductCommand(dataSource),
+                new UpdateDataProductCommand(dataSource),
                 new CreateResourceCommand(dataSource),
+                new UpdateResourceCommand(dataSource),
                 new CreateResourceDefinitionCommand(dataSource, jsonMapper),
                 new DeactivateResourceDefinitionsByResourceIdCommand(dataSource),
                 new DeleteDataProductCommand(dataSource),
@@ -159,6 +168,7 @@ public class ApplicationConfig {
                 new OptionalDataProductQuery(dataSource),
                 new OptionalResourceQuery(dataSource),
                 new OptionalResourceDefinitionQuery(dataSource),
+                new OptionalResourceDefinitionVersionQuery(dataSource, jsonMapper),
                 new AllResourcesQuery(dataSource),
                 new CountResourceDefinitionsByResourceIdQuery(dataSource),
                 new GetResourceDefinitionQuery(dataSource, jsonMapper),
@@ -173,12 +183,18 @@ public class ApplicationConfig {
                 new ValidateResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
                 new ValidateBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
                 new CheckIfExistDataProductHandler(qc.optionalDataProductQuery()),
+                new ValidateDataProductUpdateHandler(),
+                new UpdateDataProductHandler(qc.updateDataProductCommand()),
                 new CreateDataProductHandler(qc.createDataProductCommand()),
                 new CheckIfExistResourcesHandler(qc.optionalResourceQuery()),
+                new UpdateResourcesHandler(qc.updateResourceCommand()),
                 new CreateResourcesHandler(qc.createResourceCommand()),
                 new CheckIfExistResourceDefinitionVersionHandler(
                         qc.optionalResourceDefinitionQuery(),
                         qc.optionalResourceQuery()
+                ),
+                new ValidateResourceDefinitionVersionImmutabilityHandler(
+                        qc.optionalResourceDefinitionVersionQuery()
                 ),
                 new CreateResourceDefinitionsHandler(
                         qc.deactivateResourceDefinitionsByResourceIdCommand(),
@@ -192,10 +208,14 @@ public class ApplicationConfig {
                 new ValidateResourceSchemaHandler(ctx.resourceSchema(), ctx.jsonMapper()),
                 new ValidateBucketDefinitionSchemaHandler(ctx.bucketSchema(), ctx.jsonMapper()),
                 new CheckIfExistDataProductHandler(qc.optionalDataProductQuery()),
+                new ValidateDataProductUpdateHandler(),
                 new CheckIfExistResourcesHandler(qc.optionalResourceQuery()),
                 new PlanCheckResourceDefinitionVersionHandler(
                         qc.optionalResourceDefinitionQuery(),
                         qc.optionalResourceQuery()
+                ),
+                new ValidateResourceDefinitionVersionImmutabilityHandler(
+                        qc.optionalResourceDefinitionVersionQuery()
                 )
         );
 
@@ -277,7 +297,9 @@ public class ApplicationConfig {
     private record QueryCommandContext(
             GetFileFromResourceQuery getFileFromResourceQuery,
             CreateDataProductCommand createDataProductCommand,
+            UpdateDataProductCommand updateDataProductCommand,
             CreateResourceCommand createResourceCommand,
+            UpdateResourceCommand updateResourceCommand,
             CreateResourceDefinitionCommand createResourceDefinitionCommand,
             DeactivateResourceDefinitionsByResourceIdCommand deactivateResourceDefinitionsByResourceIdCommand,
             DeleteDataProductCommand deleteDataProductCommand,
@@ -286,6 +308,7 @@ public class ApplicationConfig {
             OptionalDataProductQuery optionalDataProductQuery,
             OptionalResourceQuery optionalResourceQuery,
             OptionalResourceDefinitionQuery optionalResourceDefinitionQuery,
+            OptionalResourceDefinitionVersionQuery optionalResourceDefinitionVersionQuery,
             AllResourcesQuery allResourcesQuery,
             CountResourceDefinitionsByResourceIdQuery countResourceDefinitionsByResourceIdQuery,
             GetResourceDefinitionQuery getResourceDefinitionQuery,
