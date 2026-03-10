@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class ResourceDiffStrategy implements DiffStrategy<Resource> {
 
     private static final String RESOURCE_PATH = "resource";

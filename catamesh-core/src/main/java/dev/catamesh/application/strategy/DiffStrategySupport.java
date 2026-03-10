@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@Deprecated
 final class DiffStrategySupport {
 
     private DiffStrategySupport() {
