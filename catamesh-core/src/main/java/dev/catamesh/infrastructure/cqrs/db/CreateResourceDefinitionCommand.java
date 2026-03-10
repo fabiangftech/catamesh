@@ -6,6 +6,7 @@ import dev.catamesh.core.exception.MappingException;
 import dev.catamesh.core.model.Key;
 import dev.catamesh.core.model.Resource;
 import dev.catamesh.core.model.ResourceDefinition;
+import dev.catamesh.infrastructure.adapter.ResourceDefinitionAdapter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tools.jackson.core.JacksonException;
@@ -50,7 +51,7 @@ public class CreateResourceDefinitionCommand implements Command<Resource, Resour
             preparedStatement.setString(3, resource.getId());
             preparedStatement.setString(4, definition.getVersion());
             preparedStatement.setBoolean(5, true);
-            String configJson = jsonMapper.writeValueAsString(definition.getConfig());
+            String configJson = ResourceDefinitionAdapter.toConfigJson(definition, jsonMapper);
 
             preparedStatement.setString(6, configJson);
             preparedStatement.executeUpdate();

@@ -3,6 +3,7 @@ package dev.catamesh.application.handler;
 import dev.catamesh.core.handler.DestroyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.infrastructure.adapter.DataProductYamlAdapter;
 import tools.jackson.databind.ObjectMapper;
 
 public class YAMLToDestroyDataProductHandler extends Handler<DestroyDataProductContext> {
@@ -15,7 +16,7 @@ public class YAMLToDestroyDataProductHandler extends Handler<DestroyDataProductC
 
     @Override
     protected void doHandle(DestroyDataProductContext context) {
-        DataProduct requestDataProduct = yamlMapper.readValue(context.getYaml(), DataProduct.class);
+        DataProduct requestDataProduct = DataProductYamlAdapter.toDataProduct(context.getYaml(), yamlMapper);
         context.setRequestDataProduct(requestDataProduct);
     }
 }

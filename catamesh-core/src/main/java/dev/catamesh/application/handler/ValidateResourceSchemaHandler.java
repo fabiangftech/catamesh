@@ -7,6 +7,7 @@ import com.networknt.schema.Schema;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class ValidateResourceSchemaHandler extends Handler<ApplyDataProductConte
     protected void doHandle(ApplyDataProductContext context) {
         logger.info("Validate resource schema handler");
         context.getResources().forEach(resource -> {
-            String resourceJson = jsonMapper.writeValueAsString(resource);
+            String resourceJson = SchemaPayloadAdapter.toJson(resource, jsonMapper);
             logger.info(String.format("resourceJson=%s", resourceJson));
             List<Error> resourceErrors = resourceSchema.validate(resourceJson, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
             if (!resourceErrors.isEmpty()) {

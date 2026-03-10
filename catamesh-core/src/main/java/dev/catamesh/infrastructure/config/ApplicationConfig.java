@@ -134,7 +134,7 @@ public class ApplicationConfig {
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setURL(DEFAULT_H2_URL);
         dataSource.setUser(CATAMESH);
-        dataSource.setPassword(CATAMESH);
+        dataSource.setPassword("");
         return dataSource;
     }
 

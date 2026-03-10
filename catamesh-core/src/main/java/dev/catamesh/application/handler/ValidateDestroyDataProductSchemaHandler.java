@@ -6,6 +6,7 @@ import com.networknt.schema.Schema;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.DestroyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ValidateDestroyDataProductSchemaHandler extends Handler<DestroyData
 
     @Override
     protected void doHandle(DestroyDataProductContext context) {
-        String json = jsonMapper.writeValueAsString(context.getRequestDataProduct());
+        String json = SchemaPayloadAdapter.toJson(context.getRequestDataProduct(), jsonMapper);
         List<Error> dataProductErrors = dataProductSchema.validate(
                 json,
                 InputFormat.JSON,

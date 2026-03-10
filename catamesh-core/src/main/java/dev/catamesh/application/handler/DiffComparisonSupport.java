@@ -3,6 +3,8 @@ package dev.catamesh.application.handler;
 
 import dev.catamesh.core.model.*;
 
+import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;
+
 import java.util.*;
 
 public class DiffComparisonSupport {
@@ -54,10 +56,10 @@ public class DiffComparisonSupport {
 
     public List<DiffChange> compareResource(Resource desiredResource, Resource currentResource) {
         if (desiredResource != null && currentResource == null) {
-            return List.of(DiffChange.add("resource", toResourcePayload(desiredResource)));
+            return List.of(DiffChange.add("resource", DiffPayloadAdapter.toResourcePayload(desiredResource)));
         }
         if (desiredResource == null && currentResource != null) {
-            return List.of(DiffChange.remove("resource", toResourcePayload(currentResource)));
+            return List.of(DiffChange.remove("resource", DiffPayloadAdapter.toResourcePayload(currentResource)));
         }
         if (desiredResource == null) {
             return Collections.emptyList();
@@ -114,14 +116,7 @@ public class DiffComparisonSupport {
     }
 
     public Map<String, Resource> byResourceName(List<Resource> resources) {
-        if (resources == null || resources.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Map<String, Resource> byName = new HashMap<>();
-        for (Resource resource : resources) {
-            byName.put(resource.getName(), resource);
-        }
-        return byName;
+        return DiffPayloadAdapter.byResourceName(resources);
     }
 
     public List<DiffChange> sortByPath(List<DiffChange> changes) {
@@ -140,11 +135,11 @@ public class DiffComparisonSupport {
             return;
         }
         if (hasDesired && !hasCurrent) {
-            changes.add(DiffChange.add(path, normalize(desired)));
+            changes.add(DiffChange.add(path, DiffPayloadAdapter.normalize(desired)));
             return;
         }
         if (!hasDesired) {
-            changes.add(DiffChange.remove(path, normalize(current)));
+            changes.add(DiffChange.remove(path, DiffPayloadAdapter.normalize(current)));
             return;
         }
 
@@ -154,14 +149,18 @@ public class DiffComparisonSupport {
         }
 
         if (desired instanceof List<?> desiredList && current instanceof List<?> currentList) {
-            if (!Objects.equals(normalize(desiredList), normalize(currentList))) {
-                changes.add(DiffChange.replace(path, normalize(currentList), normalize(desiredList)));
+            if (!Objects.equals(DiffPayloadAdapter.normalize(desiredList), DiffPayloadAdapter.normalize(currentList))) {
+                changes.add(DiffChange.replace(
+                        path,
+                        DiffPayloadAdapter.normalize(currentList),
+                        DiffPayloadAdapter.normalize(desiredList)
+                ));
             }
             return;
         }
 
-        Object normalizedDesired = normalize(desired);
-        Object normalizedCurrent = normalize(current);
+        Object normalizedDesired = DiffPayloadAdapter.normalize(desired);
+        Object normalizedCurrent = DiffPayloadAdapter.normalize(current);
         if (!Objects.equals(normalizedDesired, normalizedCurrent)) {
             changes.add(DiffChange.replace(path, normalizedCurrent, normalizedDesired));
         }
@@ -171,8 +170,8 @@ public class DiffComparisonSupport {
                             Map<?, ?> desiredMap,
                             Map<?, ?> currentMap,
                             List<DiffChange> changes) {
-        Map<String, Object> desiredByKey = toStringKeyedMap(desiredMap);
-        Map<String, Object> currentByKey = toStringKeyedMap(currentMap);
+        Map<String, Object> desiredByKey = DiffPayloadAdapter.toStringKeyedMap(desiredMap);
+        Map<String, Object> currentByKey = DiffPayloadAdapter.toStringKeyedMap(currentMap);
         SortedSet<String> keys = new TreeSet<>();
         keys.addAll(desiredByKey.keySet());
         keys.addAll(currentByKey.keySet());
@@ -189,63 +188,5 @@ public class DiffComparisonSupport {
                     changes
             );
         }
-    }
-
-    private Map<String, Object> toStringKeyedMap(Map<?, ?> map) {
-        Map<String, Object> stringKeyedMap = new HashMap<>();
-        map.forEach((key, value) -> stringKeyedMap.put(key.toString(), value));
-        return stringKeyedMap;
-    }
-
-    private Map<String, Object> toResourcePayload(Resource resource) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("name", resource.getName());
-        payload.put("displayName", resource.getDisplayName());
-        payload.put("kind", normalize(resource.getKind()));
-        payload.put("definition", toResourceDefinitionPayload(resource.getDefinition()));
-        return payload;
-    }
-
-    private Map<String, Object> toResourceDefinitionPayload(ResourceDefinition definition) {
-        if (definition == null) {
-            return new HashMap<>();
-        }
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("schemaVersion", normalize(definition.getSchemaVersion()));
-        payload.put("version", definition.getVersion());
-        payload.put("config", normalize(definition.getConfig()));
-        return payload;
-    }
-
-    private Object normalize(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof SchemaVersion schemaVersion) {
-            return schemaVersion.getValue();
-        }
-        if (value instanceof DataProductKind dataProductKind) {
-            return dataProductKind.getValue();
-        }
-        if (value instanceof ResourceKind resourceKind) {
-            return resourceKind.getValue();
-        }
-        if (value instanceof Key key) {
-            return key.value();
-        }
-        if (value instanceof Map<?, ?> map) {
-            Map<String, Object> normalized = new LinkedHashMap<>();
-            map.keySet().stream()
-                    .map(Object::toString)
-                    .sorted()
-                    .forEach(key -> normalized.put(key, normalize(map.get(key))));
-            return normalized;
-        }
-        if (value instanceof List<?> list) {
-            return list.stream()
-                    .map(this::normalize)
-                    .toList();
-        }
-        return value;
     }
 }

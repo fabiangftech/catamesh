@@ -2,6 +2,7 @@ package dev.catamesh.infrastructure.cqrs.cli;
 
 import dev.catamesh.core.model.ModelType;
 import dev.catamesh.infrastructure.adapter.CLIErrorAdapter;
+import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
 import dev.catamesh.infrastructure.dto.CLIErrorPayloadDTO;
 import tools.jackson.databind.ObjectMapper;
 
@@ -91,7 +92,7 @@ public class CataMeshCoreCLICommand {
 
     private static void writeError(CLIErrorPayloadDTO payload) {
         try {
-            System.err.println(JSON_MAPPER.writeValueAsString(payload));
+            System.err.println(CLIJsonAdapter.toJson(payload, JSON_MAPPER));
         } catch (Exception serializationError) {
             System.err.println(
                     "{\"errorCode\":\"INTERNAL_ERROR\",\"status\":25,\"title\":\"Internal error\",\"message\":\"Failed to serialize CLI error payload.\"}"

@@ -4,9 +4,9 @@ import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.handler.DestroyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.*;
+import dev.catamesh.infrastructure.adapter.DestroyRequestAdapter;
 import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +28,8 @@ public class PlanDestroyDataProductHandler extends Handler<DestroyDataProductCon
         Plan plan = new Plan(context.getName());
         context.setPlan(plan);
 
-        Map<String, LinkedHashSet<String>> requestedDefinitionVersionsByResource = buildRequestedDefinitionVersionsByResource(context);
+        Map<String, LinkedHashSet<String>> requestedDefinitionVersionsByResource =
+                DestroyRequestAdapter.requestedDefinitionVersionsByResource(context.getRequestedResources());
         requestedDefinitionVersionsByResource.forEach((resourceName, definitionVersions) ->
                 appendResourcePlan(context, plan, resourceName, definitionVersions)
         );
@@ -54,14 +55,6 @@ public class PlanDestroyDataProductHandler extends Handler<DestroyDataProductCon
         }
         plan.setAction(PlanAction.NOOP);
         context.plusNoopSummary();
-    }
-
-    private Map<String, LinkedHashSet<String>> buildRequestedDefinitionVersionsByResource(DestroyDataProductContext context) {
-        Map<String, LinkedHashSet<String>> requestedDefinitionVersionsByResource = new LinkedHashMap<>();
-        context.getRequestedResources().forEach(resource -> requestedDefinitionVersionsByResource
-                .computeIfAbsent(resource.getName(), key -> new LinkedHashSet<>())
-                .add(resource.getDefinition().getVersion()));
-        return requestedDefinitionVersionsByResource;
     }
 
     private void appendResourcePlan(DestroyDataProductContext context,

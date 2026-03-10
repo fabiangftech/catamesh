@@ -7,6 +7,7 @@ import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.ResourceKind;
+import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class ValidateBucketDefinitionSchemaHandler extends Handler<ApplyDataProd
         logger.info("Validate bucket schema handler");
         context.getResources().forEach(resource -> {
             if (resource.getKind().equals(ResourceKind.BUCKET)) {
-                String resourceDefinitionJson = jsonMapper.writeValueAsString(resource.getDefinition());
+                String resourceDefinitionJson = SchemaPayloadAdapter.toJson(resource.getDefinition(), jsonMapper);
                 logger.info(String.format("resourceDefinitionJson=%s", resourceDefinitionJson));
                 List<Error> bucketErrors = bucketSchema.validate(resourceDefinitionJson, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
                 if (!bucketErrors.isEmpty()) {

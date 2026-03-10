@@ -25,4 +25,8 @@ public final class ResourceDefinitionAdapter {
             throw new MappingException("Invalid schema version in resource_definition row", ex);
         }
     }
+
+    public static String toConfigJson(ResourceDefinition definition, ObjectMapper jsonMapper) {
+        return jsonMapper.writeValueAsString(definition.getConfig());
+    }
 }

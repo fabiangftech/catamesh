@@ -6,6 +6,7 @@ import com.networknt.schema.Error;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ValidateDataProductSchemaHandler extends Handler<ApplyDataProductCo
 
     @Override
     protected void doHandle(ApplyDataProductContext context) {
-        String json = jsonMapper.writeValueAsString(context.getDataProduct());
+        String json = SchemaPayloadAdapter.toJson(context.getDataProduct(), jsonMapper);
         List<Error> dataProductErrors = dataProductSchema.validate(json, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
         if (!dataProductErrors.isEmpty()) {
             String message = String.format("Error in data product with name=%s", context.getDataProduct().getMetadata().getName());
