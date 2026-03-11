@@ -6,7 +6,6 @@ import {PlanFacade} from "./application/facade/PlanFacade";
 import {ApplyFacade} from "./application/facade/ApplyFacade";
 import {GetFacade} from "./application/facade/GetFacade";
 import {CataMeshCliError} from "./core/exception/CataMeshCliError";
-import {CataMeshCoreError} from "./core/exception/CataMeshCoreError";
 import {ColorConfig} from "./infrastructure/config/ColorConfig";
 import {DiffFacade} from "./application/facade/DiffFacade";
 
@@ -76,23 +75,36 @@ export function runCli(
     }
 }
 
-function renderHint(error: CataMeshCoreError): string {
+function renderHint(error: CataMeshCliError): string {
     if (!error.hint) {
         return "";
     }
     return `\n${ColorConfig.red}Hint:${ColorConfig.reset} ${ColorConfig.white}${error.hint}${ColorConfig.reset}`;
 }
 
-function renderDetails(error: CataMeshCoreError): string {
+function renderDetails(error: CataMeshCliError): string {
     if (error.details.length === 0) {
         return "";
     }
 
     const renderedDetails = error.details
-        .map((detail) => `${ColorConfig.white}- ${detail}${ColorConfig.reset}`)
+        .map((detail) => `${ColorConfig.white}- ${formatDetail(error, detail)}${ColorConfig.reset}`)
         .join("\n");
 
     return `\n${ColorConfig.red}Details:${ColorConfig.reset}\n${renderedDetails}`;
+}
+
+function formatDetail(error: CataMeshCliError, detail: string): string {
+    if (error.errorCode !== "VALIDATION_ERROR") {
+        return detail;
+    }
+
+    const separatorIndex = detail.indexOf("=");
+    if (separatorIndex < 0) {
+        return detail;
+    }
+
+    return `${detail.slice(0, separatorIndex)}: ${detail.slice(separatorIndex + 1)}`;
 }
 
 if (require.main === module) {

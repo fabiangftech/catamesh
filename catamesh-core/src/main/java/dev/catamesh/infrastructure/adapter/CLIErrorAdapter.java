@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class CLIErrorAdapter {
+    private static final String SCHEMA_VALIDATION_MESSAGE = "The provided YAML does not match the expected schema.";
 
     private CLIErrorAdapter(){
         // do nothing
@@ -76,7 +77,7 @@ public final class CLIErrorAdapter {
         return Optional.of(payload(
                 CLIErrorCodeDTO.VALIDATION_ERROR,
                 "Schema validation failed",
-                safeMessage(schemaError),
+                SCHEMA_VALIDATION_MESSAGE,
                 null,
                 schemaError.getErrors()
         ));

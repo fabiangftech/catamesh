@@ -75,9 +75,9 @@ public class CataMeshCoreCLICommand {
             return;
         }
 
-        rootLogger.setLevel(Level.WARNING);
+        rootLogger.setLevel(Level.OFF);
         for (Handler handler : rootLogger.getHandlers()) {
-            handler.setLevel(Level.WARNING);
+            handler.setLevel(Level.OFF);
         }
     }
 

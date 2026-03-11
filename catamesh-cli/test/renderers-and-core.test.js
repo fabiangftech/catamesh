@@ -87,6 +87,39 @@ test("CataMeshCoreCommand parses structured stderr payloads", () => {
     );
 });
 
+test("CataMeshCoreCommand parses the structured payload from the last stderr line", () => {
+    const command = new CataMeshCoreCommand(() => ({
+        error: undefined,
+        status: 20,
+        stderr: [
+            "SLF4J(W): No SLF4J providers were found.",
+            "mar 11, 2026 2:17:01 P.M. dev.catamesh.application.handler.ValidateDataProductSchemaHandler lambda$doHandle$2",
+            "SEVERE: name=required property 'name' not found",
+            JSON.stringify({
+                details: ["name=required property 'name' not found"],
+                errorCode: "VALIDATION_ERROR",
+                message: "The provided YAML does not match the expected schema.",
+                status: 20,
+                title: "Schema validation failed",
+            }),
+        ].join("\n"),
+        stdout: "",
+    }));
+
+    assert.throws(
+        () => command.execute(["diff", "payload"]),
+        (error) => {
+            assert.ok(error instanceof CataMeshCoreError);
+            assert.equal(error.status, 20);
+            assert.equal(error.errorCode, "VALIDATION_ERROR");
+            assert.equal(error.title, "Schema validation failed");
+            assert.equal(error.message, "The provided YAML does not match the expected schema.");
+            assert.deepEqual(error.details, ["name=required property 'name' not found"]);
+            return true;
+        },
+    );
+});
+
 test("CataMeshCoreCommand falls back to raw stderr for invalid and incomplete payloads", () => {
     const invalidJsonCommand = new CataMeshCoreCommand(() => ({
         error: undefined,

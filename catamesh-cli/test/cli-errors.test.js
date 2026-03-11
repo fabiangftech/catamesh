@@ -133,3 +133,36 @@ test("runCli keeps rendering core errors with the shared standard format", () =>
     assert.match(errors[0], /Reason: Definition version is immutable/);
     assert.match(errors[0], /Hint: Bump definition\.version/);
 });
+
+test("runCli renders validation errors without leaking raw core stderr noise", () => {
+    const errors = [];
+
+    const {result, messages} = withCapturedLogs(() => runCli(
+        ["diff", "test--my-first-data-product"],
+        {
+            diffFacadeFactory: () => ({
+                run() {
+                    throw new CataMeshCoreError(
+                        20,
+                        "The provided YAML does not match the expected schema.",
+                        "VALIDATION_ERROR",
+                        "Schema validation failed",
+                        undefined,
+                        ["name=required property 'name' not found"],
+                    );
+                },
+            }),
+            writeError: (message) => errors.push(stripAnsi(message)),
+        },
+    ));
+
+    assert.equal(result, 20);
+    assert.deepEqual(messages, []);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /Command: cata diff test--my-first-data-product/);
+    assert.match(errors[0], /Reason: Schema validation failed/);
+    assert.match(errors[0], /Message: The provided YAML does not match the expected schema\./);
+    assert.match(errors[0], /Details:\n- name: required property 'name' not found/);
+    assert.doesNotMatch(errors[0], /\{"errorCode"/);
+    assert.doesNotMatch(errors[0], /SLF4J/);
+});

@@ -25,6 +25,7 @@ class CLIErrorAdapterTest {
         Assertions.assertEquals("VALIDATION_ERROR", payload.getErrorCode());
         Assertions.assertEquals(20, payload.getStatus());
         Assertions.assertEquals("Schema validation failed", payload.getTitle());
+        Assertions.assertEquals("The provided YAML does not match the expected schema.", payload.getMessage());
         Assertions.assertEquals(List.of("$.resources[0].name is required"), payload.getDetails());
     }
 
