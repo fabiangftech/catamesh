@@ -1,5 +1,6 @@
 package dev.catamesh.core.model;
 
+@Deprecated
 public class DiffSummary {
     private int add;
     private int remove;

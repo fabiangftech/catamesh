@@ -6,6 +6,7 @@ import dev.catamesh.core.exception.InvalidInputException;
 
 import java.util.Arrays;
 
+@Deprecated
 public enum DiffOp {
     ADD("add"),
     REMOVE("remove"),

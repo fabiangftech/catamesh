@@ -3,6 +3,7 @@ package dev.catamesh.core.model;
 
 import java.util.List;
 
+@Deprecated
 public class DiffSection {
     private final DiffScope scope;
     private final String name;

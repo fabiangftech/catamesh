@@ -1,5 +1,6 @@
 package dev.catamesh.core.model;
 
+@Deprecated
 public class DiffChange {
     private final DiffOp op;
     private final String path;

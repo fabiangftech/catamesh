@@ -3,6 +3,7 @@ package dev.catamesh.core.model;
 
 import java.util.List;
 
+@Deprecated
 public class Diff {
     private String dataProductName;
     private DiffSummary summary;

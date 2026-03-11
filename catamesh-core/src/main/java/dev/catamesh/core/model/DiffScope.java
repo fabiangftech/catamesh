@@ -6,6 +6,7 @@ import dev.catamesh.core.exception.InvalidInputException;
 
 import java.util.Arrays;
 
+@Deprecated
 public enum DiffScope {
     DATA_PRODUCT("dataProduct"),
     RESOURCE("resource");
