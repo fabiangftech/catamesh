@@ -10,7 +10,12 @@ public class BuildDiffV2ResultHandler extends Handler<ApplyDataProductContext> {
     @Override
     protected void doHandle(ApplyDataProductContext context) {
         context.setDiffResult(
-                DiffEngine.builder().build().compare(
+                DiffEngine.builder()
+                        .exclude("metadata.id")
+                        .exclude("metadata.name")
+                        .exclude("spec.resources[?].id")
+                        .exclude("spec.resources[?].dataProductId")
+                        .build().compare(
                         DiffPayloadAdapter.toDataProductPayload(context.getDataProduct()),
                         DiffPayloadAdapter.toDataProductPayload(context.getCurrentDataProduct())
                 )

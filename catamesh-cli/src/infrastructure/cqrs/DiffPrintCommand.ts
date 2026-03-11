@@ -6,11 +6,7 @@ import {DiffChangeType} from "../../core/model/v2/DiffChangeType";
 
 export class DiffPrintCommand implements Command<DiffResult, void>{
     execute(diff: DiffResult): void {
-        console.log(
-            `${ColorConfig.cyan}Diff:${ColorConfig.reset} ` +
-            `${ColorConfig.white}${diff.summary.added} added, ${diff.summary.changed} changed, ${diff.summary.removed} removed.${ColorConfig.reset}`
-        );
-        console.log("");
+
         console.log(`${ColorConfig.cyan}Changes:${ColorConfig.reset}`);
 
         const changedNodes = this.collectChangedNodes(diff.root);
@@ -21,6 +17,11 @@ export class DiffPrintCommand implements Command<DiffResult, void>{
 
         changedNodes.forEach(node => this.printChange(node));
 
+        console.log("");
+        console.log(
+            `${ColorConfig.cyan}Diff:${ColorConfig.reset} ` +
+            `${ColorConfig.white}${diff.summary.added} added, ${diff.summary.changed} changed, ${diff.summary.removed} removed.${ColorConfig.reset}`
+        );
         return undefined;
     }
 
