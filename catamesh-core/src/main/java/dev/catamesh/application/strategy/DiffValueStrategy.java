@@ -10,6 +10,9 @@ import java.util.Objects;
 public class DiffValueStrategy implements DiffStrategy<DiffTreeNode> {
     @Override
     public DiffTreeNode diffNode(String path, Object desired, Object current) {
+        if (desired == null && current == null) {
+            return new DiffTreeNode(path, DiffNodeKind.NULL, DiffChangeType.NONE, null, null, null, null, null);
+        }
         if (Objects.equals(desired, current)) {
             return new DiffTreeNode(path, DiffNodeKind.VALUE, DiffChangeType.NONE, current, desired, null, null, null);
         }

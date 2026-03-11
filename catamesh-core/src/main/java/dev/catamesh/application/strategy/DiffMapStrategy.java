@@ -6,16 +6,23 @@ import dev.catamesh.core.model.v2.DiffSupport;
 import dev.catamesh.core.model.v2.DiffTreeNode;
 import dev.catamesh.core.strategy.DiffStrategy;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class DiffMapStrategy implements DiffStrategy<DiffTreeNode> {
+    private final DiffStrategy<DiffTreeNode> diffStrategy;
+
+    public DiffMapStrategy(DiffStrategy<DiffTreeNode> diffStrategy) {
+        this.diffStrategy = diffStrategy;
+    }
+
     @Override
     public DiffTreeNode diffNode(String path, Object desired, Object current) {
-        Map<?, ?> dm = (Map<?, ?>) desired;
-        Map<?, ?> cm = (Map<?, ?>) current;
+        Map<?, ?> dm = desired instanceof Map<?, ?> map ? map : Collections.emptyMap();
+        Map<?, ?> cm = current instanceof Map<?, ?> map ? map : Collections.emptyMap();
 
         Map<String, DiffTreeNode> entries = new LinkedHashMap<>();
 
@@ -30,7 +37,7 @@ public class DiffMapStrategy implements DiffStrategy<DiffTreeNode> {
 
             String child = DiffSupport.childPath(path, key.toString());
 
-            entries.put(key.toString(), diffNode(child, dv, cv));
+            entries.put(key.toString(), diffStrategy.diffNode(child, dv, cv));
         }
 
         return new DiffTreeNode(path, DiffNodeKind.MAP, DiffChangeType.NONE, current, desired, null, null, entries);

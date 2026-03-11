@@ -10,11 +10,13 @@ import java.util.Set;
 public class DiffTreeNodeStrategy implements DiffStrategy<DiffTreeNode> {
     private final DiffStrategy<DiffTreeNode> diffValueStrategy = new DiffValueStrategy();
     private final DiffStrategy<DiffTreeNode> diffObjectStrategy;
-    private final DiffStrategy<DiffTreeNode> diffMapStrategy = new DiffMapStrategy();
-    private final DiffStrategy<DiffTreeNode> diffListStrategy = new DiffListStrategy();
+    private final DiffStrategy<DiffTreeNode> diffMapStrategy;
+    private final DiffStrategy<DiffTreeNode> diffListStrategy;
 
     public DiffTreeNodeStrategy(Set<String> ignoredPaths) {
-        diffObjectStrategy = new DiffObjectStrategy(ignoredPaths);
+        diffObjectStrategy = new DiffObjectStrategy(ignoredPaths, this);
+        diffMapStrategy = new DiffMapStrategy(this);
+        diffListStrategy = new DiffListStrategy(this);
     }
 
     @Override

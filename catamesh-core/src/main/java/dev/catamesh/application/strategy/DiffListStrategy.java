@@ -9,6 +9,12 @@ import dev.catamesh.core.strategy.DiffStrategy;
 import java.util.*;
 
 public class DiffListStrategy implements DiffStrategy<DiffTreeNode> {
+    private final DiffStrategy<DiffTreeNode> diffStrategy;
+
+    public DiffListStrategy(DiffStrategy<DiffTreeNode> diffStrategy) {
+        this.diffStrategy = diffStrategy;
+    }
+
     @Override
     public DiffTreeNode diffNode(String path, Object desired, Object current) {
         List<?> dl = DiffSupport.toList(desired);
@@ -23,7 +29,7 @@ public class DiffListStrategy implements DiffStrategy<DiffTreeNode> {
             Object dv = i < dl.size() ? dl.get(i) : null;
             Object cv = i < cl.size() ? cl.get(i) : null;
 
-            elements.add(diffNode(path + "[" + i + "]", dv, cv));
+            elements.add(diffStrategy.diffNode(path + "[" + i + "]", dv, cv));
         }
 
         return new DiffTreeNode(path, DiffNodeKind.LIST, DiffChangeType.NONE, current, desired, null, elements, null);
