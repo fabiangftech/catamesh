@@ -7,7 +7,7 @@ import dev.catamesh.core.model.DiffChange;
 import dev.catamesh.core.model.DiffScope;
 import dev.catamesh.core.model.DiffSection;
 import dev.catamesh.core.model.Resource;
-import dev.catamesh.core.strategy.DiffStrategy;
+import dev.catamesh.core.strategy.DiffOLDStrategy;
 import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;
 
 import java.util.Collections;
@@ -18,10 +18,10 @@ import java.util.TreeSet;
 @Deprecated
 public class BuildResourceDiffSectionsHandler extends Handler<ApplyDataProductContext> {
 
-    private final DiffStrategy<Resource> diffStrategy;
+    private final DiffOLDStrategy<Resource> diffOLDStrategy;
 
-    public BuildResourceDiffSectionsHandler(DiffStrategy<Resource> diffStrategy) {
-        this.diffStrategy = diffStrategy;
+    public BuildResourceDiffSectionsHandler(DiffOLDStrategy<Resource> diffOLDStrategy) {
+        this.diffOLDStrategy = diffOLDStrategy;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class BuildResourceDiffSectionsHandler extends Handler<ApplyDataProductCo
         for (String resourceName : resourceNames) {
             Resource desiredResource = desiredByName.get(resourceName);
             Resource currentResource = currentByName.get(resourceName);
-            java.util.List<DiffChange> changes = diffStrategy.compare(desiredResource, currentResource, "");
+            java.util.List<DiffChange> changes = diffOLDStrategy.compare(desiredResource, currentResource, "");
             if (!changes.isEmpty()) {
                 context.addDiffSection(new DiffSection(
                         DiffScope.RESOURCE,

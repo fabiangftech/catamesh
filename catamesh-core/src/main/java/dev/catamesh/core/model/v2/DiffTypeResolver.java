@@ -2,12 +2,12 @@ package dev.catamesh.core.model.v2;
 
 import java.util.Map;
 
-final class DiffTypeResolver {
+public class DiffTypeResolver {
 
     private DiffTypeResolver() {
     }
 
-    static DiffNodeKind resolve(Object value) {
+    public static DiffNodeKind resolve(Object value) {
         if (value == null) {
             return DiffNodeKind.NULL;
         }

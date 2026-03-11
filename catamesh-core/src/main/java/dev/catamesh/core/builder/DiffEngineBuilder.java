@@ -1,6 +1,9 @@
 package dev.catamesh.core.builder;
 
+import dev.catamesh.application.strategy.DiffTreeNodeStrategy;
 import dev.catamesh.core.model.v2.DiffEngine;
+import dev.catamesh.core.model.v2.DiffTreeNode;
+import dev.catamesh.core.strategy.DiffStrategy;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +11,7 @@ import java.util.Set;
 public class DiffEngineBuilder {
 
     private final Set<String> ignoredPaths = new HashSet<>();
+    private DiffStrategy<DiffTreeNode> strategy;
 
     public DiffEngineBuilder() {
     }
@@ -18,10 +22,15 @@ public class DiffEngineBuilder {
     }
 
     public DiffEngine build() {
+        strategy = new DiffTreeNodeStrategy(ignoredPaths);
         return new DiffEngine(this);
     }
 
     public Set<String> getIgnoredPaths() {
         return ignoredPaths;
+    }
+
+    public DiffStrategy<DiffTreeNode> getStrategy() {
+        return strategy;
     }
 }

@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class ResourceDiffStrategyTest {
+class ResourceDiffOLDStrategyTest {
 
-    private final ResourceDiffStrategy strategy = new ResourceDiffStrategy();
+    private final ResourceDiffOLDStrategy strategy = new ResourceDiffOLDStrategy();
 
     @Test
     void compareReturnsAddPayloadForNewResource() {

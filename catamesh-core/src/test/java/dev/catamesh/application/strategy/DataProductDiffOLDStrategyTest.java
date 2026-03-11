@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class DataProductDiffStrategyTest {
+class DataProductDiffOLDStrategyTest {
 
-    private final DataProductDiffStrategy strategy = new DataProductDiffStrategy();
+    private final DataProductDiffOLDStrategy strategy = new DataProductDiffOLDStrategy();
 
     @Test
     void compareReturnsSortedAddChangesWhenCurrentIsNull() {

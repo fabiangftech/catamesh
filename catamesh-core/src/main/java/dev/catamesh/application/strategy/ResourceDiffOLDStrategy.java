@@ -2,7 +2,7 @@ package dev.catamesh.application.strategy;
 
 import dev.catamesh.core.model.DiffChange;
 import dev.catamesh.core.model.Resource;
-import dev.catamesh.core.strategy.DiffStrategy;
+import dev.catamesh.core.strategy.DiffOLDStrategy;
 import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Deprecated
-public class ResourceDiffStrategy implements DiffStrategy<Resource> {
+public class ResourceDiffOLDStrategy implements DiffOLDStrategy<Resource> {
 
     private static final String RESOURCE_PATH = "resource";
 

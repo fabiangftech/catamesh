@@ -2,14 +2,14 @@ package dev.catamesh.application.strategy;
 
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.DiffChange;
-import dev.catamesh.core.strategy.DiffStrategy;
+import dev.catamesh.core.strategy.DiffOLDStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Deprecated
-public class DataProductDiffStrategy implements DiffStrategy<DataProduct> {
+public class DataProductDiffOLDStrategy implements DiffOLDStrategy<DataProduct> {
 
     @Override
     public List<DiffChange> compare(DataProduct desired, DataProduct current, String path) {

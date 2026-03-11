@@ -6,7 +6,7 @@ import dev.catamesh.core.model.DiffChange;
 import dev.catamesh.core.model.DiffScope;
 import dev.catamesh.core.model.DiffSection;
 import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.strategy.DiffStrategy;
+import dev.catamesh.core.strategy.DiffOLDStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +14,17 @@ import java.util.List;
 @Deprecated
 public class BuildDataProductDiffSectionHandler extends Handler<ApplyDataProductContext> {
 
-    private final DiffStrategy<DataProduct> diffStrategy;
+    private final DiffOLDStrategy<DataProduct> diffOLDStrategy;
 
-    public BuildDataProductDiffSectionHandler(DiffStrategy<DataProduct> diffStrategy) {
-        this.diffStrategy = diffStrategy;
+    public BuildDataProductDiffSectionHandler(DiffOLDStrategy<DataProduct> diffOLDStrategy) {
+        this.diffOLDStrategy = diffOLDStrategy;
     }
 
     @Override
     protected void doHandle(ApplyDataProductContext context) {
         context.setDiffSections(new ArrayList<>());
 
-        List<DiffChange> dataProductChanges = diffStrategy.compare(
+        List<DiffChange> dataProductChanges = diffOLDStrategy.compare(
                 context.getDataProduct(),
                 context.getCurrentDataProduct(),
                 ""
