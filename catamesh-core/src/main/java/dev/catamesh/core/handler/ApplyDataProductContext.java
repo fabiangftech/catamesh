@@ -3,7 +3,9 @@ package dev.catamesh.core.handler;
 import dev.catamesh.core.model.*;
 import dev.catamesh.core.model.DiffResult;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ApplyDataProductContext {
     private final String yaml;
@@ -11,6 +13,8 @@ public class ApplyDataProductContext {
     private DataProduct currentDataProduct;
     private Plan plan;
     private DiffResult diffResult;
+
+    private List<PolicyRule> policyRules;
 
     public ApplyDataProductContext(String yaml) {
         this.yaml = yaml;
@@ -74,6 +78,13 @@ public class ApplyDataProductContext {
 
     public void plusNoopSummary() {
         this.plan.plusNoopSummary();
+    }
+
+    public void addPolicyRule(PolicyRule policyRule) {
+        if (Objects.isNull(policyRules)) {
+            this.policyRules = new ArrayList<>();
+        }
+        this.policyRules.add(policyRule);
     }
 
 
