@@ -3,25 +3,22 @@ import {ColorConfig} from "../config/ColorConfig";
 import {DiffResult} from "../../core/model/DiffResult";
 import {DiffTreeNode} from "../../core/model/DiffTreeNode";
 import {DiffChangeType} from "../../core/model/DiffChangeType";
+import {PolicyRule} from "../../core/model/PolicyRule";
 
 export class DiffPrintCommand implements Command<DiffResult, void>{
     execute(diff: DiffResult): void {
-
         console.log(`${ColorConfig.cyan}Changes:${ColorConfig.reset}`);
 
         const changedNodes = this.collectChangedNodes(diff.root);
         if (changedNodes.length === 0) {
             console.log(` ${ColorConfig.white}(no changes)${ColorConfig.reset}`);
-            console.log("");
-            console.log(
-                `${ColorConfig.cyan}Diff:${ColorConfig.reset} ` +
-                `${ColorConfig.white}${diff.summary.added} added, ${diff.summary.changed} changed, ${diff.summary.removed} removed.${ColorConfig.reset}`
-            );
-            return undefined;
+        } else {
+            changedNodes.forEach(node => this.printChange(node));
         }
-
-        changedNodes.forEach(node => this.printChange(node));
         console.log("");
+        if (this.printPolicies(diff.policyRules)) {
+            console.log("");
+        }
         console.log(
             `${ColorConfig.cyan}Diff:${ColorConfig.reset} ` +
             `${ColorConfig.white}${diff.summary.added} added, ${diff.summary.changed} changed, ${diff.summary.removed} removed.${ColorConfig.reset}`
@@ -38,6 +35,27 @@ export class DiffPrintCommand implements Command<DiffResult, void>{
             ...node.elements.flatMap(child => this.collectChangedNodes(child)),
             ...Object.values(node.entries).flatMap(child => this.collectChangedNodes(child)),
         ];
+    }
+
+    private printPolicies(policyRules?: PolicyRule[] | null): boolean {
+        if (!policyRules || policyRules.length === 0) {
+            return false;
+        }
+
+        console.log(`${ColorConfig.cyan}Policies:${ColorConfig.reset}`);
+        policyRules.forEach(policyRule => this.printPolicy(policyRule));
+        return true;
+    }
+
+    private printPolicy(policyRule: PolicyRule): void {
+        const level = policyRule.level.toUpperCase();
+        const color = this.getPolicyLevelColor(policyRule.level);
+
+        console.log(
+            `   ${color}! [${level}]${ColorConfig.reset} ` +
+            `${ColorConfig.cyan}${policyRule.path}:${ColorConfig.reset} ` +
+            `${ColorConfig.white}${policyRule.message}${ColorConfig.reset}`
+        );
     }
 
     private printChange(node: DiffTreeNode): void {
@@ -72,6 +90,10 @@ export class DiffPrintCommand implements Command<DiffResult, void>{
             case DiffChangeType.NONE:
                 return {symbol: " ", color: ColorConfig.white};
         }
+    }
+
+    private getPolicyLevelColor(level: string): string {
+        return level.toLowerCase() === "error" ? ColorConfig.red : ColorConfig.white;
     }
 
     private formatValue(value: unknown): string {

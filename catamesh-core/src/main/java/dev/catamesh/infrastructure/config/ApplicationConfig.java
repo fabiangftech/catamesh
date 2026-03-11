@@ -205,7 +205,7 @@ public class ApplicationConfig {
                         qc.getResourceDefinitionQuery()
                 ),
                 new BuildDiffResultHandler(),
-                new ImmutabilityDataProductPolicyRuleHandler(new ImmutabilityDataProductPolicyRuleStrategy(qc.optionalResourceDefinitionVersionQuery()))
+                new DataProductPolicyRuleHandler(new ImmutabilityDataProductPolicyRuleStrategy(qc.optionalResourceDefinitionVersionQuery()))
         );
 
         PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory =

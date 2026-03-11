@@ -125,8 +125,18 @@ function createDiffNode(overrides = {}) {
     };
 }
 
+function createPolicyRule(overrides = {}) {
+    return {
+        level: "error",
+        message: "Definition version is immutable.",
+        path: "spec.resources.orders.definition.version",
+        ...overrides,
+    };
+}
+
 function createDiffResult(overrides = {}) {
     return {
+        policyRules: null,
         root: createDiffNode(),
         summary: {
             added: 0,
@@ -143,6 +153,7 @@ module.exports = {
     createDataProduct,
     createDiffNode,
     createDiffResult,
+    createPolicyRule,
     createResource,
     createPlan,
     createTempDir,

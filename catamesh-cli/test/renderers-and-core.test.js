@@ -14,6 +14,7 @@ const {
     createDataProduct,
     createDiffNode,
     createDiffResult,
+    createPolicyRule,
     createPlan,
     createResource,
     stripAnsi,
@@ -241,11 +242,20 @@ test("DiffPrintCommand renders the empty diff state", () => {
     assert.match(rendered, /Diff: 0 added, 0 changed, 0 removed\./);
     assert.match(rendered, /Changes:/);
     assert.match(rendered, /\(no changes\)/);
+    assert.doesNotMatch(rendered, /Policies:/);
 });
 
 test("DiffPrintCommand renders create, delete and update changes from the v2 tree", () => {
     const command = new DiffPrintCommand();
     const diff = createDiffResult({
+        policyRules: [
+            createPolicyRule(),
+            createPolicyRule({
+                level: "warning",
+                message: "Ownership metadata should be reviewed.",
+                path: "metadata.owner",
+            }),
+        ],
         root: createDiffNode({
             entries: {
                 metadata: createDiffNode({
@@ -329,5 +339,27 @@ test("DiffPrintCommand renders create, delete and update changes from the v2 tre
     assert.match(rendered, /~ spec\.resources\.orders\.definition\.config\.format/);
     assert.match(rendered, /Current: json/);
     assert.match(rendered, /Desired: parquet/);
+    assert.match(rendered, /Policies:/);
+    assert.match(rendered, /! \[ERROR\] spec\.resources\.orders\.definition\.version: Definition version is immutable\./);
+    assert.match(rendered, /! \[WARNING\] metadata\.owner: Ownership metadata should be reviewed\./);
     assert.doesNotMatch(rendered, /metadata\.domain/);
+});
+
+test("DiffPrintCommand renders policies when the diff has no changes", () => {
+    const command = new DiffPrintCommand();
+    const diff = createDiffResult({
+        policyRules: [
+            createPolicyRule({
+                message: "Definition changes require a new version.",
+            }),
+        ],
+    });
+    const {logs} = captureConsole(() => command.execute(diff));
+    const rendered = stripAnsi(logs.join("\n"));
+
+    assert.match(rendered, /Changes:/);
+    assert.match(rendered, /\(no changes\)/);
+    assert.match(rendered, /Policies:/);
+    assert.match(rendered, /! \[ERROR\] spec\.resources\.orders\.definition\.version: Definition changes require a new version\./);
+    assert.match(rendered, /Diff: 0 added, 0 changed, 0 removed\./);
 });

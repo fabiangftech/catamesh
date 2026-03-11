@@ -7,10 +7,10 @@ import dev.catamesh.core.strategy.PolicyRuleStrategy;
 
 import java.util.List;
 
-public class ImmutabilityDataProductPolicyRuleHandler extends Handler<ApplyDataProductContext> {
+public class DataProductPolicyRuleHandler extends Handler<ApplyDataProductContext> {
     private final PolicyRuleStrategy<ApplyDataProductContext> immutabilityDataProductPolicyRuleStrategy;
 
-    public ImmutabilityDataProductPolicyRuleHandler(PolicyRuleStrategy<ApplyDataProductContext> immutabilityDataProductPolicyRuleStrategy) {
+    public DataProductPolicyRuleHandler(PolicyRuleStrategy<ApplyDataProductContext> immutabilityDataProductPolicyRuleStrategy) {
         this.immutabilityDataProductPolicyRuleStrategy = immutabilityDataProductPolicyRuleStrategy;
     }
     @Override
