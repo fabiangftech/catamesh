@@ -13,7 +13,6 @@ public class ApplyDataProductContext {
     private DataProduct currentDataProduct;
     private Plan plan;
     private DiffResult diffResult;
-
     private List<PolicyRule> policyRules;
 
     public ApplyDataProductContext(String yaml) {
@@ -80,11 +79,22 @@ public class ApplyDataProductContext {
         this.plan.plusNoopSummary();
     }
 
+    public List<PolicyRule> getPolicyRules() {
+        return Objects.isNull(policyRules) ? new ArrayList<>() : policyRules;
+    }
+
     public void addPolicyRule(PolicyRule policyRule) {
         if (Objects.isNull(policyRules)) {
             this.policyRules = new ArrayList<>();
         }
         this.policyRules.add(policyRule);
+    }
+
+    public void addPolicyRules(List<PolicyRule> policyRules) {
+        if (Objects.isNull(this.policyRules)) {
+            this.policyRules = new ArrayList<>();
+        }
+        this.policyRules.addAll(policyRules);
     }
 
 

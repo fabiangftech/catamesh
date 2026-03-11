@@ -9,35 +9,8 @@ import dev.catamesh.application.factory.ApplyDestroyDataProductPipelineFactory;
 import dev.catamesh.application.factory.DiffDataProductPipelineFactory;
 import dev.catamesh.application.factory.PlanDataProductPipelineFactory;
 import dev.catamesh.application.factory.PlanDestroyDataProductPipelineFactory;
-import dev.catamesh.application.handler.BuildDiffResultHandler;
-import dev.catamesh.application.handler.CheckIfExistDataProductHandler;
-import dev.catamesh.application.handler.CheckIfExistResourceDefinitionVersionHandler;
-import dev.catamesh.application.handler.CheckIfExistResourcesHandler;
-import dev.catamesh.application.handler.CreateDataProductHandler;
-import dev.catamesh.application.handler.CreateResourceDefinitionsHandler;
-import dev.catamesh.application.handler.CreateResourcesHandler;
-import dev.catamesh.application.handler.DestroyDataProductHandler;
-import dev.catamesh.application.handler.DestroyResourceDefinitionHandler;
-import dev.catamesh.application.handler.DestroyResourceHandler;
-import dev.catamesh.application.handler.GetOptionalDataProductForDestroyHandler;
-import dev.catamesh.application.handler.GetResourcesForDestroyHandler;
-import dev.catamesh.application.handler.LoadCurrentDataProductForDiffHandler;
-import dev.catamesh.application.handler.PlanCheckResourceDefinitionVersionHandler;
-import dev.catamesh.application.handler.PlanDestroyDataProductHandler;
-import dev.catamesh.application.handler.PlanDestroyTerminalHandler;
-import dev.catamesh.application.handler.UpdateDataProductHandler;
-import dev.catamesh.application.handler.UpdateResourcesHandler;
-import dev.catamesh.application.handler.ValidateDataProductUpdateHandler;
-import dev.catamesh.application.handler.ValidateBucketDefinitionSchemaHandler;
-import dev.catamesh.application.handler.ValidateDataProductSchemaHandler;
-import dev.catamesh.application.handler.ValidateDestroyBucketDefinitionSchemaHandler;
-import dev.catamesh.application.handler.ValidateDestroyDataProductSchemaHandler;
-import dev.catamesh.application.handler.ValidateDestroyDefinitionVersionHandler;
-import dev.catamesh.application.handler.ValidateResourceDefinitionVersionImmutabilityHandler;
-import dev.catamesh.application.handler.ValidateDestroyResourceSchemaHandler;
-import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
-import dev.catamesh.application.handler.YAMLToDataProductHandler;
-import dev.catamesh.application.handler.YAMLToDestroyDataProductHandler;
+import dev.catamesh.application.handler.*;
+import dev.catamesh.application.strategy.ImmutabilityDataProductPolicyRuleStrategy;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
@@ -231,7 +204,8 @@ public class ApplicationConfig {
                         qc.allResourcesQuery(),
                         qc.getResourceDefinitionQuery()
                 ),
-                new BuildDiffResultHandler()
+                new BuildDiffResultHandler(),
+                new ImmutabilityDataProductPolicyRuleHandler(new ImmutabilityDataProductPolicyRuleStrategy(qc.optionalResourceDefinitionVersionQuery()))
         );
 
         PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory =

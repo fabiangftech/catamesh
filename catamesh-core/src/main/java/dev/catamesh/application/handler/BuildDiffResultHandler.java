@@ -20,5 +20,6 @@ public class BuildDiffResultHandler extends Handler<ApplyDataProductContext> {
                         DiffPayloadAdapter.toDataProductPayload(context.getCurrentDataProduct())
                 )
         );
+        context.getDiffResult().setPolicyRules(context.getPolicyRules());
     }
 }

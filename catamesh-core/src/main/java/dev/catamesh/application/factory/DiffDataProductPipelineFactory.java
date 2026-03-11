@@ -15,6 +15,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
     private final Handler<ApplyDataProductContext> planCheckResourceDefinitionVersionHandler;
     private final Handler<ApplyDataProductContext> loadCurrentDataProductForDiffHandler;
     private final Handler<ApplyDataProductContext> buildDiffV2ResultHandler;
+    private final Handler<ApplyDataProductContext> immutabilityDataProductPolicyRuleHandler;
 
     public DiffDataProductPipelineFactory(
             Handler<ApplyDataProductContext> yamlToDataProductHandler,
@@ -25,7 +26,8 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
             Handler<ApplyDataProductContext> checkIfExistResourcesHandler,
             Handler<ApplyDataProductContext> planCheckResourceDefinitionVersionHandler,
             Handler<ApplyDataProductContext> loadCurrentDataProductForDiffHandler,
-            Handler<ApplyDataProductContext> buildDiffV2ResultHandler) {
+            Handler<ApplyDataProductContext> buildDiffV2ResultHandler,
+            Handler<ApplyDataProductContext> immutabilityDataProductPolicyRuleHandler) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
         this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
         this.validateResourceSchemaHandler = validateResourceSchemaHandler;
@@ -35,6 +37,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
         this.planCheckResourceDefinitionVersionHandler = planCheckResourceDefinitionVersionHandler;
         this.loadCurrentDataProductForDiffHandler = loadCurrentDataProductForDiffHandler;
         this.buildDiffV2ResultHandler = buildDiffV2ResultHandler;
+        this.immutabilityDataProductPolicyRuleHandler = immutabilityDataProductPolicyRuleHandler;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
                 .link(checkIfExistResourcesHandler)
                 .link(planCheckResourceDefinitionVersionHandler)
                 .link(loadCurrentDataProductForDiffHandler)
+                .link(immutabilityDataProductPolicyRuleHandler)
                 .link(buildDiffV2ResultHandler);
         return yamlToDataProductHandler;
     }
