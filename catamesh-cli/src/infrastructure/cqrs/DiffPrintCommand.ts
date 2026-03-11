@@ -12,6 +12,11 @@ export class DiffPrintCommand implements Command<DiffResult, void>{
         const changedNodes = this.collectChangedNodes(diff.root);
         if (changedNodes.length === 0) {
             console.log(` ${ColorConfig.white}(no changes)${ColorConfig.reset}`);
+            console.log("");
+            console.log(
+                `${ColorConfig.cyan}Diff:${ColorConfig.reset} ` +
+                `${ColorConfig.white}${diff.summary.added} added, ${diff.summary.changed} changed, ${diff.summary.removed} removed.${ColorConfig.reset}`
+            );
             return undefined;
         }
 
