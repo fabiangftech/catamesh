@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@Deprecated
 public class BuildResourceDiffSectionsHandler extends Handler<ApplyDataProductContext> {
 
     private final DiffStrategy<Resource> diffStrategy;

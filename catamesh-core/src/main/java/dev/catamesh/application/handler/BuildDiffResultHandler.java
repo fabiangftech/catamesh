@@ -8,6 +8,7 @@ import dev.catamesh.core.model.DiffSummary;
 
 import java.util.Collections;
 import java.util.List;
+@Deprecated
 
 public class BuildDiffResultHandler extends Handler<ApplyDataProductContext> {
 

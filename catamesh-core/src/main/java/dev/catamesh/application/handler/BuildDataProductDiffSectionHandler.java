@@ -11,6 +11,7 @@ import dev.catamesh.core.strategy.DiffStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class BuildDataProductDiffSectionHandler extends Handler<ApplyDataProductContext> {
 
     private final DiffStrategy<DataProduct> diffStrategy;

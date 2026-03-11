@@ -4,6 +4,7 @@ import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.DiffSummary;
 
+@Deprecated
 public class BuildDiffSummaryHandler extends Handler<ApplyDataProductContext> {
 
     @Override
