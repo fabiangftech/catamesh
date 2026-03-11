@@ -1,5 +1,6 @@
 package dev.catamesh.core.model.v2;
 
+import dev.catamesh.core.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

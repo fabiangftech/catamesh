@@ -4,7 +4,7 @@ import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Plan;
-import dev.catamesh.core.model.v2.DiffResult;
+import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
 import dev.catamesh.infrastructure.config.ApplicationConfig;
 import tools.jackson.databind.ObjectMapper;

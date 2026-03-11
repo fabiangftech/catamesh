@@ -5,7 +5,7 @@ import {Command} from "../../core/cqrs/Command";
 import {Facade} from "../../core/facade/Facade";
 import {DiffPrintCommand} from "../../infrastructure/cqrs/DiffPrintCommand";
 import {assertDataProductSchema, resolveYamlFileName} from "./DataProductYamlSupport";
-import {DiffResult} from "../../core/model/v2/DiffResult";
+import {DiffResult} from "../../core/model/DiffResult";
 
 export class DiffFacade implements Facade<string[], void> {
     private cataMeshCoreCommand: Query<string[], string> = new CataMeshCoreCommand();

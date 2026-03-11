@@ -1,8 +1,8 @@
 import {Command} from "../../core/cqrs/Command";
 import {ColorConfig} from "../config/ColorConfig";
-import {DiffResult} from "../../core/model/v2/DiffResult";
-import {DiffTreeNode} from "../../core/model/v2/DiffTreeNode";
-import {DiffChangeType} from "../../core/model/v2/DiffChangeType";
+import {DiffResult} from "../../core/model/DiffResult";
+import {DiffTreeNode} from "../../core/model/DiffTreeNode";
+import {DiffChangeType} from "../../core/model/DiffChangeType";
 
 export class DiffPrintCommand implements Command<DiffResult, void>{
     execute(diff: DiffResult): void {

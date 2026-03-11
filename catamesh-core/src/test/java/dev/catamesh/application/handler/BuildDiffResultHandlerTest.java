@@ -10,18 +10,18 @@ import dev.catamesh.core.model.ResourceDefinition;
 import dev.catamesh.core.model.ResourceKind;
 import dev.catamesh.core.model.SchemaVersion;
 import dev.catamesh.core.model.Spec;
-import dev.catamesh.core.model.v2.DiffChangeType;
-import dev.catamesh.core.model.v2.DiffResult;
-import dev.catamesh.core.model.v2.DiffTreeNode;
+import dev.catamesh.core.model.DiffChangeType;
+import dev.catamesh.core.model.DiffResult;
+import dev.catamesh.core.model.DiffTreeNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-class BuildDiffV2ResultHandlerTest {
+class BuildDiffResultHandlerTest {
 
-    private final BuildDiffV2ResultHandler handler = new BuildDiffV2ResultHandler();
+    private final BuildDiffResultHandler handler = new BuildDiffResultHandler();
 
     @Test
     void handleBuildsNoopDiffWhenOnlyIdsAndResourceOrderDiffer() {

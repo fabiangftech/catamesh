@@ -1,8 +1,8 @@
 package dev.catamesh.core.builder;
 
 import dev.catamesh.application.strategy.DiffTreeNodeStrategy;
-import dev.catamesh.core.model.v2.DiffEngine;
-import dev.catamesh.core.model.v2.DiffTreeNode;
+import dev.catamesh.core.model.DiffEngine;
+import dev.catamesh.core.model.DiffTreeNode;
 import dev.catamesh.core.strategy.DiffStrategy;
 
 import java.util.HashSet;

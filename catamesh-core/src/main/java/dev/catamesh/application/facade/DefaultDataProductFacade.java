@@ -8,7 +8,7 @@ import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.DestroyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.*;
-import dev.catamesh.core.model.v2.DiffResult;
+import dev.catamesh.core.model.DiffResult;
 
 import java.util.List;
 import java.util.Optional;

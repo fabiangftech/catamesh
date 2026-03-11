@@ -4,7 +4,7 @@ package dev.catamesh.core.facade;
 import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Plan;
-import dev.catamesh.core.model.v2.DiffResult;
+import dev.catamesh.core.model.DiffResult;
 
 public interface DataProductFacade {
 

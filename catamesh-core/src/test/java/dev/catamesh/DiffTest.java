@@ -1,15 +1,15 @@
 package dev.catamesh;
 
 import dev.catamesh.core.model.*;
-import dev.catamesh.core.model.v2.DiffEngine;
-import dev.catamesh.core.model.v2.DiffResult;
+import dev.catamesh.core.model.DiffEngine;
+import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.infrastructure.config.JSONConfig;
 import org.junit.jupiter.api.Test;
 
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Metadata;
 import dev.catamesh.core.model.SchemaVersion;
-import dev.catamesh.core.model.v2.*;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package dev.catamesh.core.model.v2;
+package dev.catamesh.core.model;
 
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package dev.catamesh.application.strategy;
 
-import dev.catamesh.core.model.v2.DiffNodeKind;
-import dev.catamesh.core.model.v2.DiffTreeNode;
-import dev.catamesh.core.model.v2.DiffTypeResolver;
+import dev.catamesh.core.model.DiffNodeKind;
+import dev.catamesh.core.model.DiffTreeNode;
+import dev.catamesh.core.model.DiffTypeResolver;
 import dev.catamesh.core.strategy.DiffStrategy;
 
 import java.util.Set;

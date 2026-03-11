@@ -1,7 +1,7 @@
 package dev.catamesh.core.handler;
 
 import dev.catamesh.core.model.*;
-import dev.catamesh.core.model.v2.DiffResult;
+import dev.catamesh.core.model.DiffResult;
 
 import java.util.List;
 

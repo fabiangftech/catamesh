@@ -1,4 +1,4 @@
-package dev.catamesh.core.model.v2;
+package dev.catamesh.core.model;
 
 
 import dev.catamesh.core.builder.DiffEngineBuilder;

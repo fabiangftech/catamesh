@@ -9,7 +9,7 @@ import dev.catamesh.application.factory.ApplyDestroyDataProductPipelineFactory;
 import dev.catamesh.application.factory.DiffDataProductPipelineFactory;
 import dev.catamesh.application.factory.PlanDataProductPipelineFactory;
 import dev.catamesh.application.factory.PlanDestroyDataProductPipelineFactory;
-import dev.catamesh.application.handler.BuildDiffV2ResultHandler;
+import dev.catamesh.application.handler.BuildDiffResultHandler;
 import dev.catamesh.application.handler.CheckIfExistDataProductHandler;
 import dev.catamesh.application.handler.CheckIfExistResourceDefinitionVersionHandler;
 import dev.catamesh.application.handler.CheckIfExistResourcesHandler;
@@ -231,7 +231,7 @@ public class ApplicationConfig {
                         qc.allResourcesQuery(),
                         qc.getResourceDefinitionQuery()
                 ),
-                new BuildDiffV2ResultHandler()
+                new BuildDiffResultHandler()
         );
 
         PlanDestroyDataProductPipelineFactory planDestroyDataProductPipelineFactory =
