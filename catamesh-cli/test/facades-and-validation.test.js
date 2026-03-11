@@ -14,7 +14,8 @@ const {Schema} = require("../dist/core/model/Schema.js");
 const {
     createApplyResult,
     createDataProduct,
-    createDiff,
+    createDiffNode,
+    createDiffResult,
     createPlan,
     createTempDir,
     createYamlFile,
@@ -112,18 +113,26 @@ test("DiffFacade reads yaml and delegates the parsed diff to its print command",
     const {filePath} = createYamlFile("schemaVersion: data-product/v1\nname: analytics\n", "diff-input.yaml");
     const facade = new DiffFacade();
     const command = ["diff", filePath];
-    const diff = createDiff({
-        sections: [
-            {
-                changes: [{current: null, desired: "analytics", op: "add", path: "/metadata/name"}],
-                name: "analytics-product",
-                scope: "dataProduct",
+    const diff = createDiffResult({
+        root: createDiffNode({
+            entries: {
+                metadata: createDiffNode({
+                    entries: {
+                        name: createDiffNode({
+                            changeType: "CREATE",
+                            kind: "VALUE",
+                            newValue: "analytics",
+                            path: "metadata.name",
+                        }),
+                    },
+                    path: "metadata",
+                }),
             },
-        ],
+        }),
         summary: {
-            add: 1,
-            remove: 0,
-            replace: 0,
+            added: 1,
+            changed: 0,
+            removed: 0,
         },
     });
     let executedCommand;

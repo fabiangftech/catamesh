@@ -8,6 +8,7 @@ import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.DestroyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.*;
+import dev.catamesh.core.model.v2.DiffResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class DefaultDataProductFacade implements DataProductFacade {
     }
 
     @Override
-    public Diff diff(String yaml) {
+    public DiffResult diff(String yaml) {
         Handler<ApplyDataProductContext> chain = diffDataProductPipelineFactory.create();
         ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
         chain.handle(context);

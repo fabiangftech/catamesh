@@ -12,7 +12,8 @@ const {
     captureConsole,
     createApplyResult,
     createDataProduct,
-    createDiff,
+    createDiffNode,
+    createDiffResult,
     createPlan,
     createResource,
     stripAnsi,
@@ -201,55 +202,99 @@ test("PlanPrintCommand renders resources with and without versions", () => {
 
 test("DiffPrintCommand renders the empty diff state", () => {
     const command = new DiffPrintCommand();
-    const {logs} = captureConsole(() => command.execute(createDiff()));
+    const {logs} = captureConsole(() => command.execute(createDiffResult()));
     const rendered = stripAnsi(logs.join("\n"));
 
-    assert.match(rendered, /Diff: 0 to add, 0 to remove, 0 to replace\./);
+    assert.match(rendered, /Diff: 0 added, 0 changed, 0 removed\./);
     assert.match(rendered, /Changes:/);
     assert.match(rendered, /\(no changes\)/);
 });
 
-test("DiffPrintCommand renders add, remove and replace changes across scopes", () => {
+test("DiffPrintCommand renders create, delete and update changes from the v2 tree", () => {
     const command = new DiffPrintCommand();
-    const diff = createDiff({
-        sections: [
-            {
-                changes: [
-                    {current: null, desired: "analytics-product", op: "add", path: "/metadata/name"},
-                    {current: null, desired: undefined, op: "add", path: "/metadata/owner"},
-                    {current: null, desired: null, op: "remove", path: "/metadata/description"},
-                ],
-                name: "analytics-product",
-                scope: "dataProduct",
+    const diff = createDiffResult({
+        root: createDiffNode({
+            entries: {
+                metadata: createDiffNode({
+                    entries: {
+                        name: createDiffNode({
+                            changeType: "CREATE",
+                            kind: "VALUE",
+                            newValue: "analytics-product",
+                            path: "metadata.name",
+                        }),
+                        owner: createDiffNode({
+                            changeType: "CREATE",
+                            kind: "VALUE",
+                            newValue: "platform",
+                            path: "metadata.owner",
+                        }),
+                        description: createDiffNode({
+                            changeType: "DELETE",
+                            kind: "VALUE",
+                            oldValue: "Legacy description",
+                            path: "metadata.description",
+                        }),
+                        domain: createDiffNode({
+                            changeType: "NONE",
+                            kind: "VALUE",
+                            newValue: "analytics",
+                            oldValue: "analytics",
+                            path: "metadata.domain",
+                        }),
+                    },
+                    path: "metadata",
+                }),
+                spec: createDiffNode({
+                    entries: {
+                        resources: createDiffNode({
+                            entries: {
+                                orders: createDiffNode({
+                                    entries: {
+                                        definition: createDiffNode({
+                                            entries: {
+                                                config: createDiffNode({
+                                                    entries: {
+                                                        format: createDiffNode({
+                                                            changeType: "UPDATE",
+                                                            kind: "VALUE",
+                                                            newValue: "parquet",
+                                                            oldValue: "json",
+                                                            path: "spec.resources.orders.definition.config.format",
+                                                        }),
+                                                    },
+                                                    path: "spec.resources.orders.definition.config",
+                                                }),
+                                            },
+                                            path: "spec.resources.orders.definition",
+                                        }),
+                                    },
+                                    path: "spec.resources.orders",
+                                }),
+                            },
+                            path: "spec.resources",
+                        }),
+                    },
+                    path: "spec",
+                }),
             },
-            {
-                changes: [
-                    {current: null, desired: "table", op: "add", path: "/spec/resources/0/kind"},
-                    {current: 3, desired: null, op: "remove", path: "/spec/resources/0/replicas"},
-                    {current: {format: "json"}, desired: 7, op: "replace", path: "/spec/resources/0/config"},
-                ],
-                name: "orders",
-                scope: "resource",
-            },
-        ],
+        }),
         summary: {
-            add: 3,
-            remove: 2,
-            replace: 1,
+            added: 2,
+            changed: 1,
+            removed: 1,
         },
     });
     const {logs} = captureConsole(() => command.execute(diff));
     const rendered = stripAnsi(logs.join("\n"));
 
-    assert.match(rendered, /Diff: 3 to add, 2 to remove, 1 to replace\./);
-    assert.match(rendered, /Data Product: analytics-product/);
+    assert.match(rendered, /Diff: 2 added, 1 changed, 1 removed\./);
     assert.match(rendered, /Changes:/);
-    assert.match(rendered, / Data Product: analytics-product/);
-    assert.match(rendered, / Resource: orders/);
-    assert.match(rendered, /\+ \/metadata\/name: analytics-product/);
-    assert.match(rendered, /\+ \/metadata\/owner: undefined/);
-    assert.match(rendered, /- \/metadata\/description: null/);
-    assert.match(rendered, /- \/spec\/resources\/0\/replicas: 3/);
-    assert.match(rendered, /Current: \{"format":"json"\}/);
-    assert.match(rendered, /Desired: 7/);
+    assert.match(rendered, /\+ metadata\.name: analytics-product/);
+    assert.match(rendered, /\+ metadata\.owner: platform/);
+    assert.match(rendered, /- metadata\.description: Legacy description/);
+    assert.match(rendered, /~ spec\.resources\.orders\.definition\.config\.format/);
+    assert.match(rendered, /Current: json/);
+    assert.match(rendered, /Desired: parquet/);
+    assert.doesNotMatch(rendered, /metadata\.domain/);
 });

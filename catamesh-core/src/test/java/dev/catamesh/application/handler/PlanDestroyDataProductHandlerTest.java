@@ -55,6 +55,90 @@ class PlanDestroyDataProductHandlerTest {
         Assertions.assertEquals(4, plan.getSummary().getDelete());
     }
 
+    @Test
+    void handleMarksMissingResourcesAsNoop() {
+        Query<GetResourceDefinitionDTO, Optional<String>> optionalDefinitionQuery = dto -> Optional.empty();
+        Query<Key, Integer> countDefinitionsQuery = key -> 0;
+
+        PlanDestroyDataProductHandler handler = new PlanDestroyDataProductHandler(
+                optionalDefinitionQuery,
+                countDefinitionsQuery
+        );
+
+        DestroyDataProductContext context = DestroyDataProductContext.createForPlan("destroy-yaml");
+        context.setRequestDataProduct(new DataProduct(
+                SchemaVersion.DATA_PRODUCT_V1,
+                new Metadata("sales-dp", "Sales", "sales", "Sales data product"),
+                new Spec(DataProductKind.SOURCE_ALIGNED, List.of(resource("missing", "0.0.1")))
+        ));
+        context.setDataProduct(currentDataProduct());
+
+        handler.handle(context);
+
+        Plan plan = context.getPlan();
+        Assertions.assertEquals(PlanAction.NOOP, plan.getAction());
+        Assertions.assertEquals(0, plan.getSummary().getDelete());
+        Assertions.assertEquals(3, plan.getSummary().getNoop());
+        Assertions.assertEquals(PlanAction.NOOP, plan.getResources().get(0).getAction());
+        Assertions.assertEquals(PlanAction.NOOP, plan.getResources().get(1).getAction());
+    }
+
+    @Test
+    void handleKeepsResourceWhenOnlySomeDefinitionsAreDeleted() {
+        Query<GetResourceDefinitionDTO, Optional<String>> optionalDefinitionQuery = dto ->
+                "0.0.2".equals(dto.version()) ? Optional.of("found") : Optional.empty();
+        Query<Key, Integer> countDefinitionsQuery = key -> 2;
+
+        PlanDestroyDataProductHandler handler = new PlanDestroyDataProductHandler(
+                optionalDefinitionQuery,
+                countDefinitionsQuery
+        );
+
+        DestroyDataProductContext context = DestroyDataProductContext.createForPlan("destroy-yaml");
+        context.setRequestDataProduct(new DataProduct(
+                SchemaVersion.DATA_PRODUCT_V1,
+                new Metadata("sales-dp", "Sales", "sales", "Sales data product"),
+                new Spec(DataProductKind.SOURCE_ALIGNED, List.of(resource("orders", "0.0.2")))
+        ));
+        context.setDataProduct(currentDataProduct());
+
+        handler.handle(context);
+
+        Plan plan = context.getPlan();
+        Assertions.assertEquals(PlanAction.NOOP, plan.getAction());
+        Assertions.assertEquals(1, plan.getSummary().getDelete());
+        Assertions.assertEquals(2, plan.getSummary().getNoop());
+        Assertions.assertEquals(PlanAction.DELETE, plan.getResources().get(0).getAction());
+        Assertions.assertEquals(PlanAction.NOOP, plan.getResources().get(1).getAction());
+    }
+
+    @Test
+    void handleMarksPlanNoopWhenNoDefinitionExists() {
+        Query<GetResourceDefinitionDTO, Optional<String>> optionalDefinitionQuery = dto -> Optional.empty();
+        Query<Key, Integer> countDefinitionsQuery = key -> 1;
+
+        PlanDestroyDataProductHandler handler = new PlanDestroyDataProductHandler(
+                optionalDefinitionQuery,
+                countDefinitionsQuery
+        );
+
+        DestroyDataProductContext context = DestroyDataProductContext.createForPlan("destroy-yaml");
+        context.setRequestDataProduct(new DataProduct(
+                SchemaVersion.DATA_PRODUCT_V1,
+                new Metadata("sales-dp", "Sales", "sales", "Sales data product"),
+                new Spec(DataProductKind.SOURCE_ALIGNED, List.of(resource("orders", "9.9.9")))
+        ));
+        context.setDataProduct(currentDataProduct());
+
+        handler.handle(context);
+
+        Plan plan = context.getPlan();
+        Assertions.assertEquals(PlanAction.NOOP, plan.getAction());
+        Assertions.assertEquals(0, plan.getSummary().getDelete());
+        Assertions.assertEquals(3, plan.getSummary().getNoop());
+        Assertions.assertTrue(plan.getResources().stream().allMatch(resource -> resource.getAction().equals(PlanAction.NOOP)));
+    }
+
     private DataProduct requestedDestroyDataProduct() {
         return new DataProduct(
                 SchemaVersion.DATA_PRODUCT_V1,

@@ -7,8 +7,5 @@ stateDiagram-v2
     check_if_exist_data_product --> check_if_exist_resources
     check_if_exist_resources --> check_resource_definition_versions
     check_resource_definition_versions --> load_current_data_product
-    load_current_data_product --> build_data_product_diff_section
-    build_data_product_diff_section --> build_resource_diff_sections
-    build_resource_diff_sections --> build_diff_summary
-    build_diff_summary --> build_diff_result
-    build_diff_result --> [*]
+    load_current_data_product --> build_diff_v2_result
+    build_diff_v2_result --> [*]

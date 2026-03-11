@@ -3,13 +3,13 @@ import {CataMeshCoreCommand} from "../../infrastructure/cqrs/CataMeshCoreCommand
 import * as fs from "node:fs";
 import {Command} from "../../core/cqrs/Command";
 import {Facade} from "../../core/facade/Facade";
-import {Diff} from "../../core/model/Diff";
 import {DiffPrintCommand} from "../../infrastructure/cqrs/DiffPrintCommand";
 import {assertDataProductSchema, resolveYamlFileName} from "./DataProductYamlSupport";
+import {DiffResult} from "../../core/model/v2/DiffResult";
 
 export class DiffFacade implements Facade<string[], void> {
     private cataMeshCoreCommand: Query<string[], string> = new CataMeshCoreCommand();
-    private diffPrintCommand: Command<Diff, void> = new DiffPrintCommand();
+    private diffPrintCommand: Command<DiffResult, void> = new DiffPrintCommand();
 
     run(command: string[]): void {
         const fileName = resolveYamlFileName(command[1]);
@@ -21,7 +21,7 @@ export class DiffFacade implements Facade<string[], void> {
 
     private diffDataProduct(command: string[], yaml: string): void {
         command[1] = yaml;
-        const diff: Diff = JSON.parse(this.cataMeshCoreCommand.execute(command));
+        const diff: DiffResult = JSON.parse(this.cataMeshCoreCommand.execute(command));
         this.diffPrintCommand.execute(diff);
     }
 }

@@ -2,6 +2,7 @@ package dev.catamesh.infrastructure.adapter;
 
 import dev.catamesh.core.model.DataProductKind;
 import dev.catamesh.core.model.Key;
+import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Resource;
 import dev.catamesh.core.model.ResourceDefinition;
 import dev.catamesh.core.model.ResourceKind;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public final class DiffPayloadAdapter {
 
@@ -31,6 +33,18 @@ public final class DiffPayloadAdapter {
         return byName;
     }
 
+    public static Map<String, Object> toDataProductPayload(DataProduct dataProduct) {
+        if (dataProduct == null) {
+            return null;
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("schemaVersion", normalize(dataProduct.getSchemaVersion()));
+        payload.put("metadata", toMetadataPayload(dataProduct));
+        payload.put("spec", toSpecPayload(dataProduct));
+        return payload;
+    }
+
     public static Map<String, Object> toStringKeyedMap(Map<?, ?> map) {
         Map<String, Object> stringKeyedMap = new HashMap<>();
         map.forEach((key, value) -> stringKeyedMap.put(key.toString(), value));
@@ -43,6 +57,16 @@ public final class DiffPayloadAdapter {
         payload.put("displayName", resource.getDisplayName());
         payload.put("kind", normalize(resource.getKind()));
         payload.put("definition", toResourceDefinitionPayload(resource.getDefinition()));
+        return payload;
+    }
+
+    public static Map<String, Object> toResourcesPayload(List<Resource> resources) {
+        if (resources == null || resources.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        new TreeMap<>(byResourceName(resources)).forEach((name, resource) -> payload.put(name, toResourcePayload(resource)));
         return payload;
     }
 
@@ -88,5 +112,21 @@ public final class DiffPayloadAdapter {
                     .toList();
         }
         return value;
+    }
+
+    private static Map<String, Object> toMetadataPayload(DataProduct dataProduct) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("name", dataProduct.getMetadata().getName());
+        payload.put("displayName", dataProduct.getMetadata().getDisplayName());
+        payload.put("domain", dataProduct.getMetadata().getDomain());
+        payload.put("description", dataProduct.getMetadata().getDescription());
+        return payload;
+    }
+
+    private static Map<String, Object> toSpecPayload(DataProduct dataProduct) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("kind", normalize(dataProduct.getSpec().getKind()));
+        payload.put("resources", toResourcesPayload(dataProduct.getSpec().getResources()));
+        return payload;
     }
 }

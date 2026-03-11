@@ -25,24 +25,6 @@ class CoreModelCoverageTest {
     }
 
     @Test
-    void diffOpFromValueAcceptsSerializedAndEnumNames() {
-        Assertions.assertEquals(DiffOp.ADD, DiffOp.fromValue("add"));
-        Assertions.assertEquals(DiffOp.REPLACE, DiffOp.fromValue("REPLACE"));
-        Assertions.assertEquals("remove", DiffOp.REMOVE.getValue());
-        assertInvalid(() -> DiffOp.fromValue(null));
-        assertInvalid(() -> DiffOp.fromValue("invalid"));
-    }
-
-    @Test
-    void diffScopeFromValueAcceptsSerializedAndEnumNames() {
-        Assertions.assertEquals(DiffScope.DATA_PRODUCT, DiffScope.fromValue("dataProduct"));
-        Assertions.assertEquals(DiffScope.RESOURCE, DiffScope.fromValue("RESOURCE"));
-        Assertions.assertEquals("resource", DiffScope.RESOURCE.getValue());
-        assertInvalid(() -> DiffScope.fromValue(null));
-        assertInvalid(() -> DiffScope.fromValue("invalid"));
-    }
-
-    @Test
     void modelTypeFromValueAcceptsSerializedAndEnumNames() {
         Assertions.assertEquals(ModelType.DATA_PRODUCT, ModelType.fromValue("data-product"));
         Assertions.assertEquals(ModelType.ENVIRONMENT, ModelType.fromValue("ENVIRONMENT"));

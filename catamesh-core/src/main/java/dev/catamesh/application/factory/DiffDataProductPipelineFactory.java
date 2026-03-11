@@ -14,10 +14,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
     private final Handler<ApplyDataProductContext> checkIfExistResourcesHandler;
     private final Handler<ApplyDataProductContext> planCheckResourceDefinitionVersionHandler;
     private final Handler<ApplyDataProductContext> loadCurrentDataProductForDiffHandler;
-    private final Handler<ApplyDataProductContext> buildDataProductDiffSectionHandler;
-    private final Handler<ApplyDataProductContext> buildResourceDiffSectionsHandler;
-    private final Handler<ApplyDataProductContext> buildDiffSummaryHandler;
-    private final Handler<ApplyDataProductContext> buildDiffResultHandler;
+    private final Handler<ApplyDataProductContext> buildDiffV2ResultHandler;
 
     public DiffDataProductPipelineFactory(
             Handler<ApplyDataProductContext> yamlToDataProductHandler,
@@ -28,10 +25,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
             Handler<ApplyDataProductContext> checkIfExistResourcesHandler,
             Handler<ApplyDataProductContext> planCheckResourceDefinitionVersionHandler,
             Handler<ApplyDataProductContext> loadCurrentDataProductForDiffHandler,
-            Handler<ApplyDataProductContext> buildDataProductDiffSectionHandler,
-            Handler<ApplyDataProductContext> buildResourceDiffSectionsHandler,
-            Handler<ApplyDataProductContext> buildDiffSummaryHandler,
-            Handler<ApplyDataProductContext> buildDiffResultHandler) {
+            Handler<ApplyDataProductContext> buildDiffV2ResultHandler) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
         this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
         this.validateResourceSchemaHandler = validateResourceSchemaHandler;
@@ -40,10 +34,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
         this.checkIfExistResourcesHandler = checkIfExistResourcesHandler;
         this.planCheckResourceDefinitionVersionHandler = planCheckResourceDefinitionVersionHandler;
         this.loadCurrentDataProductForDiffHandler = loadCurrentDataProductForDiffHandler;
-        this.buildDataProductDiffSectionHandler = buildDataProductDiffSectionHandler;
-        this.buildResourceDiffSectionsHandler = buildResourceDiffSectionsHandler;
-        this.buildDiffSummaryHandler = buildDiffSummaryHandler;
-        this.buildDiffResultHandler = buildDiffResultHandler;
+        this.buildDiffV2ResultHandler = buildDiffV2ResultHandler;
     }
 
     @Override
@@ -56,10 +47,7 @@ public class DiffDataProductPipelineFactory implements Factory<Void, Handler<App
                 .link(checkIfExistResourcesHandler)
                 .link(planCheckResourceDefinitionVersionHandler)
                 .link(loadCurrentDataProductForDiffHandler)
-                .link(buildDataProductDiffSectionHandler)
-                .link(buildResourceDiffSectionsHandler)
-                .link(buildDiffSummaryHandler)
-                .link(buildDiffResultHandler);
+                .link(buildDiffV2ResultHandler);
         return yamlToDataProductHandler;
     }
 }

@@ -1,8 +1,8 @@
 package dev.catamesh.core.handler;
 
 import dev.catamesh.core.model.*;
+import dev.catamesh.core.model.v2.DiffResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApplyDataProductContext {
@@ -10,9 +10,7 @@ public class ApplyDataProductContext {
     private DataProduct dataProduct;
     private DataProduct currentDataProduct;
     private Plan plan;
-    private Diff diff;
-    private List<DiffSection> diffSections;
-    private DiffSummary diffSummary;
+    private DiffResult diffResult;
 
     public ApplyDataProductContext(String yaml) {
         this.yaml = yaml;
@@ -58,35 +56,12 @@ public class ApplyDataProductContext {
         this.plan = plan;
     }
 
-    public Diff getDiffResult() {
-        return diff;
+    public DiffResult getDiffResult() {
+        return diffResult;
     }
 
-    public void setDiffResult(Diff diff) {
-        this.diff = diff;
-    }
-
-    public List<DiffSection> getDiffSections() {
-        return diffSections;
-    }
-
-    public void setDiffSections(List<DiffSection> diffSections) {
-        this.diffSections = diffSections;
-    }
-
-    public void addDiffSection(DiffSection diffSection) {
-        if (diffSections == null) {
-            diffSections = new ArrayList<>();
-        }
-        diffSections.add(diffSection);
-    }
-
-    public DiffSummary getDiffSummary() {
-        return diffSummary;
-    }
-
-    public void setDiffSummary(DiffSummary diffSummary) {
-        this.diffSummary = diffSummary;
+    public void setDiffResult(DiffResult diffResult) {
+        this.diffResult = diffResult;
     }
 
     public void plusCreateSummary() {

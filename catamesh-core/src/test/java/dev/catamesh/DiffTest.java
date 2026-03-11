@@ -34,36 +34,5 @@ public class DiffTest {
 
         System.out.println(new JSONConfig().jsonMapper().writeValueAsString(diff));
         System.out.println(diff.getSummary());
-
-        printNode(diff.getRoot(), 0);
-    }
-
-    private void printNode(DiffTreeNode node, int level) {
-
-        String indent = "  ".repeat(level);
-
-        System.out.println(
-                indent +
-                node.getPath() +
-                " [" + node.getKind() + "] " +
-                node.getChangeType() +
-                " old=" + node.getOldValue() +
-                " new=" + node.getNewValue()
-        );
-
-        // OBJECT fields
-        for (DiffTreeNode child : node.getFields().values()) {
-            printNode(child, level + 1);
-        }
-
-        // LIST elements
-        for (DiffTreeNode child : node.getElements()) {
-            printNode(child, level + 1);
-        }
-
-        // MAP entries
-        for (DiffTreeNode child : node.getEntries().values()) {
-            printNode(child, level + 1);
-        }
     }
 }

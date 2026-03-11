@@ -111,14 +111,27 @@ function createApplyResult(overrides = {}) {
     };
 }
 
-function createDiff(overrides = {}) {
+function createDiffNode(overrides = {}) {
     return {
-        dataProductName: "analytics-product",
-        sections: [],
+        changeType: "NONE",
+        elements: [],
+        entries: {},
+        fields: {},
+        kind: "MAP",
+        newValue: null,
+        oldValue: null,
+        path: "",
+        ...overrides,
+    };
+}
+
+function createDiffResult(overrides = {}) {
+    return {
+        root: createDiffNode(),
         summary: {
-            add: 0,
-            remove: 0,
-            replace: 0,
+            added: 0,
+            changed: 0,
+            removed: 0,
         },
         ...overrides,
     };
@@ -128,7 +141,8 @@ module.exports = {
     captureConsole,
     createApplyResult,
     createDataProduct,
-    createDiff,
+    createDiffNode,
+    createDiffResult,
     createResource,
     createPlan,
     createTempDir,
