@@ -1,25 +1,22 @@
 package dev.catamesh.infrastructure.config;
 
+import dev.catamesh.application.facade.PlanEngineFacade;
 import dev.catamesh.application.factory.ApplyDataProductChainFactory;
-import dev.catamesh.application.factory.PlanDataProductChainFactory;
 import dev.catamesh.application.handler.*;
 import dev.catamesh.application.strategy.PlanImmutabilityPolicyRuleStrategy;
+import dev.catamesh.application.strategy.PlanMetadataStrategy;
+import dev.catamesh.application.strategy.PlanResourcesStrategy;
+import dev.catamesh.application.strategy.PlanSpecStrategy;
+import dev.catamesh.core.cqrs.Command;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.PlanDataProductContext;
-import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.model.Key;
-import dev.catamesh.core.model.Resource;
-import dev.catamesh.core.model.ResourceDefinition;
+import dev.catamesh.core.model.*;
+import dev.catamesh.core.strategy.PlanStrategy;
 import dev.catamesh.core.strategy.PolicyRuleStrategy;
-import dev.catamesh.infrastructure.config.JSONConfig;
-import dev.catamesh.infrastructure.config.YAMLConfig;
-import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
-import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
-import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
-import dev.catamesh.infrastructure.cqrs.db.OptionalResourceDefinitionVersionQuery;
+import dev.catamesh.infrastructure.cqrs.db.*;
 import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
 
 import javax.sql.DataSource;
@@ -43,6 +40,13 @@ public class ApplyConfig {
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
         Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
 
+        PlanStrategy planMetadataStrategy = new PlanMetadataStrategy();
+        PlanStrategy planResourcesStrategy = new PlanResourcesStrategy();
+        PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
+        PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
+
+        Command<DataProduct, DataProduct> createDataProductCommand=new CreateDataProductCommand(dataSource);
+
         Handler<ApplyDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
         Handler<ApplyDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
@@ -50,8 +54,8 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<ApplyDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
-        Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>();
-        Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(null);
+        Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
+        Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(createDataProductCommand);
 
         return new ApplyDataProductChainFactory(
                 yamlToDataProductHandler,

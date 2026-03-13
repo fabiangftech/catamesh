@@ -2,6 +2,7 @@ package dev.catamesh.core.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class DiffTreeNode {
 
@@ -98,5 +99,66 @@ public final class DiffTreeNode {
 
     public Map<String, DiffTreeNode> getEntries() {
         return entries;
+    }
+
+
+    public static boolean hasChanges(DiffTreeNode node) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.getChangeType() != DiffChangeType.NONE) {
+            return true;
+        }
+
+        for (DiffTreeNode child : node.getFields().values()) {
+            if (hasChanges(child)) {
+                return true;
+            }
+        }
+
+        for (DiffTreeNode child : node.getEntries().values()) {
+            if (hasChanges(child)) {
+                return true;
+            }
+        }
+
+        for (DiffTreeNode child : node.getElements()) {
+            if (hasChanges(child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasChangesExcluding(DiffTreeNode node, Set<String> excludedChildren) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.getChangeType() != DiffChangeType.NONE) {
+            return true;
+        }
+
+        for (Map.Entry<String, DiffTreeNode> field : node.getFields().entrySet()) {
+            if (!excludedChildren.contains(field.getKey()) && DiffTreeNode.hasChanges(field.getValue())) {
+                return true;
+            }
+        }
+
+        for (Map.Entry<String, DiffTreeNode> entry : node.getEntries().entrySet()) {
+            if (!excludedChildren.contains(entry.getKey()) && DiffTreeNode.hasChanges(entry.getValue())) {
+                return true;
+            }
+        }
+
+        for (DiffTreeNode child : node.getElements()) {
+            if (DiffTreeNode.hasChanges(child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

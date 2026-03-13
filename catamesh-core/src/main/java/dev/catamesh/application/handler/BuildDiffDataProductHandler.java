@@ -2,7 +2,7 @@ package dev.catamesh.application.handler;
 
 import dev.catamesh.core.handler.DiffDataProductContext;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.model.DiffEngine;
+import dev.catamesh.application.facade.DiffEngineFacade;
 import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;
 
 public class BuildDiffDataProductHandler<Context> extends Handler<Context> {
@@ -10,7 +10,7 @@ public class BuildDiffDataProductHandler<Context> extends Handler<Context> {
     protected void doHandle(Context context) {
         DiffDataProductContext diffDataProductContext = (DiffDataProductContext) context;
         diffDataProductContext.setDiffResult(
-                DiffEngine.builder()
+                DiffEngineFacade.builder()
                         .exclude("metadata.id")
                         .exclude("metadata.name")
                         .exclude("spec.resources[?].id")

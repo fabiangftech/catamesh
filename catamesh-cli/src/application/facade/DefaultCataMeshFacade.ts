@@ -19,6 +19,18 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
     }
 
     async diff(command: string[]): Promise<void> {
+        await this.execute(command)
+    }
+
+    async plan(command: string[]): Promise<void> {
+      await this.execute(command)
+    }
+
+    async apply(command: string[]): Promise<void> {
+        await this.execute(command)
+    }
+
+    private async execute(command: string[]): Promise<void> {
         let nameFile: string = command[1];
         nameFile = await this.getNameFileYMLQuery.execute(nameFile);
         const content: string = await readFile(nameFile, "utf8");
@@ -26,13 +38,5 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
         command[2] = content;
         const result: string = this.cataMeshCoreCommand.execute(command);
         console.log(result)
-    }
-
-    plan(command: string[]): void {
-        this.cataMeshCoreCommand.execute(command)
-    }
-
-    apply(command: string[]): void {
-
     }
 }

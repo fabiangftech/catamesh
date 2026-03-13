@@ -1,7 +1,7 @@
 package dev.catamesh.core.builder;
 
 import dev.catamesh.application.strategy.DiffTreeNodeStrategy;
-import dev.catamesh.core.model.DiffEngine;
+import dev.catamesh.application.facade.DiffEngineFacade;
 import dev.catamesh.core.model.DiffTreeNode;
 import dev.catamesh.core.strategy.DiffStrategy;
 
@@ -21,9 +21,9 @@ public class DiffEngineBuilder {
         return this;
     }
 
-    public DiffEngine build() {
+    public DiffEngineFacade build() {
         strategy = new DiffTreeNodeStrategy(ignoredPaths);
-        return new DiffEngine(this);
+        return new DiffEngineFacade(this);
     }
 
     public Set<String> getIgnoredPaths() {
