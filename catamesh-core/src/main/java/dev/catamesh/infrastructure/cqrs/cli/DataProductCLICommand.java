@@ -3,8 +3,7 @@ package dev.catamesh.infrastructure.cqrs.cli;
 import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
-import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
-import dev.catamesh.infrastructure.config.v2.AppConfig;
+import dev.catamesh.infrastructure.config.AppConfig;
 
 @SuppressWarnings("java:S106")
 public class DataProductCLICommand {

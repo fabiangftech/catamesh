@@ -1,4 +1,4 @@
-package dev.catamesh.infrastructure.config.v2;
+package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.factory.PlanDataProductChainFactory;
 import dev.catamesh.application.handler.*;
@@ -48,7 +48,7 @@ public class PlanConfig {
         Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<PlanDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<PlanDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
-        Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler();
+        Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>();
 
         return new PlanDataProductChainFactory(
                 yamlToDataProductHandler,
@@ -58,7 +58,6 @@ public class PlanConfig {
                 getCurrentDataProductHandler,
                 buildDiffDataProductHandler,
                 planDataProductPolicyRuleHandler,
-                buildPlanDataProductHandler
-                );
+                buildPlanDataProductHandler);
     }
 }

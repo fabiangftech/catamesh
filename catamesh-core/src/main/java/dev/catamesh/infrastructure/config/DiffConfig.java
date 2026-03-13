@@ -1,4 +1,4 @@
-package dev.catamesh.infrastructure.config.v2;
+package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.factory.DiffDataProductChainFactory;
 import dev.catamesh.application.handler.*;

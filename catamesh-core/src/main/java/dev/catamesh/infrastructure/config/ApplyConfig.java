@@ -1,4 +1,4 @@
-package dev.catamesh.infrastructure.config.v2;
+package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.factory.ApplyDataProductChainFactory;
 import dev.catamesh.application.factory.PlanDataProductChainFactory;

@@ -1,9 +1,12 @@
-package dev.catamesh.infrastructure.config.v2;
+package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.facade.DefaultDataProductFacade;
 import dev.catamesh.application.facade.DefaultStartApplicationFacade;
+import dev.catamesh.core.cqrs.Command;
+import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
-import dev.catamesh.infrastructure.config.JSONConfig;
+import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
+import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
 
@@ -12,7 +15,6 @@ import javax.sql.DataSource;
 public class AppConfig {
     private static final String CATAMESH = "catamesh";
     private static final String DEFAULT_H2_URL = "jdbc:h2:file:./db-file-catamesh/catamesh_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
-
     private final DiffConfig diffConfig;
     private final PlanConfig planConfig;
     private final ApplyConfig applyConfig;
@@ -20,10 +22,13 @@ public class AppConfig {
 
     public AppConfig() {
         DataSource dataSource = dataSource();
+        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
+        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
         diffConfig = new DiffConfig(dataSource);
         planConfig = new PlanConfig(dataSource);
         applyConfig = new ApplyConfig(dataSource);
         jsonConfig = new JSONConfig();
+        new DefaultStartApplicationFacade(initTablesDBCommand).start();
     }
 
     public DataProductFacade dataProductFacade() {

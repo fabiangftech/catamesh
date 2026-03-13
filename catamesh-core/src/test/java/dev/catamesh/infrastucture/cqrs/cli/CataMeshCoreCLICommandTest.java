@@ -1,5 +1,8 @@
 package dev.catamesh.infrastucture.cqrs.cli;
 
+import dev.catamesh.core.model.DiffResult;
+import dev.catamesh.infrastructure.adapter.DiffToStringAdapter;
+import dev.catamesh.infrastructure.config.AppConfig;
 import dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.junit.jupiter.api.Assertions;
@@ -11,6 +14,10 @@ class CataMeshCoreCLICommandTest {
     void testDiff() {
         String yaml = new GetFileFromResourceQuery().execute("examples/data-product.example.yaml");
         String[] command = {"diff", yaml};
-        Assertions.assertDoesNotThrow(()-> CataMeshCoreCLICommand.main(command));
+        Assertions.assertDoesNotThrow(() -> CataMeshCoreCLICommand.main(command));
+        AppConfig appConfig = new AppConfig();
+        DiffResult diffResult = appConfig.dataProductFacade().diff(yaml);
+        String result = DiffToStringAdapter.toString(diffResult);
+        System.out.println(result);
     }
 }
