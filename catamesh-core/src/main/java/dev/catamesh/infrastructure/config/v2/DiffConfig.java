@@ -2,24 +2,19 @@ package dev.catamesh.infrastructure.config.v2;
 
 import dev.catamesh.application.factory.DiffDataProductChainFactory;
 import dev.catamesh.application.handler.*;
-import dev.catamesh.application.strategy.PlanImmutabilityPolicyRuleStrategy;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
-import dev.catamesh.core.handler.v2.PlanDataProductContext;
+import dev.catamesh.core.handler.DiffDataProductContext;
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Key;
 import dev.catamesh.core.model.Resource;
 import dev.catamesh.core.model.ResourceDefinition;
-import dev.catamesh.core.strategy.PolicyRuleStrategy;
 import dev.catamesh.infrastructure.config.JSONConfig;
 import dev.catamesh.infrastructure.config.YAMLConfig;
 import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
 import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
 import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
-import dev.catamesh.infrastructure.cqrs.db.OptionalResourceDefinitionVersionQuery;
-import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
 
 import javax.sql.DataSource;
 import java.util.List;

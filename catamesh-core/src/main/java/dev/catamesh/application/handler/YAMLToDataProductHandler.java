@@ -1,7 +1,7 @@
 package dev.catamesh.application.handler;
 
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DataProductContext;
+import dev.catamesh.core.handler.DataProductContext;
 import dev.catamesh.core.model.DataProduct;
 import tools.jackson.databind.ObjectMapper;
 

@@ -1,11 +1,6 @@
-package dev.catamesh.core.handler.v2;
+package dev.catamesh.core.handler;
 
 import dev.catamesh.core.model.DiffResult;
-import dev.catamesh.core.model.PolicyRule;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class DiffDataProductContext extends DataProductContext {
     private DiffResult diffResult;

@@ -3,8 +3,8 @@ package dev.catamesh.application.facade;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
-import dev.catamesh.core.handler.v2.PlanDataProductContext;
+import dev.catamesh.core.handler.DiffDataProductContext;
+import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
 

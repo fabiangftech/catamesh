@@ -1,0 +1,21 @@
+stateDiagram-v2
+    yamlToDataProduct : YAML to Data Product
+    validateDataProductSchema: Validate Data Product Schema
+    validateResourceSchema: Validate Resources Schema
+    validateBucketDefinitionSchema: Validate Bucket Definition Schema
+    diffDataProductHandler: Diff Data Product
+    loadCurrentDataProductForDiff: Get Current DataProduct
+    planDataProductPolicyRule: Plan Policy Rules for Data Product
+    planDataProduct: Plan Data Product
+    createDataProduct: Create Data Product
+
+    [*] --> yamlToDataProduct
+    yamlToDataProduct --> validateDataProductSchema
+    validateDataProductSchema --> validateResourceSchema
+    validateResourceSchema --> validateBucketDefinitionSchema
+    validateBucketDefinitionSchema --> loadCurrentDataProductForDiff
+    loadCurrentDataProductForDiff --> diffDataProductHandler
+    diffDataProductHandler --> planDataProductPolicyRule
+    planDataProductPolicyRule --> planDataProduct
+    planDataProduct --> createDataProduct
+

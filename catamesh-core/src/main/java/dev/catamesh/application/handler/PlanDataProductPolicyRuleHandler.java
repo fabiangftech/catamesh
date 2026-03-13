@@ -1,8 +1,7 @@
 package dev.catamesh.application.handler;
 
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
-import dev.catamesh.core.handler.v2.PlanDataProductContext;
+import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.model.PolicyRule;
 import dev.catamesh.core.strategy.PolicyRuleStrategy;
 

@@ -6,7 +6,7 @@ import com.networknt.schema.Schema;
 import dev.catamesh.application.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DataProductContext;
+import dev.catamesh.core.handler.DataProductContext;
 import dev.catamesh.core.model.ResourceKind;
 import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;

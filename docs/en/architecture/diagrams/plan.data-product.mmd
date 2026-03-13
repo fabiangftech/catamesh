@@ -9,9 +9,7 @@ stateDiagram-v2
     validateBucketDefinitionSchema: Validate Bucket Definition Schema
     validateBucketDefinitionSchema --> loadCurrentDataProductForDiff
     loadCurrentDataProductForDiff: Get Current DataProduct
-    loadCurrentDataProductForDiff --> dataProductPolicyRule
-    dataProductPolicyRule:  Diff Policy Rules for Data Product
-    dataProductPolicyRule --> diffDataProductHandler
+    loadCurrentDataProductForDiff --> diffDataProductHandler
     diffDataProductHandler: Diff Data Product
     diffDataProductHandler --> planDataProductPolicyRule
     planDataProductPolicyRule: Plan Policy Rules for Data Product

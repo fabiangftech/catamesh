@@ -2,8 +2,7 @@ package dev.catamesh.application.factory;
 
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
-import dev.catamesh.core.handler.v2.PlanDataProductContext;
+import dev.catamesh.core.handler.PlanDataProductContext;
 
 public class PlanDataProductChainFactory implements Factory<Void, Handler<PlanDataProductContext>> {
     private final Handler<PlanDataProductContext> yamlToDataProductHandler;

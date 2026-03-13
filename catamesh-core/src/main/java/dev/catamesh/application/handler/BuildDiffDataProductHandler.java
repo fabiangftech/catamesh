@@ -1,6 +1,6 @@
 package dev.catamesh.application.handler;
 
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
+import dev.catamesh.core.handler.DiffDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.DiffEngine;
 import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;

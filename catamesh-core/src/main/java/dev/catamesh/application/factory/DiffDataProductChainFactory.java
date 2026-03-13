@@ -2,7 +2,7 @@ package dev.catamesh.application.factory;
 
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.v2.DiffDataProductContext;
+import dev.catamesh.core.handler.DiffDataProductContext;
 
 public class DiffDataProductChainFactory implements Factory<Void, Handler<DiffDataProductContext>> {
     private final Handler<DiffDataProductContext> yamlToDataProductHandler;

@@ -1,4 +1,4 @@
-package dev.catamesh.core.handler.v2;
+package dev.catamesh.core.handler;
 
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Resource;
