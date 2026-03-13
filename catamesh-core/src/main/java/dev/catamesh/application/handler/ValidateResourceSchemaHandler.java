@@ -4,19 +4,16 @@ package dev.catamesh.application.handler;
 import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
+import dev.catamesh.application.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
-import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.core.handler.v2.DataProductContext;
 import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
-public class ValidateResourceSchemaHandler extends Handler<ApplyDataProductContext> {
-    private static final Logger logger = Logger.getLogger(ValidateResourceSchemaHandler.class.getName());
+public class ValidateResourceSchemaHandler<Context> extends Handler<Context> {
     private final Schema resourceSchema;
     private final ObjectMapper jsonMapper;
 
@@ -28,21 +25,14 @@ public class ValidateResourceSchemaHandler extends Handler<ApplyDataProductConte
     }
 
     @Override
-    protected void doHandle(ApplyDataProductContext context) {
-        logger.info("Validate resource schema handler");
-        context.getResources().forEach(resource -> {
+    protected void doHandle(Context context) {
+        DataProductContext dataProductContext= (DataProductContext)context;
+        dataProductContext.getDesiredResources().forEach(resource -> {
             String resourceJson = SchemaPayloadAdapter.toJson(resource, jsonMapper);
-            logger.info(String.format("resourceJson=%s", resourceJson));
-            List<Error> resourceErrors = resourceSchema.validate(resourceJson, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
-            if (!resourceErrors.isEmpty()) {
-                String message = String.format("Error in resource with name=%s", context.getDataProduct().getMetadata().getName());
-                List<String> errors = new ArrayList<>();
-                AtomicReference<String> messageError = new AtomicReference<>();
-                resourceErrors.forEach(resourceError -> {
-                    messageError.set(String.format("%s=%s", resourceError.getProperty(), resourceError.getMessage()));
-                    logger.severe(messageError.get());
-                    errors.add(messageError.get());
-                });
+            List<Error> schemaErrors = resourceSchema.validate(resourceJson, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
+            if (!schemaErrors.isEmpty()) {
+                String message = String.format("Error in resource with name=%s", dataProductContext.getDesiredDataProduct().getMetadata().getName());
+                List<String> errors = SchemaAdapter.toList(schemaErrors);
                 throw new SchemaException(message, errors);
             }
         });

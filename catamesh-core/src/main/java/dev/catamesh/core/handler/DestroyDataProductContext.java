@@ -2,7 +2,6 @@ package dev.catamesh.core.handler;
 
 
 import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.model.Plan;
 import dev.catamesh.core.model.Resource;
 
 import java.util.Collections;
@@ -15,7 +14,6 @@ public class DestroyDataProductContext {
     private final DestroyMode mode;
     private DataProduct requestDataProduct;
     private DataProduct dataProduct;
-    private Plan plan;
 
     public DestroyDataProductContext(String yaml, DestroyMode mode) {
         this.yaml = yaml;
@@ -30,9 +28,6 @@ public class DestroyDataProductContext {
         return mode;
     }
 
-    public Plan getPlan() {
-        return plan;
-    }
 
     public String getName() {
         if (Objects.isNull(requestDataProduct)
@@ -67,9 +62,6 @@ public class DestroyDataProductContext {
         this.dataProduct = dataProduct;
     }
 
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
 
     public List<Resource> getResources() {
         if (Objects.isNull(dataProduct)
@@ -78,18 +70,6 @@ public class DestroyDataProductContext {
             return Collections.emptyList();
         }
         return dataProduct.getSpec().getResources();
-    }
-
-    public void plusDeleteSummary() {
-        this.plan.plusDeleteSummary();
-    }
-
-    public void plusUpdateSummary() {
-        this.plan.plusUpdateSummary();
-    }
-
-    public void plusNoopSummary() {
-        this.plan.plusNoopSummary();
     }
 
     public static DestroyDataProductContext createForPlan(String yaml) {

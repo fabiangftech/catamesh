@@ -1,21 +1,18 @@
 package dev.catamesh.application.handler;
 
+import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
-import com.networknt.schema.Error;
+import dev.catamesh.application.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
-import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.core.handler.v2.DataProductContext;
 import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
-public class ValidateDataProductSchemaHandler extends Handler<ApplyDataProductContext> {
-    private static final Logger logger = Logger.getLogger(ValidateDataProductSchemaHandler.class.getName());
+public class ValidateDataProductSchemaHandler<Context> extends Handler<Context> {
     private final Schema dataProductSchema;
     private final ObjectMapper jsonMapper;
 
@@ -27,18 +24,13 @@ public class ValidateDataProductSchemaHandler extends Handler<ApplyDataProductCo
     }
 
     @Override
-    protected void doHandle(ApplyDataProductContext context) {
-        String json = SchemaPayloadAdapter.toJson(context.getDataProduct(), jsonMapper);
-        List<Error> dataProductErrors = dataProductSchema.validate(json, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
-        if (!dataProductErrors.isEmpty()) {
-            String message = String.format("Error in data product with name=%s", context.getDataProduct().getMetadata().getName());
-            List<String> errors = new ArrayList<>();
-            AtomicReference<String> messageError = new AtomicReference<>();
-            dataProductErrors.forEach(dataProductError -> {
-                messageError.set(String.format("%s=%s", dataProductError.getProperty(), dataProductError.getMessage()));
-                logger.severe(messageError.get());
-                errors.add(messageError.get());
-            });
+    protected void doHandle(Context context) {
+        DataProductContext dataProductContext = (DataProductContext) context;
+        String json = SchemaPayloadAdapter.toJson(dataProductContext.getDesiredDataProduct(), jsonMapper);
+        List<Error> schemaErrors = dataProductSchema.validate(json, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
+        if (!schemaErrors.isEmpty()) {
+            String message = String.format("Error in data product with name=%s", dataProductContext.getDesiredDataProduct().getMetadata().getName());
+            List<String> errors = SchemaAdapter.toList(schemaErrors);
             throw new SchemaException(message, errors);
         }
     }

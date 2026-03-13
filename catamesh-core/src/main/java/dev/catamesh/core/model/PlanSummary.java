@@ -4,9 +4,7 @@ public class PlanSummary {
     private int create;
     private int update;
     private int delete;
-    private int replace;
     private int noop;
-    private int adopt;
 
     public PlanSummary() {
         // do nothing
@@ -24,19 +22,9 @@ public class PlanSummary {
         return delete;
     }
 
-    public int getReplace() {
-        return replace;
-    }
-
     public int getNoop() {
         return noop;
     }
-
-
-    public int getAdopt() {
-        return adopt;
-    }
-
 
     public void plusCreate(){
         this.create++;

@@ -1,0 +1,67 @@
+package dev.catamesh.infrastructure.config.v2;
+
+import dev.catamesh.application.factory.DiffDataProductChainFactory;
+import dev.catamesh.application.factory.PlanDataProductChainFactory;
+import dev.catamesh.application.handler.*;
+import dev.catamesh.application.strategy.PlanImmutabilityPolicyRuleStrategy;
+import dev.catamesh.core.cqrs.Query;
+import dev.catamesh.core.factory.Factory;
+import dev.catamesh.core.handler.Handler;
+import dev.catamesh.core.handler.v2.DiffDataProductContext;
+import dev.catamesh.core.handler.v2.PlanDataProductContext;
+import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.core.model.Key;
+import dev.catamesh.core.model.Resource;
+import dev.catamesh.core.model.ResourceDefinition;
+import dev.catamesh.core.strategy.PolicyRuleStrategy;
+import dev.catamesh.infrastructure.config.JSONConfig;
+import dev.catamesh.infrastructure.config.YAMLConfig;
+import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
+import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
+import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
+import dev.catamesh.infrastructure.cqrs.db.OptionalResourceDefinitionVersionQuery;
+import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
+import org.h2.table.Plan;
+
+import javax.sql.DataSource;
+import java.util.List;
+import java.util.Optional;
+
+public class PlanConfig {
+    private final DataSource dataSource;
+
+    public PlanConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory() {
+        YAMLConfig yamlConfig = new YAMLConfig();
+        JSONConfig jsonConfig = new JSONConfig();
+
+        Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery = new OptionalResourceDefinitionVersionQuery(dataSource, jsonConfig.jsonMapper());
+        PolicyRuleStrategy<PlanDataProductContext> planImmutabilityPolicyRuleStrategy = new PlanImmutabilityPolicyRuleStrategy(optionalResourceDefinitionVersionQuery);
+        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
+        Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
+
+        Handler<PlanDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
+        Handler<PlanDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
+        Handler<PlanDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
+        Handler<PlanDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
+        Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
+        Handler<PlanDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
+        Handler<PlanDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
+        Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler();
+
+        return new PlanDataProductChainFactory(
+                yamlToDataProductHandler,
+                validateDataProductSchemaHandler,
+                validateResourceSchemaHandler,
+                validateBucketDefinitionSchemaHandler,
+                getCurrentDataProductHandler,
+                buildDiffDataProductHandler,
+                planDataProductPolicyRuleHandler,
+                buildPlanDataProductHandler
+                );
+    }
+}

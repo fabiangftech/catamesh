@@ -6,16 +6,15 @@ import dev.catamesh.core.exception.InvalidInputException;
 
 import java.util.Arrays;
 
-public enum PlanAction {
-    CREATE("create"),
-    UPDATE("update"),
-    DELETE("delete"),
-    REPLACE("replace"),
-    NOOP("noop");
+public enum PlanStepType {
+    METADATA("metadata"),
+    SPEC("spec"),
+    RESOURCE("resource"),
+    RESOURCE_DEFINITION("resource-definition");
 
     private final String value;
 
-    PlanAction(String value) {
+    PlanStepType(String value) {
         this.value = value;
     }
 
@@ -25,15 +24,13 @@ public enum PlanAction {
     }
 
     @JsonCreator
-    public static PlanAction fromValue(String raw) {
+    public static PlanStepType fromValue(String raw) {
         if (raw == null) {
-            throw new InvalidInputException("Plan action can't be null");
+            throw new InvalidInputException("Change type can't be null");
         }
         return Arrays.stream(values())
                 .filter(v -> v.value.equalsIgnoreCase(raw) || v.name().equalsIgnoreCase(raw))
                 .findFirst()
-                .orElseThrow(() ->
-                        new InvalidInputException(String.format("Invalid plan action %s", raw))
-                );
+                .orElseThrow(() -> new InvalidInputException(String.format("Invalid change type %s", raw)));
     }
 }

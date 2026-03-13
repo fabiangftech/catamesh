@@ -11,7 +11,6 @@ public class ApplyDataProductContext {
     private final String yaml;
     private DataProduct dataProduct;
     private DataProduct currentDataProduct;
-    private Plan plan;
     private DiffResult diffResult;
     private List<PolicyRule> policyRules;
 
@@ -51,32 +50,12 @@ public class ApplyDataProductContext {
         this.currentDataProduct = currentDataProduct;
     }
 
-    public Plan getPlan() {
-        return plan;
-    }
-
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
-
     public DiffResult getDiffResult() {
         return diffResult;
     }
 
     public void setDiffResult(DiffResult diffResult) {
         this.diffResult = diffResult;
-    }
-
-    public void plusCreateSummary() {
-        this.plan.plusCreateSummary();
-    }
-
-    public void plusUpdateSummary() {
-        this.plan.plusUpdateSummary();
-    }
-
-    public void plusNoopSummary() {
-        this.plan.plusNoopSummary();
     }
 
     public List<PolicyRule> getPolicyRules() {
