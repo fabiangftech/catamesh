@@ -1,15 +1,20 @@
 package dev.catamesh.infrastructure.adapter;
 
-import dev.catamesh.core.model.DiffChangeType;
-import dev.catamesh.core.model.DiffResult;
-import dev.catamesh.core.model.DiffSummary;
-import dev.catamesh.core.model.DiffTreeNode;
+import dev.catamesh.core.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DiffToStringAdapter {
+
+    private static final String RESET = "\u001B[0m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String RED = "\u001B[31m";
+    private static final String CYAN = "\u001B[36m";
+
     public static String toString(DiffResult diffResult) {
+
         if (diffResult == null) {
             return "Diff: null";
         }
@@ -22,16 +27,19 @@ public final class DiffToStringAdapter {
         }
 
         DiffSummary summary = diffResult.getSummary();
+
         lines.add("");
-        lines.add("Summary: " +
-                  summary.getAdded() + " added, " +
-                  summary.getAdded() + " changed, " +
-                  summary.getRemoved() + " removed");
+        lines.add(CYAN + "Summary: "
+                  + summary.getAdded() + " added, "
+                  + summary.getChanged() + " changed, "
+                  + summary.getRemoved() + " removed"
+                  + RESET);
 
         return String.join(System.lineSeparator(), lines);
     }
 
     private static void appendNode(DiffTreeNode node, List<String> lines) {
+
         if (node == null) {
             return;
         }
@@ -54,12 +62,24 @@ public final class DiffToStringAdapter {
     }
 
     private static String formatLine(DiffTreeNode node) {
+
         String path = normalize(node.getPath());
 
         return switch (node.getChangeType()) {
-            case CREATE -> "+ " + path + " = " + stringify(node.getNewValue());
-            case UPDATE -> "~ " + path + " = " + stringify(node.getOldValue()) + " -> " + stringify(node.getNewValue());
-            case DELETE -> "- " + path + " = " + stringify(node.getOldValue());
+
+            case CREATE ->
+                    GREEN + "+ " + path + RESET +
+                    " = " + stringify(node.getNewValue());
+
+            case UPDATE ->
+                    YELLOW + "~ " + path + RESET +
+                    " = " + stringify(node.getOldValue()) +
+                    " -> " + stringify(node.getNewValue());
+
+            case DELETE ->
+                    RED + "- " + path + RESET +
+                    " = " + stringify(node.getOldValue());
+
             case NONE -> path;
         };
     }
@@ -72,6 +92,7 @@ public final class DiffToStringAdapter {
     }
 
     private static String stringify(Object value) {
+
         if (value == null) {
             return "null";
         }
