@@ -10,8 +10,6 @@ import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.Key;
 import dev.catamesh.core.model.Resource;
 import dev.catamesh.core.model.ResourceDefinition;
-import dev.catamesh.infrastructure.config.JSONConfig;
-import dev.catamesh.infrastructure.config.YAMLConfig;
 import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
 import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
 import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
@@ -31,8 +29,6 @@ public class DiffConfig {
         YAMLConfig yamlConfig = new YAMLConfig();
         JSONConfig jsonConfig = new JSONConfig();
 
-        // Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery = new OptionalResourceDefinitionVersionQuery(dataSource, jsonConfig.jsonMapper());
-        // PolicyRuleStrategy<PlanDataProductContext> planImmutabilityPolicyRuleStrategy = new PlanImmutabilityPolicyRuleStrategy(optionalResourceDefinitionVersionQuery);
         Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
         Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());

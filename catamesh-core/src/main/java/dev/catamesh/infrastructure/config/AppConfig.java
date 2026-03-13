@@ -5,6 +5,7 @@ import dev.catamesh.application.facade.DefaultStartApplicationFacade;
 import dev.catamesh.core.cqrs.Command;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
+import dev.catamesh.core.facade.StartApplicationFacade;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
@@ -22,13 +23,12 @@ public class AppConfig {
 
     public AppConfig() {
         DataSource dataSource = dataSource();
-        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
-        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
+        StartApplicationFacade startApplicationFacade = startApplicationFacade(dataSource);
         diffConfig = new DiffConfig(dataSource);
         planConfig = new PlanConfig(dataSource);
         applyConfig = new ApplyConfig(dataSource);
         jsonConfig = new JSONConfig();
-        new DefaultStartApplicationFacade(initTablesDBCommand).start();
+        startApplicationFacade.start();
     }
 
     public DataProductFacade dataProductFacade() {
@@ -37,6 +37,12 @@ public class AppConfig {
                 planConfig.planDataProductChainFactory(),
                 applyConfig.applynDataProductChainFactory()
         );
+    }
+
+    public StartApplicationFacade startApplicationFacade(DataSource dataSource) {
+        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
+        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
+        return new DefaultStartApplicationFacade(initTablesDBCommand);
     }
 
     public ObjectMapper jsonMapper() {
