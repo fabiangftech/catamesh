@@ -15,18 +15,22 @@ public class AppConfig {
 
     private final DiffConfig diffConfig;
     private final PlanConfig planConfig;
+    private final ApplyConfig applyConfig;
     private final JSONConfig jsonConfig;
+
     public AppConfig() {
         DataSource dataSource = dataSource();
         diffConfig = new DiffConfig(dataSource);
         planConfig = new PlanConfig(dataSource);
+        applyConfig = new ApplyConfig(dataSource);
         jsonConfig = new JSONConfig();
     }
 
     public DataProductFacade dataProductFacade() {
         return new DefaultDataProductFacade(
                 diffConfig.diffDataProductChainFactory(),
-                planConfig.planDataProductChainFactory()
+                planConfig.planDataProductChainFactory(),
+                applyConfig.applynDataProductChainFactory()
         );
     }
 

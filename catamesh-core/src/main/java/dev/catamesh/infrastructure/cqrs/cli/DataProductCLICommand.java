@@ -1,5 +1,6 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
+import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
 import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
@@ -23,14 +24,15 @@ public class DataProductCLICommand {
                 break;
             case "plan":
                 yaml = args[1];
-                PlanResult planResult = appConfig.dataProductFacade().plan(yaml);
+                PlanResult   planResult = appConfig.dataProductFacade().plan(yaml);
                 json = appConfig.jsonMapper().writeValueAsString(planResult);
                 System.out.println(json);
                 break;
             case "apply":
                 yaml = args[1];
-                //ApplyResult applyResult = dataProductFacade.apply(yaml);
-                //System.out.println(CLIJsonAdapter.toJson(applyResult, jsonMapper));
+                ApplyResult applyResult = appConfig.dataProductFacade().apply(yaml);
+                json = appConfig.jsonMapper().writeValueAsString(applyResult);
+                System.out.println(json);
                 break;
             case "get":
                 dataProductName = args[2];

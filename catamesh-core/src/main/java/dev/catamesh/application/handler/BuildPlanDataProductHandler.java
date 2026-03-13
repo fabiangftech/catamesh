@@ -5,7 +5,7 @@ import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.model.PlanEngine;
 import dev.catamesh.core.model.PlanResult;
 
-public class BuildPlanDataProductHandler extends Handler<PlanDataProductContext> {
+public class BuildPlanDataProductHandler<Context> extends Handler<Context> {
     private final PlanEngine planEngine;
 
     public BuildPlanDataProductHandler() {
@@ -17,13 +17,14 @@ public class BuildPlanDataProductHandler extends Handler<PlanDataProductContext>
     }
 
     @Override
-    protected void doHandle(PlanDataProductContext context) {
+    protected void doHandle(Context context) {
+        PlanDataProductContext planDataProductContext=(PlanDataProductContext)context;
         PlanResult planResult = planEngine.plan(
-                context.getDesiredDataProduct(),
-                context.getCurrentDataProduct(),
-                context.getDiffResult()
+                planDataProductContext.getDesiredDataProduct(),
+                planDataProductContext.getCurrentDataProduct(),
+                planDataProductContext.getDiffResult()
         );
-        planResult.setPolicyRules(context.getPolicyRules());
-        context.setPlanResult(planResult);
+        planResult.setPolicyRules(planDataProductContext.getPolicyRules());
+        planDataProductContext.setPlanResult(planResult);
     }
 }

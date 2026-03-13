@@ -13,15 +13,17 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
     private final Handler<ApplyDataProductContext> buildDiffDataProductHandler;
     private final Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler;
     private final Handler<ApplyDataProductContext> buildPlanDataProductHandler;
+    private final Handler<ApplyDataProductContext> createDataProductHandler;
 
     public ApplyDataProductChainFactory(Handler<ApplyDataProductContext> yamlToDataProductHandler,
-                                       Handler<ApplyDataProductContext> validateDataProductSchemaHandler,
-                                       Handler<ApplyDataProductContext> validateResourceSchemaHandler,
-                                       Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler,
-                                       Handler<ApplyDataProductContext> getCurrentDataProductHandler,
-                                       Handler<ApplyDataProductContext> buildDiffDataProductHandler,
-                                       Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
-                                       Handler<ApplyDataProductContext> buildPlanDataProductHandler
+                                        Handler<ApplyDataProductContext> validateDataProductSchemaHandler,
+                                        Handler<ApplyDataProductContext> validateResourceSchemaHandler,
+                                        Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler,
+                                        Handler<ApplyDataProductContext> getCurrentDataProductHandler,
+                                        Handler<ApplyDataProductContext> buildDiffDataProductHandler,
+                                        Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
+                                        Handler<ApplyDataProductContext> buildPlanDataProductHandler,
+                                        Handler<ApplyDataProductContext> createDataProductHandler
     ) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
         this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
@@ -31,6 +33,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
         this.buildDiffDataProductHandler = buildDiffDataProductHandler;
         this.planDataProductPolicyRuleHandler = planDataProductPolicyRuleHandler;
         this.buildPlanDataProductHandler = buildPlanDataProductHandler;
+        this.createDataProductHandler = createDataProductHandler;
     }
 
     @Override
@@ -42,7 +45,8 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                 .link(getCurrentDataProductHandler)
                 .link(buildDiffDataProductHandler)
                 .link(planDataProductPolicyRuleHandler)
-                .link(buildPlanDataProductHandler);
+                .link(buildPlanDataProductHandler)
+                .link(createDataProductHandler);
         return yamlToDataProductHandler;
     }
 }
