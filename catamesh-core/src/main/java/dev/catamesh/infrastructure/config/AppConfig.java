@@ -2,10 +2,12 @@ package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.facade.DefaultDataProductFacade;
 import dev.catamesh.application.facade.DefaultStartApplicationFacade;
+import dev.catamesh.application.facade.DefaultTemplateFacade;
 import dev.catamesh.core.cqrs.Command;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
+import dev.catamesh.core.facade.TemplateFacade;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
@@ -31,18 +33,24 @@ public class AppConfig {
         startApplicationFacade.start();
     }
 
+    public StartApplicationFacade startApplicationFacade(DataSource dataSource) {
+        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
+        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
+        return new DefaultStartApplicationFacade(initTablesDBCommand);
+    }
+
+    public TemplateFacade templateFacade() {
+        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
+        return new DefaultTemplateFacade(getFileFromResourceQuery);
+    }
+
+
     public DataProductFacade dataProductFacade() {
         return new DefaultDataProductFacade(
                 diffConfig.diffDataProductChainFactory(),
                 planConfig.planDataProductChainFactory(),
                 applyConfig.applynDataProductChainFactory()
         );
-    }
-
-    public StartApplicationFacade startApplicationFacade(DataSource dataSource) {
-        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
-        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
-        return new DefaultStartApplicationFacade(initTablesDBCommand);
     }
 
     public ObjectMapper jsonMapper() {

@@ -1,17 +1,17 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
-import dev.catamesh.core.facade.TemplateFacade;
+import dev.catamesh.infrastructure.config.AppConfig;
 
-@SuppressWarnings("java:S106")
 public class NewTemplateCLICommand {
-    //private static final TemplateFacade templateFacade;
+    private static final AppConfig appConfig = new AppConfig();
+
     public static void main(String[] args) {
-        String kind = args[1]; // data-product - deploy - env
+        String kind = args[1];
         switch (kind) {
             case "data-product":
                 String name = args[2];
-                //String yaml = templateFacade.initDataProduct(name);
-                //System.out.println(yaml);
+                String yaml = appConfig.templateFacade().initDataProduct(name);
+                System.out.println(yaml);
                 break;
             case "deploy":
                 System.out.println("Not implemented deploy template yet!.");
