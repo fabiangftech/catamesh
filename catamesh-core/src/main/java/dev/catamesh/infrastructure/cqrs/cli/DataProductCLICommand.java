@@ -3,6 +3,7 @@ package dev.catamesh.infrastructure.cqrs.cli;
 import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
+import dev.catamesh.infrastructure.adapter.DiffToStringAdapter;
 import dev.catamesh.infrastructure.config.AppConfig;
 
 import static dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand.*;
@@ -20,8 +21,8 @@ public class DataProductCLICommand {
             case DIFF:
                 yaml = args[1];
                 DiffResult diffResult = appConfig.dataProductFacade().diff(yaml);
-                json = appConfig.jsonMapper().writeValueAsString(diffResult);
-                System.out.println(json);
+                String result = DiffToStringAdapter.toString(diffResult);
+                System.out.println(result);
                 break;
             case PLAN:
                 yaml = args[1];
