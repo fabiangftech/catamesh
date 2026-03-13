@@ -1,11 +1,25 @@
 #!/usr/bin/env node
 
-import {DefaultPlanFacade} from "./application/facade/DefaultPlanFacade";
+import {DefaultCataMeshFacade} from "./application/facade/DefaultCataMeshFacade";
 
-const planFacade: PlanFacade = new DefaultPlanFacade();
+const cataMeshFacade: CataMeshFacade = new DefaultCataMeshFacade();
 
 if (require.main === module) {
     const command: string[] = process.argv.slice(2);
-    console.log(command)
-    planFacade.plan(command);
+    switch (command[0]) {
+        case "init":
+            cataMeshFacade.init(command);
+            break;
+        case "diff":
+            cataMeshFacade.diff(command);
+            break;
+        case "plan":
+            cataMeshFacade.plan(command);
+            break;
+        case "apply":
+            cataMeshFacade.apply(command);
+            break;
+        default:
+            break;
+    }
 }
