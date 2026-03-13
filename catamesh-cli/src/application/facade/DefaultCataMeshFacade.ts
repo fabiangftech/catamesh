@@ -1,14 +1,15 @@
 import {CataMeshCoreCommand} from "../../infrastructure/cqrs/CataMeshCoreCommand";
 import {readFile, writeFile} from "fs/promises";
-import {access} from "fs/promises";
 import {Query} from "../../core/cqrs/Query";
 import {GetNameFileYMLQuery} from "../../infrastructure/cqrs/GetNameFileYMLQuery";
 import {Command} from "../../core/cqrs/Command";
+import {GetKindFromContentQuery} from "../../infrastructure/cqrs/GetKindFromContentQuery";
 
 export class DefaultCataMeshFacade implements CataMeshFacade {
 
-    constructor(private cataMeshCoreCommand:  Command<string[], string> = new CataMeshCoreCommand(),
-                private getNameFileYMLQuery: Query<string, Promise<string>> = new GetNameFileYMLQuery()) {
+    constructor(private cataMeshCoreCommand: Command<string[], string> = new CataMeshCoreCommand(),
+                private getNameFileYMLQuery: Query<string, Promise<string>> = new GetNameFileYMLQuery(),
+                private getKindFromContentQuery: Query<string, string> = new GetKindFromContentQuery()) {
     }
 
     async init(command: string[]): Promise<void> {
@@ -21,7 +22,7 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
         let nameFile: string = command[1];
         nameFile = await this.getNameFileYMLQuery.execute(nameFile);
         const content: string = await readFile(nameFile, "utf8");
-        command[1] = "data-product";
+        command[1] = this.getKindFromContentQuery.execute(content);
         command[2] = content;
         const result: string = this.cataMeshCoreCommand.execute(command);
         console.log(result)
