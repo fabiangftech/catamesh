@@ -13,16 +13,19 @@ public class DataProductCLICommand {
         String verb = args[0];  // plan - apply - get - diff
         String yaml;
         String dataProductName;
+        String json;
         switch (verb) {
             case "diff":
                 yaml = args[1];
-                DiffResult diff = appConfig.dataProductFacade().diff(yaml);
-                System.out.println(CLIJsonAdapter.toJson(diff, appConfig.jsonMapper()));
+                DiffResult diffResult = appConfig.dataProductFacade().diff(yaml);
+                json = appConfig.jsonMapper().writeValueAsString(diffResult);
+                System.out.println(json);
                 break;
             case "plan":
                 yaml = args[1];
-                PlanResult plan = appConfig.dataProductFacade().plan(yaml);
-                System.out.println(CLIJsonAdapter.toJson(plan, appConfig.jsonMapper()));
+                PlanResult planResult = appConfig.dataProductFacade().plan(yaml);
+                json = appConfig.jsonMapper().writeValueAsString(planResult);
+                System.out.println(json);
                 break;
             case "apply":
                 yaml = args[1];
