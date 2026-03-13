@@ -7,6 +7,7 @@ import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.DiffDataProductContext;
 import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.model.ApplyResult;
+import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
 
@@ -45,5 +46,10 @@ public class DefaultDataProductFacade implements DataProductFacade {
         ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
         chain.handle(context);
         return context.getApplyResult();
+    }
+
+    @Override
+    public DataProduct get(String dataProductNames) {
+        return null;
     }
 }
