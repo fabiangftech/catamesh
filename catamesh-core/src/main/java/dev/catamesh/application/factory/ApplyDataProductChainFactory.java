@@ -14,7 +14,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
     private final Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler;
     private final Handler<ApplyDataProductContext> buildPlanDataProductHandler;
     private final Handler<ApplyDataProductContext> createDataProductHandler;
-    private final Handler<ApplyDataProductContext> createResourcesDataProductHandler;
+    private final Handler<ApplyDataProductContext> createResourcesHandler;
 
     public ApplyDataProductChainFactory(Handler<ApplyDataProductContext> yamlToDataProductHandler,
                                         Handler<ApplyDataProductContext> validateDataProductSchemaHandler,
@@ -25,7 +25,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                                         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
                                         Handler<ApplyDataProductContext> buildPlanDataProductHandler,
                                         Handler<ApplyDataProductContext> createDataProductHandler,
-                                        Handler<ApplyDataProductContext> createResourcesDataProductHandler
+                                        Handler<ApplyDataProductContext> createResourcesHandler
     ) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
         this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
@@ -36,7 +36,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
         this.planDataProductPolicyRuleHandler = planDataProductPolicyRuleHandler;
         this.buildPlanDataProductHandler = buildPlanDataProductHandler;
         this.createDataProductHandler = createDataProductHandler;
-        this.createResourcesDataProductHandler = createResourcesDataProductHandler;
+        this.createResourcesHandler = createResourcesHandler;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                 .link(planDataProductPolicyRuleHandler)
                 .link(buildPlanDataProductHandler)
                 .link(createDataProductHandler)
-                .link(createResourcesDataProductHandler);
+                .link(createResourcesHandler);
         return yamlToDataProductHandler;
     }
 }

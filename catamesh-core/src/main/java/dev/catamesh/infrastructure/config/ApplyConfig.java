@@ -57,7 +57,7 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
         Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
         Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(createDataProductCommand);
-        Handler<ApplyDataProductContext> createResourcesDataProductHandler = new CreateResourcesDataProductHandler<>(createResourceCommand);
+        Handler<ApplyDataProductContext> createResourcesDataProductHandler = new CreateResourcesHandler<>(createResourceCommand);
 
         return new ApplyDataProductChainFactory(
                 yamlToDataProductHandler,
