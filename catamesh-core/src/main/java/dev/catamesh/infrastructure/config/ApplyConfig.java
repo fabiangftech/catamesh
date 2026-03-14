@@ -45,7 +45,8 @@ public class ApplyConfig {
         PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
-        Command<DataProduct, DataProduct> createDataProductCommand=new CreateDataProductCommand(dataSource);
+        Command<DataProduct, DataProduct> createDataProductCommand = new CreateDataProductCommand(dataSource);
+        Command<Resource, Void> createResourceCommand = new CreateResourceCommand(dataSource);
 
         Handler<ApplyDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
         Handler<ApplyDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
@@ -56,6 +57,7 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
         Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
         Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(createDataProductCommand);
+        Handler<ApplyDataProductContext> createResourcesDataProductHandler = new CreateResourcesDataProductHandler<>(createResourceCommand);
 
         return new ApplyDataProductChainFactory(
                 yamlToDataProductHandler,
@@ -66,6 +68,7 @@ public class ApplyConfig {
                 buildDiffDataProductHandler,
                 planDataProductPolicyRuleHandler,
                 buildPlanDataProductHandler,
-                createDataProductHandler);
+                createDataProductHandler,
+                createResourcesDataProductHandler);
     }
 }

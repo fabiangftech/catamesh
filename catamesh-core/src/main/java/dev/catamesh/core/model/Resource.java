@@ -3,6 +3,8 @@ package dev.catamesh.core.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.catamesh.core.exception.ConflictException;
+import dev.catamesh.core.exception.InvariantException;
+import dev.catamesh.core.handler.ApplyDataProductContext;
 
 import java.util.Objects;
 
@@ -38,6 +40,7 @@ public class Resource {
     public Key getKey() {
         return this.id;
     }
+
     public String getId() {
         return Objects.isNull(id) ? null : id.value();
     }
@@ -74,11 +77,8 @@ public class Resource {
         this.definition = definition;
     }
 
-    public static boolean isSame(Resource current, Resource candidate) {
-        if (!current.getKind().equals(candidate.getKind())) {
-            throw new ConflictException("Resource kind cannot be changed. Delete the resource and recreate it.");
-        }
-        return current.getDisplayName().equals(candidate.getDisplayName())
-               && current.getName().equals(candidate.getName());
+    @JsonIgnore
+    public String getResourcePath() {
+        return "spec.resources." + name;
     }
 }
