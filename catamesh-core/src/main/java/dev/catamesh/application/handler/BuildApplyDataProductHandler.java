@@ -11,10 +11,10 @@ import dev.catamesh.core.model.ApplyStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class BuildApplyDataProductHandler<Context> extends Handler<Context> {
+public class BuildApplyDataProductHandler<C> extends Handler<C> {
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         ApplyDataProductContext applyDataProductContext = (ApplyDataProductContext) context;
         applyDataProductContext.resolvePendingSteps();
 

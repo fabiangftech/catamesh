@@ -2,9 +2,6 @@ package dev.catamesh.core.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dev.catamesh.core.exception.ConflictException;
-import dev.catamesh.core.exception.InvariantException;
-import dev.catamesh.core.handler.ApplyDataProductContext;
 
 import java.util.Objects;
 

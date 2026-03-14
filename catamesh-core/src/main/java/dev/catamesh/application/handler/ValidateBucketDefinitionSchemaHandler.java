@@ -13,7 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-public class ValidateBucketDefinitionSchemaHandler<Context> extends Handler<Context> {
+public class ValidateBucketDefinitionSchemaHandler<C> extends Handler<C> {
     private final Schema bucketSchema;
     private final ObjectMapper jsonMapper;
 
@@ -25,7 +25,7 @@ public class ValidateBucketDefinitionSchemaHandler<Context> extends Handler<Cont
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         DataProductContext dataProductContext = (DataProductContext) context;
         dataProductContext.getDesiredResources().forEach(resource -> {
             if (resource.getKind().equals(ResourceKind.BUCKET)) {

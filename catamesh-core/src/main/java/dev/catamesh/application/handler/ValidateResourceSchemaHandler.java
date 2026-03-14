@@ -13,7 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-public class ValidateResourceSchemaHandler<Context> extends Handler<Context> {
+public class ValidateResourceSchemaHandler<C> extends Handler<C> {
     private final Schema resourceSchema;
     private final ObjectMapper jsonMapper;
 
@@ -25,7 +25,7 @@ public class ValidateResourceSchemaHandler<Context> extends Handler<Context> {
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         DataProductContext dataProductContext= (DataProductContext)context;
         dataProductContext.getDesiredResources().forEach(resource -> {
             String resourceJson = SchemaPayloadAdapter.toJson(resource, jsonMapper);

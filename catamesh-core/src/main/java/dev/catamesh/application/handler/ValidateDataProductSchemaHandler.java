@@ -12,7 +12,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-public class ValidateDataProductSchemaHandler<Context> extends Handler<Context> {
+public class ValidateDataProductSchemaHandler<C> extends Handler<C> {
     private final Schema dataProductSchema;
     private final ObjectMapper jsonMapper;
 
@@ -24,7 +24,7 @@ public class ValidateDataProductSchemaHandler<Context> extends Handler<Context> 
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         DataProductContext dataProductContext = (DataProductContext) context;
         String json = SchemaPayloadAdapter.toJson(dataProductContext.getDesiredDataProduct(), jsonMapper);
         List<Error> schemaErrors = dataProductSchema.validate(json, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));

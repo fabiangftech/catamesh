@@ -5,9 +5,9 @@ import dev.catamesh.core.handler.Handler;
 import dev.catamesh.application.facade.DiffEngineFacade;
 import dev.catamesh.infrastructure.adapter.DiffPayloadAdapter;
 
-public class BuildDiffDataProductHandler<Context> extends Handler<Context> {
+public class BuildDiffDataProductHandler<C> extends Handler<C> {
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         DiffDataProductContext diffDataProductContext = (DiffDataProductContext) context;
         diffDataProductContext.setDiffResult(
                 DiffEngineFacade.builder()

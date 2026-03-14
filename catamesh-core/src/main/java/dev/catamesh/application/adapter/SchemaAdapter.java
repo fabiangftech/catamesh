@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SchemaAdapter {
+public final class SchemaAdapter {
+
+    private SchemaAdapter() {
+        // do nothing
+    }
 
     public static List<String> toList(List<Error> schemaErrors) {
         List<String> errors = new ArrayList<>();
