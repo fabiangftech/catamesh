@@ -15,6 +15,8 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
     private final Handler<ApplyDataProductContext> buildPlanDataProductHandler;
     private final Handler<ApplyDataProductContext> createDataProductHandler;
     private final Handler<ApplyDataProductContext> createResourcesHandler;
+    private final Handler<ApplyDataProductContext> createResourcesDefinitionsHandler;
+    private final Handler<ApplyDataProductContext> buildApplyDataProductHandler;
 
     public ApplyDataProductChainFactory(Handler<ApplyDataProductContext> yamlToDataProductHandler,
                                         Handler<ApplyDataProductContext> validateDataProductSchemaHandler,
@@ -25,7 +27,9 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                                         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
                                         Handler<ApplyDataProductContext> buildPlanDataProductHandler,
                                         Handler<ApplyDataProductContext> createDataProductHandler,
-                                        Handler<ApplyDataProductContext> createResourcesHandler
+                                        Handler<ApplyDataProductContext> createResourcesHandler,
+                                        Handler<ApplyDataProductContext> createResourcesDefinitionsHandler,
+                                        Handler<ApplyDataProductContext> buildApplyDataProductHandler
     ) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
         this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
@@ -37,6 +41,8 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
         this.buildPlanDataProductHandler = buildPlanDataProductHandler;
         this.createDataProductHandler = createDataProductHandler;
         this.createResourcesHandler = createResourcesHandler;
+        this.createResourcesDefinitionsHandler = createResourcesDefinitionsHandler;
+        this.buildApplyDataProductHandler=buildApplyDataProductHandler;
     }
 
     @Override
@@ -50,7 +56,9 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                 .link(planDataProductPolicyRuleHandler)
                 .link(buildPlanDataProductHandler)
                 .link(createDataProductHandler)
-                .link(createResourcesHandler);
+                .link(createResourcesHandler)
+                .link(createResourcesDefinitionsHandler)
+                .link(buildApplyDataProductHandler);
         return yamlToDataProductHandler;
     }
 }
