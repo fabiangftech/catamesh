@@ -22,6 +22,28 @@ public class ApplyResult {
         return dataProductName;
     }
 
+    public ApplyStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ApplyStatus status) {
+        this.status = status;
+    }
+    public List<ApplyStep> getSteps() {
+        return steps;
+    }
+    public void setSteps(List<ApplyStep> steps) {
+        this.steps = steps;
+    }
+
+    public ApplySummary getSummary() {
+        return summary;
+    }
+
+    public void setSummary(ApplySummary summary) {
+        this.summary = summary;
+    }
+
     public LocalDateTime getExecutedAt() {
         return executedAt;
     }
