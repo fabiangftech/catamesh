@@ -24,6 +24,10 @@ public class CreateDataProductHandler<Context> extends Handler<Context> {
                 );
         if (shouldCreate) {
             createDataProductCommand.execute(applyDataProductContext.getDesiredDataProduct());
+            applyDataProductContext.getPlanResult().getSteps().stream()
+                    .filter(step -> step.getAction() == PlanAction.CREATE)
+                    .filter(step -> step.getType() == PlanStepType.METADATA || step.getType() == PlanStepType.SPEC)
+                    .forEach(step -> applyDataProductContext.markStepExecuted(step.getPath()));
         }
     }
 }

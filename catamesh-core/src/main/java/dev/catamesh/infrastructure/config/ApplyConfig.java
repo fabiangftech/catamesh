@@ -57,6 +57,7 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
         Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
+        Handler<ApplyDataProductContext> initializeApplyDataProductHandler = new InitializeApplyDataProductHandler<>();
         Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(createDataProductCommand);
         Handler<ApplyDataProductContext> createResourcesDataProductHandler = new CreateResourcesHandler<>(createResourceCommand);
         Handler<ApplyDataProductContext> createResourcesDefinitionsHandler = new CreateResourcesDefinitionsHandler<>(createResourceDefinitionCommand);
@@ -71,6 +72,7 @@ public class ApplyConfig {
                 buildDiffDataProductHandler,
                 planDataProductPolicyRuleHandler,
                 buildPlanDataProductHandler,
+                initializeApplyDataProductHandler,
                 createDataProductHandler,
                 createResourcesDataProductHandler,
                 createResourcesDefinitionsHandler,

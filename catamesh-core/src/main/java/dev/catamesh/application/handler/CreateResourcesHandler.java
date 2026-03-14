@@ -29,6 +29,7 @@ public class CreateResourcesHandler<Context> extends Handler<Context> {
                     Resource resource = ApplyDataProductContext.resolve(applyDataProductContext, step.getPath());
                     resource.setDataProductId(Key.create(ApplyDataProductContext.resolveDataProductId(applyDataProductContext, resource)));
                     createResourceCommand.execute(resource);
+                    applyDataProductContext.markStepExecuted(step.getPath());
                 });
     }
 }

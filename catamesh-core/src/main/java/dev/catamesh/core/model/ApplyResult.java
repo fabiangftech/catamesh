@@ -2,8 +2,8 @@ package dev.catamesh.core.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,8 +32,9 @@ public class ApplyResult {
     public List<ApplyStep> getSteps() {
         return steps;
     }
+
     public void setSteps(List<ApplyStep> steps) {
-        this.steps = steps;
+        this.steps = steps == null ? new ArrayList<>() : new ArrayList<>(steps);
     }
 
     public ApplySummary getSummary() {

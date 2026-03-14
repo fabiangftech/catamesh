@@ -13,6 +13,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
     private final Handler<ApplyDataProductContext> buildDiffDataProductHandler;
     private final Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler;
     private final Handler<ApplyDataProductContext> buildPlanDataProductHandler;
+    private final Handler<ApplyDataProductContext> initializeApplyDataProductHandler;
     private final Handler<ApplyDataProductContext> createDataProductHandler;
     private final Handler<ApplyDataProductContext> createResourcesHandler;
     private final Handler<ApplyDataProductContext> createResourcesDefinitionsHandler;
@@ -26,6 +27,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                                         Handler<ApplyDataProductContext> buildDiffDataProductHandler,
                                         Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
                                         Handler<ApplyDataProductContext> buildPlanDataProductHandler,
+                                        Handler<ApplyDataProductContext> initializeApplyDataProductHandler,
                                         Handler<ApplyDataProductContext> createDataProductHandler,
                                         Handler<ApplyDataProductContext> createResourcesHandler,
                                         Handler<ApplyDataProductContext> createResourcesDefinitionsHandler,
@@ -39,6 +41,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
         this.buildDiffDataProductHandler = buildDiffDataProductHandler;
         this.planDataProductPolicyRuleHandler = planDataProductPolicyRuleHandler;
         this.buildPlanDataProductHandler = buildPlanDataProductHandler;
+        this.initializeApplyDataProductHandler = initializeApplyDataProductHandler;
         this.createDataProductHandler = createDataProductHandler;
         this.createResourcesHandler = createResourcesHandler;
         this.createResourcesDefinitionsHandler = createResourcesDefinitionsHandler;
@@ -55,6 +58,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                 .link(buildDiffDataProductHandler)
                 .link(planDataProductPolicyRuleHandler)
                 .link(buildPlanDataProductHandler)
+                .link(initializeApplyDataProductHandler)
                 .link(createDataProductHandler)
                 .link(createResourcesHandler)
                 .link(createResourcesDefinitionsHandler)

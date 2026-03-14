@@ -45,6 +45,7 @@ public class CreateResourcesDefinitionsHandler<Context> extends Handler<Context>
                     }
 
                     createResourceDefinitionCommand.execute(resource);
+                    applyDataProductContext.markStepExecuted(step.getPath());
                 });
     }
 
