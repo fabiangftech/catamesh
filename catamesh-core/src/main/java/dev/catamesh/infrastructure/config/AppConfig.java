@@ -53,9 +53,14 @@ public class AppConfig {
         );
     }
 
+    public Query<String, String> getFileFromResourceQuery() {
+        return new GetFileFromResourceQuery();
+    }
+
     public ObjectMapper jsonMapper() {
         return this.jsonConfig.jsonMapper();
     }
+
 
     private DataSource dataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
