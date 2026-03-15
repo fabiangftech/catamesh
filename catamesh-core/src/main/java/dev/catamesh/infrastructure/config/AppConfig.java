@@ -8,12 +8,21 @@ import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
 import dev.catamesh.core.facade.TemplateFacade;
+import dev.catamesh.core.model.DataProduct;
+import dev.catamesh.core.model.Key;
+import dev.catamesh.core.model.Resource;
+import dev.catamesh.core.model.ResourceDefinition;
+import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
+import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
+import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
+import java.util.List;
+import java.util.Optional;
 
 public class AppConfig {
     private static final String CATAMESH = "catamesh";
@@ -46,10 +55,16 @@ public class AppConfig {
 
 
     public DataProductFacade dataProductFacade() {
+        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource());
+        Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource());
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource(), jsonMapper());
         return new DefaultDataProductFacade(
                 diffConfig.diffDataProductChainFactory(),
                 planConfig.planDataProductChainFactory(),
-                applyConfig.applynDataProductChainFactory()
+                applyConfig.applynDataProductChainFactory(),
+                optionalDataProductQuery,
+                allResourcesQuery,
+                getResourceDefinitionQuery
         );
     }
 

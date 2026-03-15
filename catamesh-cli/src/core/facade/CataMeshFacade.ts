@@ -3,4 +3,5 @@ interface CataMeshFacade {
     diff(command: string[]): void;
     plan(command: string[]): void;
     apply(command: string[]): void;
+    get(command: string[]): void;
 }

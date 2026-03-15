@@ -19,6 +19,9 @@ if (require.main === module) {
         case "apply":
             cataMeshFacade.apply(command);
             break;
+        case "get":
+            cataMeshFacade.get(command);
+            break;
         default:
             break;
     }

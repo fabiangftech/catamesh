@@ -15,9 +15,9 @@ public class CataMeshCoreCLICommand {
         try {
             switch (command[0]) {
                 case DIFF, PLAN, APPLY, GET -> {
-                    String[] aux = CLIAdapter.removeKind(command);
+                    String[] auxCommand = CLIAdapter.removeKind(command);
                     if (command[1].equals("data-product")) {
-                        DataProductCLICommand.main(aux);
+                        DataProductCLICommand.main(auxCommand);
                     }
                 }
                 case INIT -> {

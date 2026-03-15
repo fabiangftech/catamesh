@@ -30,6 +30,11 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
         await this.execute(command)
     }
 
+    async get(command: string[]): Promise<void> {
+        const result: string = this.cataMeshCoreCommand.execute(command);
+        console.log(result);
+    }
+
     private async execute(command: string[]): Promise<void> {
         let nameFile: string = command[1];
         nameFile = await this.getNameFileYMLQuery.execute(nameFile);
