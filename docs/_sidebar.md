@@ -1,4 +1,4 @@
-* [Home](/en/README.md)
+* [Home](/)
 * About
   * [Architecture](/en/what-is-catamesh/architecture)
 * Blog
