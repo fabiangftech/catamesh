@@ -1,4 +1,4 @@
-# What is CataMesh? — Architecture
+# Architecture
 
 **CataMesh is a control plane for data products.**
 
