@@ -13,9 +13,9 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
     }
 
     async init(command: string[]): Promise<void> {
-        const nameFile: string = command[2];
+        const fileName: string = command[2];
         const result: string = this.cataMeshCoreCommand.execute(command);
-        await writeFile(nameFile + ".yaml", result, "utf8");
+        await writeFile(fileName + ".yaml", result, "utf8");
     }
 
     async diff(command: string[]): Promise<void> {
@@ -23,7 +23,7 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
     }
 
     async plan(command: string[]): Promise<void> {
-      await this.execute(command)
+        await this.execute(command)
     }
 
     async apply(command: string[]): Promise<void> {
@@ -35,10 +35,17 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
         console.log(result);
     }
 
+    async pull(command: string[]): Promise<void> {
+        const result: string = this.cataMeshCoreCommand.execute(command);
+        const fileName: string = command[2] + ".yaml";
+        await writeFile(fileName, result, "utf8");
+        console.info(`Successfully pulled '${command[2]}' to ${fileName}`);
+    }
+
     private async execute(command: string[]): Promise<void> {
-        let nameFile: string = command[1];
-        nameFile = await this.getNameFileYMLQuery.execute(nameFile);
-        const content: string = await readFile(nameFile, "utf8");
+        let fileName: string = command[1];
+        fileName = await this.getNameFileYMLQuery.execute(fileName);
+        const content: string = await readFile(fileName, "utf8");
         command[1] = this.getKindFromContentQuery.execute(content);
         command[2] = content;
         const result: string = this.cataMeshCoreCommand.execute(command);

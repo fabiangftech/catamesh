@@ -4,4 +4,5 @@ interface CataMeshFacade {
     plan(command: string[]): void;
     apply(command: string[]): void;
     get(command: string[]): void;
+    pull(command: string[]): void;
 }

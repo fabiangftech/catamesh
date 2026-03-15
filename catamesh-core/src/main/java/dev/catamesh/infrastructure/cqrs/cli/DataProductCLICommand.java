@@ -16,6 +16,7 @@ public class DataProductCLICommand {
     public static void main(String[] args) {
         String verb = args[0];
         String yaml;
+        DataProduct dataProduct;
         String dataProductName;
         String result;
         switch (verb) {
@@ -39,7 +40,13 @@ public class DataProductCLICommand {
                 break;
             case GET:
                 dataProductName = args[1];
-                DataProduct dataProduct = appConfig.dataProductFacade().get(dataProductName);
+                dataProduct = appConfig.dataProductFacade().get(dataProductName);
+                result = DataProductAdapter.toYaml(dataProduct);
+                System.out.println(result);
+                break;
+            case PULL:
+                dataProductName = args[1];
+                dataProduct = appConfig.dataProductFacade().get(dataProductName);
                 result = DataProductAdapter.toYaml(dataProduct);
                 System.out.println(result);
                 break;
