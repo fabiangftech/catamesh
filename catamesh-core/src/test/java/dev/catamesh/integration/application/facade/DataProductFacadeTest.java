@@ -65,26 +65,6 @@ class DataProductFacadeTest {
     }
 
     @Test
-    void testApplyUnsupportedActions() {
-        String yaml = appConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
-        String updatedYaml = yaml.replace("description: this is a data product!", "description: updated data product description");
-        DataProductFacade dataProductFacade = appConfig.dataProductFacade();
-
-        dataProductFacade.apply(yaml);
-        ApplyResult applyResult = dataProductFacade.apply(updatedYaml);
-
-        Assertions.assertEquals(ApplyStatus.SUCCESS, applyResult.getStatus());
-        Assertions.assertEquals(0, applyResult.getSummary().getExecuted());
-        Assertions.assertTrue(
-                applyResult.getSteps().stream().anyMatch(step ->
-                        step.getAction().getValue().equals("update")
-                        && step.getStatus() == ApplyStepStatus.SKIPPED
-                        && "Action not supported by current apply pipeline".equals(step.getMessage())
-                )
-        );
-    }
-
-    @Test
     void testGet() {
         String yaml = appConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
         DataProductFacade dataProductFacade = appConfig.dataProductFacade();

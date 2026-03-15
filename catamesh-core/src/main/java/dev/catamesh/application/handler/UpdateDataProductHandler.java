@@ -7,25 +7,24 @@ import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.PlanAction;
 import dev.catamesh.core.model.PlanStepType;
 
-public class CreateDataProductHandler<C> extends Handler<C> {
-    private final Command<DataProduct, DataProduct> createDataProductCommand;
+public class UpdateDataProductHandler<C> extends Handler<C> {
+    private final Command<DataProduct, DataProduct> updateDataProductCommand;
 
-    public CreateDataProductHandler(Command<DataProduct, DataProduct> createDataProductCommand) {
-        this.createDataProductCommand = createDataProductCommand;
+    public UpdateDataProductHandler(Command<DataProduct, DataProduct> updateDataProductCommand) {
+        this.updateDataProductCommand = updateDataProductCommand;
     }
-
     @Override
     protected void doHandle(C context) {
         ApplyDataProductContext applyDataProductContext = (ApplyDataProductContext) context;
         boolean shouldCreate = applyDataProductContext.getPlanResult().getSteps().stream()
                 .anyMatch(step ->
-                        step.getAction() == PlanAction.CREATE &&
+                        step.getAction() == PlanAction.UPDATE &&
                         (step.getType() == PlanStepType.METADATA || step.getType() == PlanStepType.SPEC)
                 );
         if (shouldCreate) {
-            createDataProductCommand.execute(applyDataProductContext.getDesiredDataProduct());
+            updateDataProductCommand.execute(applyDataProductContext.getDesiredDataProduct());
             applyDataProductContext.getPlanResult().getSteps().stream()
-                    .filter(step -> step.getAction() == PlanAction.CREATE)
+                    .filter(step -> step.getAction() == PlanAction.UPDATE)
                     .filter(step -> step.getType() == PlanStepType.METADATA || step.getType() == PlanStepType.SPEC)
                     .forEach(step -> applyDataProductContext.markStepExecuted(step.getPath()));
         }

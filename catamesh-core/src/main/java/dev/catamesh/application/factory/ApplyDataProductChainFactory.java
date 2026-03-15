@@ -17,6 +17,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
     private final Handler<ApplyDataProductContext> createDataProductHandler;
     private final Handler<ApplyDataProductContext> createResourcesHandler;
     private final Handler<ApplyDataProductContext> createResourcesDefinitionsHandler;
+    private final Handler<ApplyDataProductContext> updateDataProductHandler;
     private final Handler<ApplyDataProductContext> buildApplyDataProductHandler;
 
     public ApplyDataProductChainFactory(Handler<ApplyDataProductContext> yamlToDataProductHandler,
@@ -31,6 +32,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                                         Handler<ApplyDataProductContext> createDataProductHandler,
                                         Handler<ApplyDataProductContext> createResourcesHandler,
                                         Handler<ApplyDataProductContext> createResourcesDefinitionsHandler,
+                                        Handler<ApplyDataProductContext> updateDataProductHandler,
                                         Handler<ApplyDataProductContext> buildApplyDataProductHandler
     ) {
         this.yamlToDataProductHandler = yamlToDataProductHandler;
@@ -45,7 +47,8 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
         this.createDataProductHandler = createDataProductHandler;
         this.createResourcesHandler = createResourcesHandler;
         this.createResourcesDefinitionsHandler = createResourcesDefinitionsHandler;
-        this.buildApplyDataProductHandler=buildApplyDataProductHandler;
+        this.updateDataProductHandler = updateDataProductHandler;
+        this.buildApplyDataProductHandler = buildApplyDataProductHandler;
     }
 
     @Override
@@ -62,6 +65,7 @@ public class ApplyDataProductChainFactory implements Factory<Void, Handler<Apply
                 .link(createDataProductHandler)
                 .link(createResourcesHandler)
                 .link(createResourcesDefinitionsHandler)
+                .link(updateDataProductHandler)
                 .link(buildApplyDataProductHandler);
         return yamlToDataProductHandler;
     }

@@ -38,6 +38,7 @@ public class GetCurrentDataProductHandler<Context> extends Handler<Context> {
         List<Resource> resources = allResourcesQuery.execute(dataProductName);
         resources.forEach(resource -> resource.setDefinition(getResourceDefinitionQuery.execute(resource.getKey())));
         currentDataProduct.setResources(resources);
+        dataProductContext.getDesiredDataProduct().getMetadata().setId(currentDataProduct.getMetadata().getId());
         dataProductContext.setCurrentDataProduct(currentDataProduct);
     }
 }
