@@ -4,10 +4,7 @@ import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.DataProduct;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.PlanResult;
-import dev.catamesh.infrastructure.adapter.ApplyToStringAdapter;
-import dev.catamesh.infrastructure.adapter.CLIJsonAdapter;
-import dev.catamesh.infrastructure.adapter.DiffToStringAdapter;
-import dev.catamesh.infrastructure.adapter.PlanToStringAdapter;
+import dev.catamesh.infrastructure.adapter.*;
 import dev.catamesh.infrastructure.config.AppConfig;
 
 import static dev.catamesh.infrastructure.cqrs.cli.CataMeshCoreCLICommand.*;
@@ -43,7 +40,8 @@ public class DataProductCLICommand {
             case GET:
                 dataProductName = args[1];
                 DataProduct dataProduct = appConfig.dataProductFacade().get(dataProductName);
-                System.out.println(CLIJsonAdapter.toJson(dataProduct, appConfig.jsonMapper()));
+                result = DataProductAdapter.toYaml(dataProduct);
+                System.out.println(result);
                 break;
         }
     }
