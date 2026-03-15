@@ -1,116 +1,87 @@
 # What is CataMesh? — Architecture
 
-**CataMesh** is a framework and control plane for defining, managing, and evolving **data products** using a declarative approach. It enables teams to describe data infrastructure and resources as code, apply changes safely, and maintain a consistent catalog of data products.
+**CataMesh is a control plane for data products.**
 
-CataMesh is designed to manage data platforms at scale by treating data products as versioned artifacts that can be diffed, planned, and applied in a controlled workflow.
+Teams describe the desired state of a data product in YAML. CataMesh reads that declaration, compares it with the current state stored in the control plane, and produces a controlled `diff -> plan -> apply` workflow.
 
-Here, we explain the key architectural concepts behind CataMesh.
+This page explains the architecture at a high level without assuming deep knowledge of the codebase.
 
----
+## What CataMesh Is
 
-# Declarative Data Products
+CataMesh treats a data product as a versioned, declarative artifact instead of a collection of manual platform changes.
 
-In CataMesh, every **data product** is defined declaratively using a configuration file (for example, YAML).
-This file describes metadata, resources, and specifications that represent the data product.
+In the current product, the control plane is centered on storing and reconciling data product state. It is the place where metadata, spec, resources, and resource definitions are compared and persisted. External platform provisioning can be connected to this model, but that is an integration concern rather than the main behavior shown by the current core.
 
-Instead of manually creating infrastructure or configurations, teams declare the **desired state** of the data product.
+```mermaid
+flowchart LR
+    A[Domain team YAML] --> B[CataMesh control plane]
+    B --> C[Diff / Plan / Apply]
+    C --> D[Persisted data product state]
+    C -. Integration-dependent .-> E[External platform actions]
+```
 
-For example, a data product may include:
+## How a Data Product Is Modeled
 
-* storage resources such as buckets or tables
-* streaming components
-* schemas and definitions
-* metadata describing ownership and domain
+A data product in CataMesh is declared in YAML with a small, explicit structure:
 
-CataMesh then evaluates the difference between the **current state** and the **desired state**.
+* `metadata` identifies the product and its domain
+* `spec` describes the product type and its resources
+* each `resource` has a `kind`
+* each resource points to a `resource definition`
 
-This allows the system to safely determine what changes are required.
+The current repository models data products conservatively. The implemented examples are currently centered on `source-aligned` data products, resources such as `bucket` and `flink`, and a built-in `bucket/v1` resource definition schema.
 
----
+```mermaid
+flowchart TD
+    A[Data Product] --> B[Metadata]
+    A --> C[Spec]
+    C --> D[Resources]
+    D --> E[Resource]
+    E --> F[Resource Definition]
+```
 
-# Diff, Plan, Apply Workflow
+This separation matters because CataMesh can track the product-level declaration independently from the resource-specific definition attached to each resource.
 
-CataMesh uses a workflow inspired by modern infrastructure tools to safely manage changes.
+## How Changes Flow Through CataMesh
 
-### Diff
+The core workflow is simple:
 
-The **diff** step compares the declared data product configuration with the current state stored in the control plane.
+* `diff` compares desired YAML with the current stored state
+* `plan` turns that delta into explicit steps
+* `apply` executes the supported steps and persists the resulting state
 
-It identifies:
+This makes changes reviewable before execution and keeps the current state visible to the control plane.
 
-* resources to be created
-* resources to be updated
-* resources to be removed
+```mermaid
+flowchart LR
+    A[Desired YAML] --> C[Diff]
+    B[Current stored state] --> C
+    C --> D[Plan]
+    D --> E[Apply]
+    E --> F[Updated stored state]
+```
 
-This provides visibility into the exact differences before any action is taken.
+In the current implementation, `apply` fully supports creation flows for data products, resources, and resource definitions. Updates and deletes can appear in `diff` and `plan`, but they are not yet fully executed by the current apply pipeline.
 
----
+## What the Control Plane Persists Today
 
-### Plan
+Today, the control plane behavior is primarily persistence and reconciliation oriented.
 
-The **plan** step converts the detected differences into a sequence of execution steps.
+It stores the declared structure of a data product and the related resources that belong to it. In practice, that means CataMesh can:
 
-Each step represents an action that must be performed to reconcile the current state with the desired state.
+* read a declared data product from YAML
+* validate its structure
+* compare it with the stored version
+* produce a plan of changes
+* persist supported create operations
+* retrieve the current stored data product state
 
-For example:
+This is why it is more accurate to describe CataMesh as a control plane for data product state than as a broad end-to-end data platform orchestrator.
 
-* updating metadata
-* creating a new resource
-* modifying a resource definition
-* deleting obsolete components
+## Why This Architecture Matters
 
-The plan ensures that changes are explicit, predictable, and reviewable before execution.
+This architecture gives teams a predictable way to evolve data products.
 
----
+Instead of relying on ad hoc changes, they work from a declared desired state, inspect the difference against current state, and apply supported changes through a consistent workflow. That makes the model easier to understand, easier to review, and easier to extend over time.
 
-### Apply
-
-The **apply** step executes the plan.
-
-During this phase, CataMesh updates the control plane state and persists the new configuration of the data product.
-
-Depending on the platform integration, this step may also trigger infrastructure provisioning or updates in external systems.
-
----
-
-# Manage Data Products at Scale
-
-CataMesh is designed to support organizations with **large numbers of data products and teams**.
-
-The architecture enables:
-
-* versioned data product definitions
-* reproducible deployments
-* clear ownership and governance
-* automated change tracking
-
-Because data products are treated as structured resources, organizations can manage hundreds or thousands of data products consistently.
-
----
-
-# Extensible Resource Model
-
-CataMesh separates the **data product definition** from the **resource implementation**.
-
-Each resource references a **resource definition**, which describes how that resource should behave.
-
-This allows platforms to evolve independently and enables teams to reuse standardized resource definitions across multiple data products.
-
-Examples of resources may include:
-
-* storage buckets
-* streaming topics
-* compute pipelines
-* data schemas
-
-This modular architecture allows CataMesh to integrate with many data platform technologies.
-
----
-
-# A Control Plane for the Data Platform
-
-CataMesh acts as a **control plane** for data products.
-
-Instead of managing infrastructure manually, teams interact with CataMesh to declare and evolve data products. The platform keeps track of changes, enforces policies, and ensures that the data platform remains consistent.
-
-By treating data products as declarative artifacts, CataMesh enables organizations to scale their data platforms with the same principles used in modern infrastructure and software engineering.
+For a new reader, the key idea is simple: CataMesh keeps data product intent explicit, compares that intent with what is currently stored, and uses that gap to drive controlled change.
