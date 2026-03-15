@@ -11,7 +11,5 @@ stateDiagram-v2
     loadCurrentDataProductForDiff: Get Current DataProduct
     loadCurrentDataProductForDiff --> diffDataProductHandler
     diffDataProductHandler: Diff Data Product
-    diffDataProductHandler --> planDataProductPolicyRule
-    planDataProductPolicyRule: Plan Policy Rules for Data Product
-    planDataProductPolicyRule --> planDataProduct
+    diffDataProductHandler --> planDataProduct
     planDataProduct: Plan Data Product

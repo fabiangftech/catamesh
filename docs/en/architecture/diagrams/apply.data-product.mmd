@@ -8,6 +8,8 @@ stateDiagram-v2
     planDataProductPolicyRule: Plan Policy Rules for Data Product
     planDataProduct: Plan Data Product
     createDataProduct: Create Data Product
+    createResources: Create Resources
+    createResourcesDefinitions: Create Resources Definitions
 
     [*] --> yamlToDataProduct
     yamlToDataProduct --> validateDataProductSchema
@@ -18,4 +20,6 @@ stateDiagram-v2
     diffDataProductHandler --> planDataProductPolicyRule
     planDataProductPolicyRule --> planDataProduct
     planDataProduct --> createDataProduct
+    createDataProduct --> createResources
+    createResources --> createResourcesDefinitions
 
