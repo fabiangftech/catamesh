@@ -37,40 +37,37 @@ public class AppConfig {
     private final PlanConfig planConfig;
     private final ApplyConfig applyConfig;
     private final JSONConfig jsonConfig;
+    private final CQRSConfig cqrsConfig;
 
     public AppConfig() {
         DataSource dataSource = dataSource();
+        this.diffConfig = new DiffConfig(dataSource);
+        this.planConfig = new PlanConfig(dataSource);
+        this.applyConfig = new ApplyConfig(dataSource);
+        this.jsonConfig = new JSONConfig();
+        this.cqrsConfig= new CQRSConfig(dataSource, jsonConfig.jsonMapper());
         StartApplicationFacade startApplicationFacade = startApplicationFacade(dataSource);
-        diffConfig = new DiffConfig(dataSource);
-        planConfig = new PlanConfig(dataSource);
-        applyConfig = new ApplyConfig(dataSource);
-        jsonConfig = new JSONConfig();
         startApplicationFacade.start();
     }
 
     public StartApplicationFacade startApplicationFacade(DataSource dataSource) {
-        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
-        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, getFileFromResourceQuery);
+        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, this.cqrsConfig.getFileFromResourceQuery());
         return new DefaultStartApplicationFacade(initTablesDBCommand);
     }
 
     public TemplateFacade templateFacade() {
-        Query<String, String> getFileFromResourceQuery = new GetFileFromResourceQuery();
-        return new DefaultTemplateFacade(getFileFromResourceQuery);
+        return new DefaultTemplateFacade(this.cqrsConfig.getFileFromResourceQuery());
     }
 
 
     public DataProductFacade dataProductFacade() {
-        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource());
-        Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource());
-        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource(), jsonMapper());
         return new DefaultDataProductFacade(
                 diffConfig.diffDataProductChainFactory(),
                 planConfig.planDataProductChainFactory(),
                 applyConfig.applynDataProductChainFactory(),
-                optionalDataProductQuery,
-                allResourcesQuery,
-                getResourceDefinitionQuery
+                this.cqrsConfig.getOptionalDataProductQuery(),
+                this.cqrsConfig.getAllResourcesQuery(),
+                this.cqrsConfig.getResourceDefinitionQuery()
         );
     }
 
