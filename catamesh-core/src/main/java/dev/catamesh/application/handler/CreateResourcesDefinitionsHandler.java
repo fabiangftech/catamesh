@@ -9,7 +9,7 @@ import dev.catamesh.core.model.PlanResult;
 import dev.catamesh.core.model.PlanStepType;
 import dev.catamesh.core.model.Resource;
 
-public class CreateResourcesDefinitionsHandler<Context> extends Handler<Context> {
+public class CreateResourcesDefinitionsHandler<C> extends Handler<C> {
     private static final String RESOURCE_DEFINITION_SUFFIX = ".definition";
 
     private final Command<Resource, Resource> createResourceDefinitionCommand;
@@ -19,7 +19,7 @@ public class CreateResourcesDefinitionsHandler<Context> extends Handler<Context>
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         ApplyDataProductContext applyDataProductContext = (ApplyDataProductContext) context;
         PlanResult planResult = applyDataProductContext.getPlanResult();
         planResult.getSteps()

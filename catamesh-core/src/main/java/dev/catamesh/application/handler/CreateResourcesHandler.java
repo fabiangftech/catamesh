@@ -9,7 +9,7 @@ import dev.catamesh.core.model.PlanResult;
 import dev.catamesh.core.model.PlanStepType;
 import dev.catamesh.core.model.Resource;
 
-public class CreateResourcesHandler<Context> extends Handler<Context> {
+public class CreateResourcesHandler<C> extends Handler<C> {
 
     private final Command<Resource, Void> createResourceCommand;
 
@@ -18,7 +18,7 @@ public class CreateResourcesHandler<Context> extends Handler<Context> {
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         ApplyDataProductContext applyDataProductContext = (ApplyDataProductContext) context;
         PlanResult planResult = applyDataProductContext.getPlanResult();
         planResult.getSteps()

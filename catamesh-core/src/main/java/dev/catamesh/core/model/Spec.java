@@ -6,9 +6,11 @@ public class Spec {
 
     private DataProductKind kind;
     private List<Resource> resources;
-    public Spec() {
 
+    public Spec() {
+        // do nothing
     }
+
     public Spec(DataProductKind kind, List<Resource> resources) {
         this.kind = kind;
         this.resources = resources;

@@ -11,7 +11,7 @@ import dev.catamesh.core.model.ResourceDefinition;
 import java.util.List;
 import java.util.Optional;
 
-public class GetCurrentDataProductHandler<Context> extends Handler<Context> {
+public class GetCurrentDataProductHandler<C> extends Handler<C> {
 
     private final Query<String, Optional<DataProduct>> optionalDataProductQuery;
     private final Query<String, List<Resource>> allResourcesQuery;
@@ -27,7 +27,7 @@ public class GetCurrentDataProductHandler<Context> extends Handler<Context> {
     }
 
     @Override
-    protected void doHandle(Context context) {
+    protected void doHandle(C context) {
         DataProductContext dataProductContext = (DataProductContext) context;
         String dataProductName = dataProductContext.getDesiredDataProduct().getMetadata().getName();
         Optional<DataProduct> optional = optionalDataProductQuery.execute(dataProductName);
