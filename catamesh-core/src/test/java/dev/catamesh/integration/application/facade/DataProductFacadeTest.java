@@ -3,23 +3,36 @@ package dev.catamesh.integration.application.facade;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.*;
 import dev.catamesh.infrastructure.config.AppConfig;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 
 class DataProductFacadeTest {
+    @TempDir
+    Path tempDir;
 
     private AppConfig appConfig;
+    private String previousDbDirProperty;
 
     @BeforeEach
-    void setUp() throws IOException {
-        deleteDatabaseFiles();
+    void setUp() {
+        previousDbDirProperty = System.getProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY);
+        System.setProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY, tempDir.resolve("db-file-catamesh").toString());
         appConfig = new AppConfig();
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (previousDbDirProperty == null) {
+            System.clearProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY);
+            return;
+        }
+
+        System.setProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY, previousDbDirProperty);
     }
 
     @Test
@@ -73,23 +86,5 @@ class DataProductFacadeTest {
         Assertions.assertNotNull(dataProduct);
         String json = appConfig.jsonMapper().writeValueAsString(dataProduct);
         Assertions.assertNotNull(json);
-    }
-
-    private void deleteDatabaseFiles() throws IOException {
-        Path dbPath = Path.of("db-file-catamesh");
-        if (!Files.exists(dbPath)) {
-            return;
-        }
-
-        try (var paths = Files.walk(dbPath)) {
-            paths.sorted(Comparator.reverseOrder())
-                    .forEach(path -> {
-                        try {
-                            Files.deleteIfExists(path);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-        }
     }
 }

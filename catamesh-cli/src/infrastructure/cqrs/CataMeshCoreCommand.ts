@@ -3,13 +3,23 @@ import {CataMeshCoreConfig, SpawnProcess} from "../config/CataMeshCoreConfig";
 import {Command} from "../../core/cqrs/Command";
 
 export class CataMeshCoreCommand implements Command<string[], string> {
-    constructor(private readonly spawnProcess: SpawnProcess = spawnSync) {
+    constructor(
+        private readonly spawnProcess: SpawnProcess = spawnSync,
+        private readonly env: NodeJS.ProcessEnv = process.env,
+    ) {
     }
 
     execute(args: string[]): string {
+        const databaseDirectory = CataMeshCoreConfig.databaseDirectory(this.env);
         const child = this.spawnProcess(
             "java",
-            ["-jar", CataMeshCoreConfig.CORE_JAR_PATH, args[0], ...args.slice(1)],
+            [
+                `-D${CataMeshCoreConfig.DB_DIR_SYSTEM_PROPERTY}=${databaseDirectory}`,
+                "-jar",
+                CataMeshCoreConfig.CORE_JAR_PATH,
+                args[0],
+                ...args.slice(1),
+            ],
             {encoding: "utf8"},
         );
         if (child.error) {

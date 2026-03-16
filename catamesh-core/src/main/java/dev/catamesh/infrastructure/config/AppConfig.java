@@ -21,12 +21,18 @@ import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 public class AppConfig {
     private static final String CATAMESH = "catamesh";
-    private static final String DEFAULT_H2_URL = "jdbc:h2:file:./db-file-catamesh/catamesh_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+    public static final String DB_DIR_SYSTEM_PROPERTY = "catamesh.db.dir";
+    public static final String DB_DIR_ENV_VAR = "CATAMESH_DB_DIR";
+    public static final String DEFAULT_DB_DIR = "./db-file-catamesh";
+    private static final String H2_URL_SUFFIX = ";MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
     private final DiffConfig diffConfig;
     private final PlanConfig planConfig;
     private final ApplyConfig applyConfig;
@@ -79,9 +85,57 @@ public class AppConfig {
 
     private DataSource dataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setURL(DEFAULT_H2_URL);
+        dataSource.setURL(resolveDatabaseUrl());
         dataSource.setUser(CATAMESH);
         dataSource.setPassword("");
         return dataSource;
+    }
+
+    static String resolveDatabaseUrl() {
+        return resolveDatabaseUrl(System.getProperties(), System.getenv());
+    }
+
+    static String resolveDatabaseUrl(Properties systemProperties, Map<String, String> environment) {
+        return resolveDatabaseUrl(resolveDatabaseDirectory(systemProperties, environment));
+    }
+
+    static String resolveDatabaseUrl(String databaseDirectory) {
+        Path databasePath = Path.of(databaseDirectory)
+                .toAbsolutePath()
+                .normalize()
+                .resolve("catamesh_db");
+
+        return "jdbc:h2:file:" + databasePath.toString().replace('\\', '/') + H2_URL_SUFFIX;
+    }
+
+    static String resolveDatabaseDirectory() {
+        return resolveDatabaseDirectory(System.getProperties(), System.getenv());
+    }
+
+    static String resolveDatabaseDirectory(Properties systemProperties, Map<String, String> environment) {
+        String propertyDirectory = trimToNull(systemProperties.getProperty(DB_DIR_SYSTEM_PROPERTY));
+        if (propertyDirectory != null) {
+            return propertyDirectory;
+        }
+
+        String environmentDirectory = trimToNull(environment.get(DB_DIR_ENV_VAR));
+        if (environmentDirectory != null) {
+            return environmentDirectory;
+        }
+
+        return DEFAULT_DB_DIR;
+    }
+
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmedValue = value.trim();
+        if (trimmedValue.isEmpty()) {
+            return null;
+        }
+
+        return trimmedValue;
     }
 }
