@@ -49,6 +49,7 @@ public class ApplyConfig {
         Command<Resource, Void> createResourceCommand = new CreateResourceCommand(dataSource);
         Command<Resource, Resource> createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, jsonConfig.jsonMapper());
         Command<DataProduct, DataProduct> updateDataProductCommand = new UpdateDataProductCommand(dataSource);
+        Command<Resource, Resource> updateResourceCommand = new UpdateResourceCommand(dataSource);
 
         Handler<ApplyDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
         Handler<ApplyDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
@@ -63,6 +64,7 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> createResourcesDataProductHandler = new CreateResourcesHandler<>(createResourceCommand);
         Handler<ApplyDataProductContext> createResourcesDefinitionsHandler = new CreateResourcesDefinitionsHandler<>(createResourceDefinitionCommand);
         Handler<ApplyDataProductContext> updateDataProductHandler = new UpdateDataProductHandler<>(updateDataProductCommand);
+        Handler<ApplyDataProductContext> updateResourceHandler = new UpdateResourceHandler<>(updateResourceCommand);
         Handler<ApplyDataProductContext> buildApplyDataProductHandler = new BuildApplyDataProductHandler<>();
 
         return new ApplyDataProductChainFactory(
@@ -79,6 +81,7 @@ public class ApplyConfig {
                 createResourcesDataProductHandler,
                 createResourcesDefinitionsHandler,
                 updateDataProductHandler,
+                updateResourceHandler,
                 buildApplyDataProductHandler
         );
     }

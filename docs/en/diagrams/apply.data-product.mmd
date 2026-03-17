@@ -10,6 +10,8 @@ stateDiagram-v2
     createDataProduct: Create Data Product
     createResources: Create Resources
     createResourcesDefinitions: Create Resources Definitions
+    updateDataProduct: Update Data Product
+    updateResource: Update Resource
 
     [*] --> yamlToDataProduct
     yamlToDataProduct --> validateDataProductSchema
@@ -22,4 +24,6 @@ stateDiagram-v2
     planDataProduct --> createDataProduct
     createDataProduct --> createResources
     createResources --> createResourcesDefinitions
+    createResourcesDefinitions --> updateDataProduct
+    updateDataProduct --> updateResource
 
