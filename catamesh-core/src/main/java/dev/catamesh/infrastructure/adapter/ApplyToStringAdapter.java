@@ -4,7 +4,6 @@ import dev.catamesh.core.model.ApplyResult;
 import dev.catamesh.core.model.ApplyStep;
 import dev.catamesh.core.model.ApplyStepStatus;
 import dev.catamesh.core.model.ApplySummary;
-import dev.catamesh.core.model.PlanAction;
 import dev.catamesh.core.model.PlanStepType;
 
 import java.util.ArrayList;

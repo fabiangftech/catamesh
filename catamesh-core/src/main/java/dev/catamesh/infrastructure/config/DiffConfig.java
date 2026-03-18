@@ -40,13 +40,14 @@ public class DiffConfig {
         Handler<DiffDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<DiffDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
 
-        return new DiffDataProductChainFactory(
-                yamlToDataProductHandler,
-                validateDataProductSchemaHandler,
-                validateResourceSchemaHandler,
-                validateBucketDefinitionSchemaHandler,
-                getCurrentDataProductHandler,
-                buildDiffDataProductHandler
-        );
+        return DiffDataProductChainFactory.builder()
+                .add(yamlToDataProductHandler)
+                .add(validateDataProductSchemaHandler)
+                .add(validateResourceSchemaHandler)
+                .add(validateBucketDefinitionSchemaHandler)
+                .add(getCurrentDataProductHandler)
+                .add(buildDiffDataProductHandler)
+                .build();
+
     }
 }

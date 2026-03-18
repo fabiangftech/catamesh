@@ -2,8 +2,6 @@ package dev.catamesh.infrastructure.cqrs.cli;
 
 import dev.catamesh.infrastructure.adapter.CLIAdapter;
 
-import java.util.stream.IntStream;
-
 public class CataMeshCoreCLICommand {
     public static final String INIT = "init";
     public static final String DIFF = "diff";
@@ -27,6 +25,7 @@ public class CataMeshCoreCLICommand {
                     }
                 }
                 default -> {
+                    throw new IllegalArgumentException();
                 }
             }
         } catch (Exception e) {

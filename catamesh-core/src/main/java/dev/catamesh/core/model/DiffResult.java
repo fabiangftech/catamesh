@@ -1,7 +1,5 @@
 package dev.catamesh.core.model;
 
-import java.util.List;
-
 public final class DiffResult {
     private final DiffTreeNode root;
     public DiffResult(DiffTreeNode root) {

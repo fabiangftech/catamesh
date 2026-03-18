@@ -8,23 +8,14 @@ import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
 import dev.catamesh.core.facade.TemplateFacade;
-import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.model.Key;
-import dev.catamesh.core.model.Resource;
-import dev.catamesh.core.model.ResourceDefinition;
-import dev.catamesh.infrastructure.cqrs.db.AllResourcesQuery;
-import dev.catamesh.infrastructure.cqrs.db.GetResourceDefinitionQuery;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
-import dev.catamesh.infrastructure.cqrs.db.OptionalDataProductQuery;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
 import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 
 public class AppConfig {

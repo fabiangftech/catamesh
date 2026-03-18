@@ -1,39 +1,37 @@
 package dev.catamesh.application.factory;
 
+import dev.catamesh.application.builder.DiffDataProductChainFactoryBuilder;
 import dev.catamesh.core.factory.Factory;
-import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.DiffDataProductContext;
+import dev.catamesh.core.handler.Handler;
+
+import java.util.List;
+import java.util.Objects;
 
 public class DiffDataProductChainFactory implements Factory<Void, Handler<DiffDataProductContext>> {
-    private final Handler<DiffDataProductContext> yamlToDataProductHandler;
-    private final Handler<DiffDataProductContext> validateDataProductSchemaHandler;
-    private final Handler<DiffDataProductContext> validateResourceSchemaHandler;
-    private final Handler<DiffDataProductContext> validateBucketDefinitionSchemaHandler;
-    private final Handler<DiffDataProductContext> getCurrentDataProductHandler;
-    private final Handler<DiffDataProductContext> buildDiffDataProductHandler;
 
-    public DiffDataProductChainFactory(Handler<DiffDataProductContext> yamlToDataProductHandler,
-                                       Handler<DiffDataProductContext> validateDataProductSchemaHandler,
-                                       Handler<DiffDataProductContext> validateResourceSchemaHandler,
-                                       Handler<DiffDataProductContext> validateBucketDefinitionSchemaHandler,
-                                       Handler<DiffDataProductContext> getCurrentDataProductHandler,
-                                       Handler<DiffDataProductContext> buildDiffDataProductHandler) {
-        this.yamlToDataProductHandler = yamlToDataProductHandler;
-        this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
-        this.validateResourceSchemaHandler = validateResourceSchemaHandler;
-        this.validateBucketDefinitionSchemaHandler = validateBucketDefinitionSchemaHandler;
-        this.getCurrentDataProductHandler = getCurrentDataProductHandler;
-        this.buildDiffDataProductHandler = buildDiffDataProductHandler;
+    private final List<Handler<DiffDataProductContext>> handlers;
+
+    public DiffDataProductChainFactory(List<Handler<DiffDataProductContext>> handlers) {
+        this.handlers = List.copyOf(Objects.requireNonNull(handlers, "handlers cannot be null"));
     }
 
     @Override
     public Handler<DiffDataProductContext> create(Void input) {
-        this.yamlToDataProductHandler
-                .link(validateDataProductSchemaHandler)
-                .link(validateResourceSchemaHandler)
-                .link(validateBucketDefinitionSchemaHandler)
-                .link(getCurrentDataProductHandler)
-                .link(buildDiffDataProductHandler);
-        return yamlToDataProductHandler;
+        if (handlers.isEmpty()) {
+            throw new IllegalStateException("At least one handler is required");
+        }
+
+        Handler<DiffDataProductContext> first = handlers.getFirst();
+
+        for (int i = 0; i < handlers.size() - 1; i++) {
+            handlers.get(i).link(handlers.get(i + 1));
+        }
+
+        return first;
+    }
+
+    public static DiffDataProductChainFactoryBuilder builder() {
+        return new DiffDataProductChainFactoryBuilder();
     }
 }

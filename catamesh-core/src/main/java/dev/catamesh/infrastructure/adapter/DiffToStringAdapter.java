@@ -13,6 +13,10 @@ public final class DiffToStringAdapter {
     private static final String RED = "\u001B[31m";
     private static final String CYAN = "\u001B[36m";
 
+    private DiffToStringAdapter(){
+        // do nothing
+    }
+
     public static String toString(DiffResult diffResult) {
 
         if (diffResult == null) {
