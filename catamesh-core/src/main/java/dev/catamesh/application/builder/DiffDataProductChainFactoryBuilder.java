@@ -20,7 +20,7 @@ public class DiffDataProductChainFactoryBuilder {
 
     public DiffDataProductChainFactory build() {
         if (handlers.isEmpty()) {
-            throw new IllegalStateException("At least one handler is required");
+            throw new IllegalStateException("At least one diff handler is required");
         }
         return new DiffDataProductChainFactory(List.copyOf(handlers));
     }
