@@ -38,13 +38,7 @@ public class DataProductCLICommand {
                 result = ApplyToStringAdapter.toString(applyResult);
                 System.out.println(result);
                 break;
-            case GET:
-                dataProductName = args[1];
-                dataProduct = appConfig.dataProductFacade().get(dataProductName);
-                result = DataProductAdapter.toYaml(dataProduct);
-                System.out.println(result);
-                break;
-            case PULL:
+            case GET, PULL:
                 dataProductName = args[1];
                 dataProduct = appConfig.dataProductFacade().get(dataProductName);
                 result = DataProductAdapter.toYaml(dataProduct);
