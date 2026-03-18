@@ -14,6 +14,9 @@ public class ApplyResult {
     private ApplySummary summary;
     private LocalDateTime executedAt;
 
+    private List<PolicyRule> policyRules;
+
+
     public ApplyResult() {
         // do nothing
     }
@@ -55,5 +58,13 @@ public class ApplyResult {
 
     public void setDataProductName(String dataProductName) {
         this.dataProductName = dataProductName;
+    }
+
+    public List<PolicyRule> getPolicyRules() {
+        return policyRules;
+    }
+
+    public void setPolicyRules(List<PolicyRule> policyRules) {
+        this.policyRules = policyRules;
     }
 }

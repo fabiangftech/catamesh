@@ -49,6 +49,8 @@ public class DefaultDataProductFacade implements DataProductFacade {
         Handler<PlanDataProductContext> chain = planDataProductChainFactory.create();
         PlanDataProductContext context = PlanDataProductContext.create(yaml);
         chain.handle(context);
+        PlanResult planResult = context.getPlanResult();
+        planResult.setPolicyRules(context.getPolicyRules());
         return context.getPlanResult();
     }
 
@@ -57,7 +59,9 @@ public class DefaultDataProductFacade implements DataProductFacade {
         Handler<ApplyDataProductContext> chain = applyDataProductChainFactory.create();
         ApplyDataProductContext context = ApplyDataProductContext.create(yaml);
         chain.handle(context);
-        return context.getApplyResult();
+        ApplyResult applyResult = context.getApplyResult();
+        applyResult.setPolicyRules(context.getPolicyRules());
+        return applyResult;
     }
 
     @Override
