@@ -55,6 +55,5 @@ public final class DataSourceConfig {
         }
         String environmentDirectory = environment.get(DB_DIR_ENV_VAR);
         return Objects.requireNonNullElse(environmentDirectory, DEFAULT_DB_DIR);
-
     }
 }
