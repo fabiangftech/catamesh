@@ -67,22 +67,22 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> updateResourceHandler = new UpdateResourceHandler<>(updateResourceCommand);
         Handler<ApplyDataProductContext> buildApplyDataProductHandler = new BuildApplyDataProductHandler<>();
 
-        return new ApplyDataProductChainFactory(
-                yamlToDataProductHandler,
-                validateDataProductSchemaHandler,
-                validateResourceSchemaHandler,
-                validateBucketDefinitionSchemaHandler,
-                getCurrentDataProductHandler,
-                buildDiffDataProductHandler,
-                planDataProductPolicyRuleHandler,
-                buildPlanDataProductHandler,
-                initializeApplyDataProductHandler,
-                createDataProductHandler,
-                createResourcesDataProductHandler,
-                createResourcesDefinitionsHandler,
-                updateDataProductHandler,
-                updateResourceHandler,
-                buildApplyDataProductHandler
-        );
+        return ApplyDataProductChainFactory.builder()
+                .add(yamlToDataProductHandler)
+                .add(validateDataProductSchemaHandler)
+                .add(validateResourceSchemaHandler)
+                .add(validateBucketDefinitionSchemaHandler)
+                .add(getCurrentDataProductHandler)
+                .add(buildDiffDataProductHandler)
+                .add(planDataProductPolicyRuleHandler)
+                .add(buildPlanDataProductHandler)
+                .add(initializeApplyDataProductHandler)
+                .add(createDataProductHandler)
+                .add(createResourcesDataProductHandler)
+                .add(createResourcesDefinitionsHandler)
+                .add(updateDataProductHandler)
+                .add(updateResourceHandler)
+                .add(buildApplyDataProductHandler)
+                .build();
     }
 }

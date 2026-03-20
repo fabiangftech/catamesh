@@ -1,76 +1,36 @@
 package dev.catamesh.application.factory;
 
+import dev.catamesh.application.builder.ApplyDataProductChainFactoryBuilder;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 
-public class ApplyDataProductChainFactory implements Factory<Void, Handler<ApplyDataProductContext>> {
-    private final Handler<ApplyDataProductContext> yamlToDataProductHandler;
-    private final Handler<ApplyDataProductContext> validateDataProductSchemaHandler;
-    private final Handler<ApplyDataProductContext> validateResourceSchemaHandler;
-    private final Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler;
-    private final Handler<ApplyDataProductContext> getCurrentDataProductHandler;
-    private final Handler<ApplyDataProductContext> buildDiffDataProductHandler;
-    private final Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler;
-    private final Handler<ApplyDataProductContext> buildPlanDataProductHandler;
-    private final Handler<ApplyDataProductContext> initializeApplyDataProductHandler;
-    private final Handler<ApplyDataProductContext> createDataProductHandler;
-    private final Handler<ApplyDataProductContext> createResourcesHandler;
-    private final Handler<ApplyDataProductContext> createResourcesDefinitionsHandler;
-    private final Handler<ApplyDataProductContext> updateDataProductHandler;
-    private final Handler<ApplyDataProductContext> updateResourceHandler;
-    private final Handler<ApplyDataProductContext> buildApplyDataProductHandler;
+import java.util.List;
+import java.util.Objects;
 
-    public ApplyDataProductChainFactory(Handler<ApplyDataProductContext> yamlToDataProductHandler,
-                                        Handler<ApplyDataProductContext> validateDataProductSchemaHandler,
-                                        Handler<ApplyDataProductContext> validateResourceSchemaHandler,
-                                        Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler,
-                                        Handler<ApplyDataProductContext> getCurrentDataProductHandler,
-                                        Handler<ApplyDataProductContext> buildDiffDataProductHandler,
-                                        Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler,
-                                        Handler<ApplyDataProductContext> buildPlanDataProductHandler,
-                                        Handler<ApplyDataProductContext> initializeApplyDataProductHandler,
-                                        Handler<ApplyDataProductContext> createDataProductHandler,
-                                        Handler<ApplyDataProductContext> createResourcesHandler,
-                                        Handler<ApplyDataProductContext> createResourcesDefinitionsHandler,
-                                        Handler<ApplyDataProductContext> updateDataProductHandler,
-                                        Handler<ApplyDataProductContext> updateResourceHandler,
-                                        Handler<ApplyDataProductContext> buildApplyDataProductHandler
-    ) {
-        this.yamlToDataProductHandler = yamlToDataProductHandler;
-        this.validateDataProductSchemaHandler = validateDataProductSchemaHandler;
-        this.validateResourceSchemaHandler = validateResourceSchemaHandler;
-        this.validateBucketDefinitionSchemaHandler = validateBucketDefinitionSchemaHandler;
-        this.getCurrentDataProductHandler = getCurrentDataProductHandler;
-        this.buildDiffDataProductHandler = buildDiffDataProductHandler;
-        this.planDataProductPolicyRuleHandler = planDataProductPolicyRuleHandler;
-        this.buildPlanDataProductHandler = buildPlanDataProductHandler;
-        this.initializeApplyDataProductHandler = initializeApplyDataProductHandler;
-        this.createDataProductHandler = createDataProductHandler;
-        this.createResourcesHandler = createResourcesHandler;
-        this.createResourcesDefinitionsHandler = createResourcesDefinitionsHandler;
-        this.updateDataProductHandler = updateDataProductHandler;
-        this.updateResourceHandler = updateResourceHandler;
-        this.buildApplyDataProductHandler = buildApplyDataProductHandler;
+public class ApplyDataProductChainFactory implements Factory<Void, Handler<ApplyDataProductContext>> {
+    private final List<Handler<ApplyDataProductContext>> handlers;
+
+    public ApplyDataProductChainFactory(List<Handler<ApplyDataProductContext>> handlers) {
+        this.handlers = List.copyOf(Objects.requireNonNull(handlers, "handlers cannot be null"));
     }
 
     @Override
     public Handler<ApplyDataProductContext> create(Void input) {
-        this.yamlToDataProductHandler
-                .link(validateDataProductSchemaHandler)
-                .link(validateResourceSchemaHandler)
-                .link(validateBucketDefinitionSchemaHandler)
-                .link(getCurrentDataProductHandler)
-                .link(buildDiffDataProductHandler)
-                .link(planDataProductPolicyRuleHandler)
-                .link(buildPlanDataProductHandler)
-                .link(initializeApplyDataProductHandler)
-                .link(createDataProductHandler)
-                .link(createResourcesHandler)
-                .link(createResourcesDefinitionsHandler)
-                .link(updateDataProductHandler)
-                .link(updateResourceHandler)
-                .link(buildApplyDataProductHandler);
-        return yamlToDataProductHandler;
+        if (handlers.isEmpty()) {
+            throw new IllegalStateException("At least one handler is required");
+        }
+
+        Handler<ApplyDataProductContext> first = handlers.getFirst();
+
+        for (int i = 0; i < handlers.size() - 1; i++) {
+            handlers.get(i).link(handlers.get(i + 1));
+        }
+
+        return first;
+    }
+
+    public static ApplyDataProductChainFactoryBuilder builder() {
+        return new ApplyDataProductChainFactoryBuilder();
     }
 }
