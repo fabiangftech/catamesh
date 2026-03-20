@@ -6,9 +6,9 @@ import dev.catamesh.application.strategy.PlanResourcesStrategy;
 import dev.catamesh.application.strategy.PlanSpecStrategy;
 import dev.catamesh.core.strategy.PlanStrategy;
 
-public final class PlanStrategyConfig {
+public final class StrategyConfig {
 
-    private PlanStrategyConfig(){
+    private StrategyConfig(){
         // do nothing
     }
 

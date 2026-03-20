@@ -2,7 +2,6 @@ package dev.catamesh.infrastructure.config;
 
 import dev.catamesh.application.handler.*;
 import dev.catamesh.application.strategy.ValidateImmutabilityPolicyRuleStrategy;
-import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.ValidateDataProductContext;
 import dev.catamesh.core.strategy.PolicyRuleStrategy;
@@ -41,7 +40,7 @@ public class HandlerConfig {
     }
 
     public static <T> Handler<T> buildPlanDataProductHandler() {
-        return new BuildPlanDataProductHandler<>(PlanStrategyConfig.planEngineFacade());
+        return new BuildPlanDataProductHandler<>(StrategyConfig.planEngineFacade());
     }
 
     public static <T> Handler<T> initializeApplyDataProductHandler() {
