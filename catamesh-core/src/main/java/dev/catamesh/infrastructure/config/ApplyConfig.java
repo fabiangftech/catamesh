@@ -24,27 +24,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApplyConfig {
-    private final DataSource dataSource;
-
-    public ApplyConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     public Factory<Void, Handler<ApplyDataProductContext>> applynDataProductChainFactory() {
-        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
-        Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
-        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
+        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(DataSourceConfig.get());
+        Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(DataSourceConfig.get());
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(DataSourceConfig.get(), JSONConfig.jsonMapper());
 
         PlanStrategy planMetadataStrategy = new PlanMetadataStrategy();
         PlanStrategy planResourcesStrategy = new PlanResourcesStrategy();
         PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
-        Command<DataProduct, DataProduct> createDataProductCommand = new CreateDataProductCommand(dataSource);
-        Command<Resource, Void> createResourceCommand = new CreateResourceCommand(dataSource);
-        Command<Resource, Resource> createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
-        Command<DataProduct, DataProduct> updateDataProductCommand = new UpdateDataProductCommand(dataSource);
-        Command<Resource, Resource> updateResourceCommand = new UpdateResourceCommand(dataSource);
+        Command<DataProduct, DataProduct> createDataProductCommand = new CreateDataProductCommand(DataSourceConfig.get());
+        Command<Resource, Void> createResourceCommand = new CreateResourceCommand(DataSourceConfig.get());
+        Command<Resource, Resource> createResourceDefinitionCommand = new CreateResourceDefinitionCommand(DataSourceConfig.get(), JSONConfig.jsonMapper());
+        Command<DataProduct, DataProduct> updateDataProductCommand = new UpdateDataProductCommand(DataSourceConfig.get());
+        Command<Resource, Resource> updateResourceCommand = new UpdateResourceCommand(DataSourceConfig.get());
 
         Handler<ApplyDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<ApplyDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
@@ -59,6 +54,7 @@ public class ApplyConfig {
 
         return ApplyDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())
+                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())

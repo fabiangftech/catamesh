@@ -22,7 +22,6 @@ public final class CQRSConfig {
     private final Command<Resource, Resource> createResourceDefinitionCommand;
     private final Query<Key, ResourceDefinition> getResourceDefinitionQuery;
     private final Command<Void, Void> initTablesDBCommand;
-    private final Query<String, Optional<DataProduct>> optionalDataProductQuery;
     private final Query<GetResourceDefinitionDTO, Optional<String>> optionalResourceDefinitionQuery;
     private final Command<DataProduct, DataProduct> updateDataProductCommand;
     private final Query<String, String> getFileFromResourceQuery;
@@ -35,7 +34,6 @@ public final class CQRSConfig {
         this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
         this.getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
         this.initTablesDBCommand = new InitTablesDBCommand(dataSource, this.getFileFromResourceQuery);
-        this.optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         this.optionalResourceDefinitionQuery = new OptionalResourceDefinitionQuery(dataSource);
         this.updateDataProductCommand = new UpdateDataProductCommand(dataSource);
     }
@@ -68,10 +66,6 @@ public final class CQRSConfig {
         return initTablesDBCommand;
     }
 
-    public Query<String, Optional<DataProduct>> getOptionalDataProductQuery() {
-        return optionalDataProductQuery;
-    }
-
     public Query<GetResourceDefinitionDTO, Optional<String>> getOptionalResourceDefinitionQuery() {
         return optionalResourceDefinitionQuery;
     }
@@ -83,4 +77,9 @@ public final class CQRSConfig {
     public Command<DataProduct, DataProduct> getUpdateDataProductCommand() {
         return updateDataProductCommand;
     }
+
+    public static Query<String, Optional<DataProduct>> optionalDataProductQuery() {
+        return new OptionalDataProductQuery(DataSourceConfig.get());
+    }
+
 }

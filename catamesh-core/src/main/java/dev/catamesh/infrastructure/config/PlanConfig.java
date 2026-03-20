@@ -28,7 +28,6 @@ public class PlanConfig {
     }
 
     public Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory() {
-        Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
         Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
 
@@ -38,7 +37,7 @@ public class PlanConfig {
         PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
-        Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
+        Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(CQRSConfig.optionalDataProductQuery(), allResourcesQuery, getResourceDefinitionQuery);
         Handler<PlanDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
 

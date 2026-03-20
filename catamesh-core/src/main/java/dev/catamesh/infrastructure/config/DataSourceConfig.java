@@ -5,6 +5,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import javax.sql.DataSource;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 public final class DataSourceConfig {
@@ -27,7 +28,7 @@ public final class DataSourceConfig {
         localJdbcDataSource.setPassword("");
     }
 
-    public static DataSource dataSource() {
+    public static DataSource get() {
         return localJdbcDataSource;
     }
 
@@ -52,12 +53,8 @@ public final class DataSourceConfig {
         if (propertyDirectory != null) {
             return propertyDirectory;
         }
-
         String environmentDirectory = environment.get(DB_DIR_ENV_VAR);
-        if (environmentDirectory != null) {
-            return environmentDirectory;
-        }
+        return Objects.requireNonNullElse(environmentDirectory, DEFAULT_DB_DIR);
 
-        return DEFAULT_DB_DIR;
     }
 }

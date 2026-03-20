@@ -14,7 +14,7 @@ public class HandlerConfig {
 
     public static <T> Handler<T> validateImmutabilityHandler() {
         PolicyRuleStrategy<ValidateDataProductContext> immutabilityPolicyRuleStrategy =
-                new ValidateImmutabilityPolicyRuleStrategy(CQRSConfig.optionalResourceDefinitionVersionQuery(DataSourceConfig.dataSource()));
+                new ValidateImmutabilityPolicyRuleStrategy(CQRSConfig.optionalResourceDefinitionVersionQuery(DataSourceConfig.get()));
         return new ValidateImmutabilityHandler<>(immutabilityPolicyRuleStrategy);
     }
 

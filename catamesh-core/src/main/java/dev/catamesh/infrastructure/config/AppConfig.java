@@ -20,11 +20,11 @@ public class AppConfig {
     private final CQRSConfig cqrsConfig;
 
     public AppConfig() {
-        this.diffConfig = new DiffConfig(DataSourceConfig.dataSource());
-        this.planConfig = new PlanConfig(DataSourceConfig.dataSource());
-        this.applyConfig = new ApplyConfig(DataSourceConfig.dataSource());
-        this.cqrsConfig= new CQRSConfig(DataSourceConfig.dataSource());
-        StartApplicationFacade startApplicationFacade = startApplicationFacade(DataSourceConfig.dataSource());
+        this.diffConfig = new DiffConfig(DataSourceConfig.get());
+        this.planConfig = new PlanConfig(DataSourceConfig.get());
+        this.applyConfig = new ApplyConfig();
+        this.cqrsConfig= new CQRSConfig(DataSourceConfig.get());
+        StartApplicationFacade startApplicationFacade = startApplicationFacade(DataSourceConfig.get());
         startApplicationFacade.start();
     }
 
@@ -43,7 +43,7 @@ public class AppConfig {
                 diffConfig.diffDataProductChainFactory(),
                 planConfig.planDataProductChainFactory(),
                 applyConfig.applynDataProductChainFactory(),
-                this.cqrsConfig.getOptionalDataProductQuery(),
+                CQRSConfig.optionalDataProductQuery(),
                 this.cqrsConfig.getAllResourcesQuery(),
                 this.cqrsConfig.getResourceDefinitionQuery()
         );
