@@ -19,7 +19,7 @@ public class HandlerConfig {
     }
 
     public static <T> Handler<T> validateDataProductSchemaHandler() {
-        return new ValidateDataProductSchemaHandler<>(JSONConfig.resourceSchema(), JSONConfig.jsonMapper());
+        return new ValidateDataProductSchemaHandler<>(JSONConfig.dataProductSchema(), JSONConfig.jsonMapper());
     }
 
     public static <T> Handler<T> validateResourceSchemaHandler() {
