@@ -44,7 +44,7 @@ public class AppConfig {
                 planConfig.planDataProductChainFactory(),
                 applyConfig.applynDataProductChainFactory(),
                 CQRSConfig.optionalDataProductQuery(),
-                this.cqrsConfig.getAllResourcesQuery(),
+                CQRSConfig.allResourcesQuery(),
                 this.cqrsConfig.getResourceDefinitionQuery()
         );
     }

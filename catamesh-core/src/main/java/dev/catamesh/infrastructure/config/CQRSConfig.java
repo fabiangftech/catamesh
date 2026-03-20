@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 public final class CQRSConfig {
-    private final Query<String, List<Resource>> allResourcesQuery;
     private final Command<DataProduct, DataProduct> createDataProductCommand;
     private final Command<Resource, Void> createResourceCommand;
     private final Command<Resource, Resource> createResourceDefinitionCommand;
@@ -28,7 +27,6 @@ public final class CQRSConfig {
 
     public CQRSConfig(DataSource dataSource) {
         this.getFileFromResourceQuery = new GetFileFromResourceQuery();
-        this.allResourcesQuery = new AllResourcesQuery(dataSource);
         this.createDataProductCommand = new CreateDataProductCommand(dataSource);
         this.createResourceCommand = new CreateResourceCommand(dataSource);
         this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
@@ -42,9 +40,6 @@ public final class CQRSConfig {
         return getFileFromResourceQuery;
     }
 
-    public Query<String, List<Resource>> getAllResourcesQuery() {
-        return allResourcesQuery;
-    }
 
     public Command<DataProduct, DataProduct> getCreateDataProductCommand() {
         return createDataProductCommand;
@@ -82,4 +77,7 @@ public final class CQRSConfig {
         return new OptionalDataProductQuery(DataSourceConfig.get());
     }
 
+    public static  Query<String, List<Resource>> allResourcesQuery(){
+        return  new AllResourcesQuery(DataSourceConfig.get());
+    }
 }
