@@ -19,7 +19,6 @@ public final class CQRSConfig {
     private final Command<DataProduct, DataProduct> createDataProductCommand;
     private final Command<Resource, Void> createResourceCommand;
     private final Command<Resource, Resource> createResourceDefinitionCommand;
-    private final Query<Key, ResourceDefinition> getResourceDefinitionQuery;
     private final Command<Void, Void> initTablesDBCommand;
     private final Query<GetResourceDefinitionDTO, Optional<String>> optionalResourceDefinitionQuery;
     private final Command<DataProduct, DataProduct> updateDataProductCommand;
@@ -30,7 +29,6 @@ public final class CQRSConfig {
         this.createDataProductCommand = new CreateDataProductCommand(dataSource);
         this.createResourceCommand = new CreateResourceCommand(dataSource);
         this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
-        this.getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
         this.initTablesDBCommand = new InitTablesDBCommand(dataSource, this.getFileFromResourceQuery);
         this.optionalResourceDefinitionQuery = new OptionalResourceDefinitionQuery(dataSource);
         this.updateDataProductCommand = new UpdateDataProductCommand(dataSource);
@@ -53,9 +51,6 @@ public final class CQRSConfig {
         return createResourceDefinitionCommand;
     }
 
-    public Query<Key, ResourceDefinition> getResourceDefinitionQuery() {
-        return getResourceDefinitionQuery;
-    }
 
     public Command<Void, Void> getInitTablesDBCommand() {
         return initTablesDBCommand;
@@ -77,7 +72,12 @@ public final class CQRSConfig {
         return new OptionalDataProductQuery(DataSourceConfig.get());
     }
 
-    public static  Query<String, List<Resource>> allResourcesQuery(){
-        return  new AllResourcesQuery(DataSourceConfig.get());
+    public static Query<String, List<Resource>> allResourcesQuery() {
+        return new AllResourcesQuery(DataSourceConfig.get());
     }
+
+    public static Query<Key, ResourceDefinition> getResourceDefinitionQuery() {
+        return new GetResourceDefinitionQuery(DataSourceConfig.get(), JSONConfig.jsonMapper());
+    }
+
 }

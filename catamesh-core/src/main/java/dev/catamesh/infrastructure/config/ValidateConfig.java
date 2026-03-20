@@ -17,7 +17,6 @@ public final class ValidateConfig {
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
-                //todo add handler build validate
                 .build();
     }
 }
