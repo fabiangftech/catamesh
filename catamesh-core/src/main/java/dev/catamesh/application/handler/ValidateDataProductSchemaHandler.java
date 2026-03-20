@@ -7,6 +7,7 @@ import dev.catamesh.application.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.DataProductContext;
+import dev.catamesh.core.handler.ValidateDataProductContext;
 import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
@@ -25,12 +26,13 @@ public class ValidateDataProductSchemaHandler<C> extends Handler<C> {
 
     @Override
     protected void doHandle(C context) {
-        DataProductContext dataProductContext = (DataProductContext) context;
-        String json = SchemaPayloadAdapter.toJson(dataProductContext.getDesiredDataProduct(), jsonMapper);
+        ValidateDataProductContext validateDataProductContext = (ValidateDataProductContext) context;
+        String json = SchemaPayloadAdapter.toJson(validateDataProductContext.getDesiredDataProduct(), jsonMapper);
         List<Error> schemaErrors = dataProductSchema.validate(json, InputFormat.JSON, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig.formatAssertionsEnabled(true)));
         if (!schemaErrors.isEmpty()) {
-            String message = String.format("Error in data product with name=%s", dataProductContext.getDesiredDataProduct().getMetadata().getName());
+            String message = String.format("Error in data product with name=%s", validateDataProductContext.getDesiredDataProduct().getMetadata().getName());
             List<String> errors = SchemaAdapter.toList(schemaErrors);
+            //todo change exception to policy-rule
             throw new SchemaException(message, errors);
         }
     }

@@ -50,7 +50,6 @@ public class ApplyConfig {
         Command<Resource, Resource> updateResourceCommand = new UpdateResourceCommand(dataSource);
 
         Handler<ApplyDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<ApplyDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
@@ -66,7 +65,6 @@ public class ApplyConfig {
 
         return ApplyDataProductChainFactory.builder()
                 .add(yamlToDataProductHandler)
-                .add(validateDataProductSchemaHandler)
                 .add(validateResourceSchemaHandler)
                 .add(validateBucketDefinitionSchemaHandler)
                 .add(getCurrentDataProductHandler)

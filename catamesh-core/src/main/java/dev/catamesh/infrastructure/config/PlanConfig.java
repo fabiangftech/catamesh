@@ -42,7 +42,6 @@ public class PlanConfig {
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
         Handler<PlanDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<PlanDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
         Handler<PlanDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
         Handler<PlanDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
@@ -51,7 +50,6 @@ public class PlanConfig {
 
         return PlanDataProductChainFactory.builder()
                 .add(yamlToDataProductHandler)
-                .add(validateDataProductSchemaHandler)
                 .add(validateResourceSchemaHandler)
                 .add(validateBucketDefinitionSchemaHandler)
                 .add(getCurrentDataProductHandler)

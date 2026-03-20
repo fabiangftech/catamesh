@@ -34,7 +34,6 @@ public class DiffConfig {
         Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
 
         Handler<DiffDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<DiffDataProductContext> validateDataProductSchemaHandler = new ValidateDataProductSchemaHandler<>(jsonConfig.dataProductSchema(), jsonConfig.jsonMapper());
         Handler<DiffDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
         Handler<DiffDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<DiffDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
@@ -42,7 +41,6 @@ public class DiffConfig {
 
         return DiffDataProductChainFactory.builder()
                 .add(yamlToDataProductHandler)
-                .add(validateDataProductSchemaHandler)
                 .add(validateResourceSchemaHandler)
                 .add(validateBucketDefinitionSchemaHandler)
                 .add(getCurrentDataProductHandler)
