@@ -16,43 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 public final class CQRSConfig {
-    private final Command<Resource, Resource> createResourceDefinitionCommand;
-    private final Command<Void, Void> initTablesDBCommand;
-    private final Query<GetResourceDefinitionDTO, Optional<String>> optionalResourceDefinitionQuery;
-    private final Command<DataProduct, DataProduct> updateDataProductCommand;
-    private final Query<String, String> getFileFromResourceQuery;
-
-    public CQRSConfig(DataSource dataSource) {
-        this.getFileFromResourceQuery = new GetFileFromResourceQuery();
-        this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
-        this.initTablesDBCommand = new InitTablesDBCommand(dataSource, this.getFileFromResourceQuery);
-        this.optionalResourceDefinitionQuery = new OptionalResourceDefinitionQuery(dataSource);
-        this.updateDataProductCommand = new UpdateDataProductCommand(dataSource);
-    }
-
-    public Query<String, String> getFileFromResourceQuery() {
-        return getFileFromResourceQuery;
-    }
-
-    public Command<Resource, Resource> getCreateResourceDefinitionCommand() {
-        return createResourceDefinitionCommand;
-    }
-
-
-    public Command<Void, Void> getInitTablesDBCommand() {
-        return initTablesDBCommand;
-    }
-
-    public Query<GetResourceDefinitionDTO, Optional<String>> getOptionalResourceDefinitionQuery() {
-        return optionalResourceDefinitionQuery;
+    private CQRSConfig() {
+        // do nothing
     }
 
     public static Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery(DataSource dataSource) {
         return new OptionalResourceDefinitionVersionQuery(dataSource, JSONConfig.jsonMapper());
-    }
-
-    public Command<DataProduct, DataProduct> getUpdateDataProductCommand() {
-        return updateDataProductCommand;
     }
 
     public static Query<String, Optional<DataProduct>> optionalDataProductQuery() {
@@ -87,4 +56,11 @@ public final class CQRSConfig {
         return new UpdateResourceCommand(DataSourceConfig.get());
     }
 
+    public static Query<String, String> getFileFromResourceQuery() {
+        return new GetFileFromResourceQuery();
+    }
+
+    public static Command<Void, Void> initTablesDBCommand() {
+        return new InitTablesDBCommand(DataSourceConfig.get(), CQRSConfig.getFileFromResourceQuery());
+    }
 }

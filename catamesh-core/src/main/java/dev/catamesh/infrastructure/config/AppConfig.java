@@ -14,23 +14,18 @@ import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import javax.sql.DataSource;
 
 public class AppConfig {
-    private final CQRSConfig cqrsConfig;
-
     public AppConfig() {
-        this.cqrsConfig= new CQRSConfig(DataSourceConfig.get());
-        StartApplicationFacade startApplicationFacade = startApplicationFacade(DataSourceConfig.get());
+        StartApplicationFacade startApplicationFacade = startApplicationFacade();
         startApplicationFacade.start();
     }
 
-    public StartApplicationFacade startApplicationFacade(DataSource dataSource) {
-        Command<Void, Void> initTablesDBCommand = new InitTablesDBCommand(dataSource, this.cqrsConfig.getFileFromResourceQuery());
-        return new DefaultStartApplicationFacade(initTablesDBCommand);
+    public StartApplicationFacade startApplicationFacade() {
+        return new DefaultStartApplicationFacade(CQRSConfig.initTablesDBCommand());
     }
 
     public TemplateFacade templateFacade() {
-        return new DefaultTemplateFacade(this.cqrsConfig.getFileFromResourceQuery());
+        return new DefaultTemplateFacade(CQRSConfig.getFileFromResourceQuery());
     }
-
 
     public DataProductFacade dataProductFacade() {
         return new DefaultDataProductFacade(
