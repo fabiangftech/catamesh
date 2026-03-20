@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 public final class CQRSConfig {
-    private final Command<DataProduct, DataProduct> createDataProductCommand;
-    private final Command<Resource, Void> createResourceCommand;
     private final Command<Resource, Resource> createResourceDefinitionCommand;
     private final Command<Void, Void> initTablesDBCommand;
     private final Query<GetResourceDefinitionDTO, Optional<String>> optionalResourceDefinitionQuery;
@@ -26,8 +24,6 @@ public final class CQRSConfig {
 
     public CQRSConfig(DataSource dataSource) {
         this.getFileFromResourceQuery = new GetFileFromResourceQuery();
-        this.createDataProductCommand = new CreateDataProductCommand(dataSource);
-        this.createResourceCommand = new CreateResourceCommand(dataSource);
         this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
         this.initTablesDBCommand = new InitTablesDBCommand(dataSource, this.getFileFromResourceQuery);
         this.optionalResourceDefinitionQuery = new OptionalResourceDefinitionQuery(dataSource);
@@ -36,15 +32,6 @@ public final class CQRSConfig {
 
     public Query<String, String> getFileFromResourceQuery() {
         return getFileFromResourceQuery;
-    }
-
-
-    public Command<DataProduct, DataProduct> getCreateDataProductCommand() {
-        return createDataProductCommand;
-    }
-
-    public Command<Resource, Void> getCreateResourceCommand() {
-        return createResourceCommand;
     }
 
     public Command<Resource, Resource> getCreateResourceDefinitionCommand() {
@@ -78,6 +65,26 @@ public final class CQRSConfig {
 
     public static Query<Key, ResourceDefinition> getResourceDefinitionQuery() {
         return new GetResourceDefinitionQuery(DataSourceConfig.get(), JSONConfig.jsonMapper());
+    }
+
+    public static Command<DataProduct, DataProduct> createDataProductCommand() {
+        return new CreateDataProductCommand(DataSourceConfig.get());
+    }
+
+    public static Command<Resource, Void> createResourceCommand() {
+        return new CreateResourceCommand(DataSourceConfig.get());
+    }
+
+    public static Command<Resource, Resource> createResourceDefinitionCommand() {
+        return new CreateResourceDefinitionCommand(DataSourceConfig.get(), JSONConfig.jsonMapper());
+    }
+
+    public static Command<DataProduct, DataProduct> updateDataProductCommand() {
+        return new UpdateDataProductCommand(DataSourceConfig.get());
+    }
+
+    public static Command<Resource, Resource> updateResourceCommand() {
+        return new UpdateResourceCommand(DataSourceConfig.get());
     }
 
 }

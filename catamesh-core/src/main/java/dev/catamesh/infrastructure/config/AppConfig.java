@@ -14,11 +14,9 @@ import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import javax.sql.DataSource;
 
 public class AppConfig {
-    private final ApplyConfig applyConfig;
     private final CQRSConfig cqrsConfig;
 
     public AppConfig() {
-        this.applyConfig = new ApplyConfig();
         this.cqrsConfig= new CQRSConfig(DataSourceConfig.get());
         StartApplicationFacade startApplicationFacade = startApplicationFacade(DataSourceConfig.get());
         startApplicationFacade.start();
@@ -36,9 +34,9 @@ public class AppConfig {
 
     public DataProductFacade dataProductFacade() {
         return new DefaultDataProductFacade(
-                DiffConfig.diffDataProductChainFactory(),
-                PlanConfig.planDataProductChainFactory(),
-                applyConfig.applynDataProductChainFactory(),
+                FactoryConfig.diffDataProductChainFactory(),
+                FactoryConfig.planDataProductChainFactory(),
+                FactoryConfig.applyDataProductChainFactory(),
                 CQRSConfig.optionalDataProductQuery(),
                 CQRSConfig.allResourcesQuery(),
                 CQRSConfig.getResourceDefinitionQuery()
