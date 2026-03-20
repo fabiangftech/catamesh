@@ -1,15 +1,21 @@
 package dev.catamesh.infrastructure.config;
 
-import dev.catamesh.application.handler.ValidateBucketDefinitionSchemaHandler;
-import dev.catamesh.application.handler.ValidateDataProductSchemaHandler;
-import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
-import dev.catamesh.application.handler.YAMLToDataProductHandler;
+import dev.catamesh.application.handler.*;
+import dev.catamesh.application.strategy.ValidateImmutabilityPolicyRuleStrategy;
 import dev.catamesh.core.handler.Handler;
+import dev.catamesh.core.handler.ValidateDataProductContext;
+import dev.catamesh.core.strategy.PolicyRuleStrategy;
 
 public class HandlerConfig {
 
     public static <T> Handler<T> yamlToDataProductHandler() {
         return new YAMLToDataProductHandler<>(YAMLConfig.yamlMapper());
+    }
+
+    public static <T> Handler<T> validateImmutabilityHandler() {
+        PolicyRuleStrategy<ValidateDataProductContext> immutabilityPolicyRuleStrategy =
+                new ValidateImmutabilityPolicyRuleStrategy(CQRSConfig.optionalResourceDefinitionVersionQuery(DataSourceConfig.dataSource()));
+        return new ValidateImmutabilityHandler<>(immutabilityPolicyRuleStrategy);
     }
 
     public static <T> Handler<T> validateDataProductSchemaHandler() {

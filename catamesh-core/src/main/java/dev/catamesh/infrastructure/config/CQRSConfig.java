@@ -15,8 +15,7 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
-public class CQRSConfig {
-
+public final class CQRSConfig {
     private final Query<String, List<Resource>> allResourcesQuery;
     private final Command<DataProduct, DataProduct> createDataProductCommand;
     private final Command<Resource, Void> createResourceCommand;
@@ -25,21 +24,19 @@ public class CQRSConfig {
     private final Command<Void, Void> initTablesDBCommand;
     private final Query<String, Optional<DataProduct>> optionalDataProductQuery;
     private final Query<GetResourceDefinitionDTO, Optional<String>> optionalResourceDefinitionQuery;
-    private final Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery;
     private final Command<DataProduct, DataProduct> updateDataProductCommand;
     private final Query<String, String> getFileFromResourceQuery;
 
-    public CQRSConfig(DataSource dataSource, ObjectMapper jsonMapper) {
+    public CQRSConfig(DataSource dataSource) {
         this.getFileFromResourceQuery = new GetFileFromResourceQuery();
         this.allResourcesQuery = new AllResourcesQuery(dataSource);
         this.createDataProductCommand = new CreateDataProductCommand(dataSource);
         this.createResourceCommand = new CreateResourceCommand(dataSource);
-        this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, jsonMapper);
-        this.getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonMapper);
+        this.createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
+        this.getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
         this.initTablesDBCommand = new InitTablesDBCommand(dataSource, this.getFileFromResourceQuery);
         this.optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         this.optionalResourceDefinitionQuery = new OptionalResourceDefinitionQuery(dataSource);
-        this.optionalResourceDefinitionVersionQuery = new OptionalResourceDefinitionVersionQuery(dataSource, jsonMapper);
         this.updateDataProductCommand = new UpdateDataProductCommand(dataSource);
     }
 
@@ -79,8 +76,8 @@ public class CQRSConfig {
         return optionalResourceDefinitionQuery;
     }
 
-    public Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> getOptionalResourceDefinitionVersionQuery() {
-        return optionalResourceDefinitionVersionQuery;
+    public static Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery(DataSource dataSource) {
+        return new OptionalResourceDefinitionVersionQuery(dataSource, JSONConfig.jsonMapper());
     }
 
     public Command<DataProduct, DataProduct> getUpdateDataProductCommand() {

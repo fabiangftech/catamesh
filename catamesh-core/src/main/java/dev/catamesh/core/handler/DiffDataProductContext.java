@@ -2,7 +2,7 @@ package dev.catamesh.core.handler;
 
 import dev.catamesh.core.model.DiffResult;
 
-public class DiffDataProductContext extends DataProductContext {
+public class DiffDataProductContext extends ValidateDataProductContext {
     private DiffResult diffResult;
 
     protected DiffDataProductContext(String yaml) {

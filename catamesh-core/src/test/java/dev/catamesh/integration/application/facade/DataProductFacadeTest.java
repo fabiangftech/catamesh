@@ -3,6 +3,7 @@ package dev.catamesh.integration.application.facade;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.*;
 import dev.catamesh.infrastructure.config.AppConfig;
+import dev.catamesh.infrastructure.config.DataSourceConfig;
 import dev.catamesh.infrastructure.config.JSONConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -21,19 +22,19 @@ class DataProductFacadeTest {
 
     @BeforeEach
     void setUp() {
-        previousDbDirProperty = System.getProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY);
-        System.setProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY, tempDir.resolve("db-file-catamesh").toString());
+        previousDbDirProperty = System.getProperty(DataSourceConfig.DB_DIR_SYSTEM_PROPERTY);
+        System.setProperty(DataSourceConfig.DB_DIR_SYSTEM_PROPERTY, tempDir.resolve("db-file-catamesh").toString());
         appConfig = new AppConfig();
     }
 
     @AfterEach
     void tearDown() {
         if (previousDbDirProperty == null) {
-            System.clearProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY);
+            System.clearProperty(DataSourceConfig.DB_DIR_SYSTEM_PROPERTY);
             return;
         }
 
-        System.setProperty(AppConfig.DB_DIR_SYSTEM_PROPERTY, previousDbDirProperty);
+        System.setProperty(DataSourceConfig.DB_DIR_SYSTEM_PROPERTY, previousDbDirProperty);
     }
 
     @Test
