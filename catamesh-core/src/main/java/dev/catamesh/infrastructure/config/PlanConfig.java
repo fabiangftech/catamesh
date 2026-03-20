@@ -56,14 +56,15 @@ public class PlanConfig {
         Handler<PlanDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
         Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
 
-        return new PlanDataProductChainFactory(
-                yamlToDataProductHandler,
-                validateDataProductSchemaHandler,
-                validateResourceSchemaHandler,
-                validateBucketDefinitionSchemaHandler,
-                getCurrentDataProductHandler,
-                buildDiffDataProductHandler,
-                planDataProductPolicyRuleHandler,
-                buildPlanDataProductHandler);
+        return PlanDataProductChainFactory.builder()
+                .add(yamlToDataProductHandler)
+                .add(validateDataProductSchemaHandler)
+                .add(validateResourceSchemaHandler)
+                .add(validateBucketDefinitionSchemaHandler)
+                .add(getCurrentDataProductHandler)
+                .add(buildDiffDataProductHandler)
+                .add(planDataProductPolicyRuleHandler)
+                .add(buildPlanDataProductHandler)
+                .build();
     }
 }

@@ -23,6 +23,6 @@ public class PlanDataProductChainFactoryBuilder {
        if (handlers.isEmpty()) {
            throw new IllegalStateException("At least one plan handler is required");
        }
-        return null;
+        return new PlanDataProductChainFactory(handlers);
     }
 }
