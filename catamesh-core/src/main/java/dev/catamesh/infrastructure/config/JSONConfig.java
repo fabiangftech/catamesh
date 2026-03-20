@@ -15,31 +15,31 @@ public class JSONConfig {
     private static final String SCHEMA_RESOURCE_V1 = "schemas/resource.v1.schema.json";
     private static final String SCHEMA_DEFINITION_BUCKET_V1 = "schemas/definition-bucket.v1.schema.json";
 
-    public ObjectMapper jsonMapper() {
+    public static ObjectMapper jsonMapper() {
         return new ObjectMapper();
     }
 
-    public Schema dataProductSchema() {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(SCHEMA_DATA_PRODUCT_V1);
+    public static Schema dataProductSchema() {
+        InputStream in = JSONConfig.class.getClassLoader().getResourceAsStream(SCHEMA_DATA_PRODUCT_V1);
         return schemaRegistry().getSchema(in);
     }
 
-    public Schema resourceSchema() {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(SCHEMA_RESOURCE_V1);
+    public static Schema resourceSchema() {
+        InputStream in = JSONConfig.class.getClassLoader().getResourceAsStream(SCHEMA_RESOURCE_V1);
         return schemaRegistry().getSchema(in);
     }
 
-    public Schema bucketSchema(){
-        InputStream in = getClass().getClassLoader().getResourceAsStream(SCHEMA_DEFINITION_BUCKET_V1);
+    public static Schema bucketSchema(){
+        InputStream in = JSONConfig.class.getClassLoader().getResourceAsStream(SCHEMA_DEFINITION_BUCKET_V1);
         return schemaRegistry().getSchema(in);
     }
 
-    private SchemaRegistry schemaRegistry() {
+    private static SchemaRegistry schemaRegistry() {
         return SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12,
                 builder -> builder.schemaRegistryConfig(schemaRegistryConfig()));
     }
 
-    private SchemaRegistryConfig schemaRegistryConfig() {
+    private static SchemaRegistryConfig schemaRegistryConfig() {
         return SchemaRegistryConfig.builder()
                 .locale(Locale.ENGLISH)
                 .regularExpressionFactory(JDKRegularExpressionFactory.getInstance()).build();

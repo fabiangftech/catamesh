@@ -3,6 +3,7 @@ package dev.catamesh.integration.application.facade;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.*;
 import dev.catamesh.infrastructure.config.AppConfig;
+import dev.catamesh.infrastructure.config.JSONConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +85,7 @@ class DataProductFacadeTest {
         dataProductFacade.apply(yaml);
         DataProduct dataProduct = dataProductFacade.get("my-first-data-product");
         Assertions.assertNotNull(dataProduct);
-        String json = appConfig.jsonMapper().writeValueAsString(dataProduct);
+        String json = JSONConfig.jsonMapper().writeValueAsString(dataProduct);
         Assertions.assertNotNull(json);
     }
 }

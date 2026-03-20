@@ -28,12 +28,9 @@ public class PlanConfig {
     }
 
     public Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory() {
-        YAMLConfig yamlConfig = new YAMLConfig();
-        JSONConfig jsonConfig = new JSONConfig();
-
         Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
-        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
 
 
         PlanStrategy planMetadataStrategy = new PlanMetadataStrategy();
@@ -41,9 +38,9 @@ public class PlanConfig {
         PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
-        Handler<PlanDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<PlanDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
-        Handler<PlanDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
+        Handler<PlanDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(YAMLConfig.yamlMapper());
+        Handler<PlanDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(JSONConfig.resourceSchema(), JSONConfig.jsonMapper());
+        Handler<PlanDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(JSONConfig.bucketSchema(), JSONConfig.jsonMapper());
         Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<PlanDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);

@@ -27,7 +27,6 @@ public class AppConfig {
     private final DiffConfig diffConfig;
     private final PlanConfig planConfig;
     private final ApplyConfig applyConfig;
-    private final JSONConfig jsonConfig;
     private final CQRSConfig cqrsConfig;
 
     public AppConfig() {
@@ -35,8 +34,7 @@ public class AppConfig {
         this.diffConfig = new DiffConfig(dataSource);
         this.planConfig = new PlanConfig(dataSource);
         this.applyConfig = new ApplyConfig(dataSource);
-        this.jsonConfig = new JSONConfig();
-        this.cqrsConfig= new CQRSConfig(dataSource, jsonConfig.jsonMapper());
+        this.cqrsConfig= new CQRSConfig(dataSource, JSONConfig.jsonMapper());
         StartApplicationFacade startApplicationFacade = startApplicationFacade(dataSource);
         startApplicationFacade.start();
     }
@@ -65,11 +63,6 @@ public class AppConfig {
     public Query<String, String> getFileFromResourceQuery() {
         return new GetFileFromResourceQuery();
     }
-
-    public ObjectMapper jsonMapper() {
-        return this.jsonConfig.jsonMapper();
-    }
-
 
     private DataSource dataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
