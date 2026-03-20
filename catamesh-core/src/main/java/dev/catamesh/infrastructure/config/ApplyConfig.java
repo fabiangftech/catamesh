@@ -3,7 +3,7 @@ package dev.catamesh.infrastructure.config;
 import dev.catamesh.application.facade.PlanEngineFacade;
 import dev.catamesh.application.factory.ApplyDataProductChainFactory;
 import dev.catamesh.application.handler.*;
-import dev.catamesh.application.strategy.PlanImmutabilityPolicyRuleStrategy;
+import dev.catamesh.application.strategy.ValidateImmutabilityPolicyRuleStrategy;
 import dev.catamesh.application.strategy.PlanMetadataStrategy;
 import dev.catamesh.application.strategy.PlanResourcesStrategy;
 import dev.catamesh.application.strategy.PlanSpecStrategy;
@@ -34,8 +34,6 @@ public class ApplyConfig {
         YAMLConfig yamlConfig = new YAMLConfig();
         JSONConfig jsonConfig = new JSONConfig();
 
-        Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery = new OptionalResourceDefinitionVersionQuery(dataSource, jsonConfig.jsonMapper());
-        PolicyRuleStrategy<PlanDataProductContext> planImmutabilityPolicyRuleStrategy = new PlanImmutabilityPolicyRuleStrategy(optionalResourceDefinitionVersionQuery);
         Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
         Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
@@ -57,7 +55,6 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<ApplyDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
-        Handler<ApplyDataProductContext> planDataProductPolicyRuleHandler = new PlanDataProductPolicyRuleHandler<>(planImmutabilityPolicyRuleStrategy);
         Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
         Handler<ApplyDataProductContext> initializeApplyDataProductHandler = new InitializeApplyDataProductHandler<>();
         Handler<ApplyDataProductContext> createDataProductHandler = new CreateDataProductHandler<>(createDataProductCommand);
@@ -74,7 +71,6 @@ public class ApplyConfig {
                 .add(validateBucketDefinitionSchemaHandler)
                 .add(getCurrentDataProductHandler)
                 .add(buildDiffDataProductHandler)
-                .add(planDataProductPolicyRuleHandler)
                 .add(buildPlanDataProductHandler)
                 .add(initializeApplyDataProductHandler)
                 .add(createDataProductHandler)

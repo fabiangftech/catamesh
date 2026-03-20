@@ -2,6 +2,7 @@ package dev.catamesh.application.strategy;
 
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.handler.PlanDataProductContext;
+import dev.catamesh.core.handler.ValidateDataProductContext;
 import dev.catamesh.core.model.PolicyLevel;
 import dev.catamesh.core.model.PolicyRule;
 import dev.catamesh.core.model.ResourceDefinition;
@@ -12,16 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PlanImmutabilityPolicyRuleStrategy implements PolicyRuleStrategy<PlanDataProductContext> {
+public class ValidateImmutabilityPolicyRuleStrategy implements PolicyRuleStrategy<ValidateDataProductContext> {
 
     private final Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery;
 
-    public PlanImmutabilityPolicyRuleStrategy(Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery) {
+    public ValidateImmutabilityPolicyRuleStrategy(Query<GetResourceDefinitionDTO, Optional<ResourceDefinition>> optionalResourceDefinitionVersionQuery) {
         this.optionalResourceDefinitionVersionQuery = optionalResourceDefinitionVersionQuery;
     }
 
     @Override
-    public List<PolicyRule> apply(PlanDataProductContext context) {
+    public List<PolicyRule> apply(ValidateDataProductContext context) {
         List<PolicyRule> policyRules = new ArrayList<>();
         context.getDesiredDataProduct().getSpec().getResources().forEach(resource -> {
             Optional<ResourceDefinition> optional
