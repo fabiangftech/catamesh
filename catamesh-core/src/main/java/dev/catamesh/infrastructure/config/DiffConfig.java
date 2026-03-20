@@ -26,23 +26,18 @@ public class DiffConfig {
     }
 
     public Factory<Void, Handler<DiffDataProductContext>> diffDataProductChainFactory() {
-        YAMLConfig yamlConfig = new YAMLConfig();
-        JSONConfig jsonConfig = new JSONConfig();
-
         Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
-        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
 
-        Handler<DiffDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<DiffDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
-        Handler<DiffDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<DiffDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<DiffDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
 
         return DiffDataProductChainFactory.builder()
-                .add(yamlToDataProductHandler)
-                .add(validateResourceSchemaHandler)
-                .add(validateBucketDefinitionSchemaHandler)
+                .add(HandlerConfig.yamlToDataProductHandler())
+                .add(HandlerConfig.validateDataProductSchemaHandler())
+                .add(HandlerConfig.validateResourceSchemaHandler())
+                .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
                 .add(getCurrentDataProductHandler)
                 .add(buildDiffDataProductHandler)
                 .build();

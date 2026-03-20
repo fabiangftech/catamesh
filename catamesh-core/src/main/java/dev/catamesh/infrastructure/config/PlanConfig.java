@@ -38,17 +38,15 @@ public class PlanConfig {
         PlanStrategy planSpecStrategy = new PlanSpecStrategy(planResourcesStrategy);
         PlanEngineFacade planEngineFacade = new PlanEngineFacade(planMetadataStrategy, planSpecStrategy);
 
-        Handler<PlanDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(YAMLConfig.yamlMapper());
-        Handler<PlanDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(JSONConfig.resourceSchema(), JSONConfig.jsonMapper());
-        Handler<PlanDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(JSONConfig.bucketSchema(), JSONConfig.jsonMapper());
         Handler<PlanDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<PlanDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<PlanDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
 
         return PlanDataProductChainFactory.builder()
-                .add(yamlToDataProductHandler)
-                .add(validateResourceSchemaHandler)
-                .add(validateBucketDefinitionSchemaHandler)
+                .add(HandlerConfig.yamlToDataProductHandler())
+                .add(HandlerConfig.validateDataProductSchemaHandler())
+                .add(HandlerConfig.validateResourceSchemaHandler())
+                .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
                 .add(getCurrentDataProductHandler)
                 .add(buildDiffDataProductHandler)
                 .add(buildPlanDataProductHandler)

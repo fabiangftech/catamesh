@@ -31,12 +31,9 @@ public class ApplyConfig {
     }
 
     public Factory<Void, Handler<ApplyDataProductContext>> applynDataProductChainFactory() {
-        YAMLConfig yamlConfig = new YAMLConfig();
-        JSONConfig jsonConfig = new JSONConfig();
-
         Query<String, Optional<DataProduct>> optionalDataProductQuery = new OptionalDataProductQuery(dataSource);
         Query<String, List<Resource>> allResourcesQuery = new AllResourcesQuery(dataSource);
-        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, jsonConfig.jsonMapper());
+        Query<Key, ResourceDefinition> getResourceDefinitionQuery = new GetResourceDefinitionQuery(dataSource, JSONConfig.jsonMapper());
 
         PlanStrategy planMetadataStrategy = new PlanMetadataStrategy();
         PlanStrategy planResourcesStrategy = new PlanResourcesStrategy();
@@ -45,13 +42,10 @@ public class ApplyConfig {
 
         Command<DataProduct, DataProduct> createDataProductCommand = new CreateDataProductCommand(dataSource);
         Command<Resource, Void> createResourceCommand = new CreateResourceCommand(dataSource);
-        Command<Resource, Resource> createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, jsonConfig.jsonMapper());
+        Command<Resource, Resource> createResourceDefinitionCommand = new CreateResourceDefinitionCommand(dataSource, JSONConfig.jsonMapper());
         Command<DataProduct, DataProduct> updateDataProductCommand = new UpdateDataProductCommand(dataSource);
         Command<Resource, Resource> updateResourceCommand = new UpdateResourceCommand(dataSource);
 
-        Handler<ApplyDataProductContext> yamlToDataProductHandler = new YAMLToDataProductHandler<>(yamlConfig.yamlMapper());
-        Handler<ApplyDataProductContext> validateResourceSchemaHandler = new ValidateResourceSchemaHandler<>(jsonConfig.resourceSchema(), jsonConfig.jsonMapper());
-        Handler<ApplyDataProductContext> validateBucketDefinitionSchemaHandler = new ValidateBucketDefinitionSchemaHandler<>(jsonConfig.bucketSchema(), jsonConfig.jsonMapper());
         Handler<ApplyDataProductContext> getCurrentDataProductHandler = new GetCurrentDataProductHandler<>(optionalDataProductQuery, allResourcesQuery, getResourceDefinitionQuery);
         Handler<ApplyDataProductContext> buildDiffDataProductHandler = new BuildDiffDataProductHandler<>();
         Handler<ApplyDataProductContext> buildPlanDataProductHandler = new BuildPlanDataProductHandler<>(planEngineFacade);
@@ -64,9 +58,10 @@ public class ApplyConfig {
         Handler<ApplyDataProductContext> buildApplyDataProductHandler = new BuildApplyDataProductHandler<>();
 
         return ApplyDataProductChainFactory.builder()
-                .add(yamlToDataProductHandler)
-                .add(validateResourceSchemaHandler)
-                .add(validateBucketDefinitionSchemaHandler)
+                .add(HandlerConfig.yamlToDataProductHandler())
+                .add(HandlerConfig.validateDataProductSchemaHandler())
+                .add(HandlerConfig.validateResourceSchemaHandler())
+                .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
                 .add(getCurrentDataProductHandler)
                 .add(buildDiffDataProductHandler)
                 .add(buildPlanDataProductHandler)

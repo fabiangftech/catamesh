@@ -1,5 +1,6 @@
 package dev.catamesh.application.factory;
 
+import dev.catamesh.application.builder.ValidateDataProductChainFactoryBuilder;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.PlanDataProductContext;
@@ -28,5 +29,9 @@ public class ValidateDataProductChainFactory implements Factory<Void, Handler<Va
         }
 
         return first;
+    }
+
+    public static ValidateDataProductChainFactoryBuilder builder() {
+        return new ValidateDataProductChainFactoryBuilder();
     }
 }
