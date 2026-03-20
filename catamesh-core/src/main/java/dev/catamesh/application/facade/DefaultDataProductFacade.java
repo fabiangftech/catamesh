@@ -4,10 +4,7 @@ import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.exception.NotFoundException;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.factory.Factory;
-import dev.catamesh.core.handler.ApplyDataProductContext;
-import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.DiffDataProductContext;
-import dev.catamesh.core.handler.PlanDataProductContext;
+import dev.catamesh.core.handler.*;
 import dev.catamesh.core.model.*;
 import dev.catamesh.infrastructure.dto.GetResourceDTO;
 
@@ -15,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class DefaultDataProductFacade implements DataProductFacade {
+    private final Factory<Void, Handler<ValidateDataProductContext>> validateDataProductChainFactory;
     private final Factory<Void, Handler<DiffDataProductContext>> diffDataProductChainFactory;
     private final Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory;
     private final Factory<Void, Handler<ApplyDataProductContext>> applyDataProductChainFactory;
@@ -22,18 +20,29 @@ public class DefaultDataProductFacade implements DataProductFacade {
     private final Query<String, List<Resource>> allResourcesQuery;
     private final Query<Key, ResourceDefinition> getResourceDefinitionQuery;
 
-    public DefaultDataProductFacade(Factory<Void, Handler<DiffDataProductContext>> diffDataProductChainFactory,
-                                    Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory,
-                                    Factory<Void, Handler<ApplyDataProductContext>> applyDataProductChainFactory,
-                                    Query<String, Optional<DataProduct>> optionalDataProductQuery,
-                                    Query<String, List<Resource>> allResourcesQuery,
-                                    Query<Key, ResourceDefinition> getResourceDefinitionQuery) {
+    public DefaultDataProductFacade(
+            Factory<Void, Handler<ValidateDataProductContext>> validateDataProductChainFactory,
+            Factory<Void, Handler<DiffDataProductContext>> diffDataProductChainFactory,
+            Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory,
+            Factory<Void, Handler<ApplyDataProductContext>> applyDataProductChainFactory,
+            Query<String, Optional<DataProduct>> optionalDataProductQuery,
+            Query<String, List<Resource>> allResourcesQuery,
+            Query<Key, ResourceDefinition> getResourceDefinitionQuery) {
+        this.validateDataProductChainFactory = validateDataProductChainFactory;
         this.diffDataProductChainFactory = diffDataProductChainFactory;
         this.planDataProductChainFactory = planDataProductChainFactory;
         this.applyDataProductChainFactory = applyDataProductChainFactory;
         this.optionalDataProductQuery = optionalDataProductQuery;
         this.allResourcesQuery = allResourcesQuery;
         this.getResourceDefinitionQuery = getResourceDefinitionQuery;
+    }
+
+    @Override
+    public ValidateResult validate(String yaml) {
+        Handler<ValidateDataProductContext> chain = validateDataProductChainFactory.create();
+        ValidateDataProductContext context = ValidateDataProductContext.create(yaml);
+        chain.handle(context);
+        return context.getValidateResult();
     }
 
     @Override

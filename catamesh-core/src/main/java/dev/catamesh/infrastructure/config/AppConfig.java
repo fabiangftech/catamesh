@@ -29,6 +29,7 @@ public class AppConfig {
 
     public DataProductFacade dataProductFacade() {
         return new DefaultDataProductFacade(
+                FactoryConfig.validateDataProductChainFactory(),
                 FactoryConfig.diffDataProductChainFactory(),
                 FactoryConfig.planDataProductChainFactory(),
                 FactoryConfig.applyDataProductChainFactory(),

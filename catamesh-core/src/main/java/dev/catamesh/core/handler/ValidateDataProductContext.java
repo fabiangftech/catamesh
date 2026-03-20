@@ -23,4 +23,8 @@ public class ValidateDataProductContext extends DataProductContext {
         }
         this.validateResult.addPolicyRule(policyRule);
     }
+
+    public static ValidateDataProductContext create(String yaml) {
+        return new ValidateDataProductContext(yaml);
+    }
 }

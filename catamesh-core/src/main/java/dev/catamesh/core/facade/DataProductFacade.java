@@ -1,11 +1,9 @@
 package dev.catamesh.core.facade;
 
-import dev.catamesh.core.model.ApplyResult;
-import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.model.DiffResult;
-import dev.catamesh.core.model.PlanResult;
+import dev.catamesh.core.model.*;
 
 public interface DataProductFacade {
+    ValidateResult validate(String yaml);
     DiffResult diff(String yaml);
     PlanResult plan(String yaml);
     ApplyResult apply(String yaml);
