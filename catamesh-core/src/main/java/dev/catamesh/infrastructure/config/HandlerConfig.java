@@ -5,7 +5,6 @@ import dev.catamesh.application.handler.ValidateDataProductSchemaHandler;
 import dev.catamesh.application.handler.ValidateResourceSchemaHandler;
 import dev.catamesh.application.handler.YAMLToDataProductHandler;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.PlanDataProductContext;
 
 public class HandlerConfig {
 

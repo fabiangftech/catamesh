@@ -5,6 +5,7 @@ import dev.catamesh.infrastructure.config.AppConfig;
 public class NewTemplateCLICommand {
     private static final AppConfig appConfig = new AppConfig();
 
+    @SuppressWarnings("java:S106")
     public static void main(String[] args) {
         String kind = args[1];
         switch (kind) {

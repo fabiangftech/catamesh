@@ -1,7 +1,6 @@
 package dev.catamesh.application.strategy;
 
 import dev.catamesh.core.cqrs.Query;
-import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.handler.ValidateDataProductContext;
 import dev.catamesh.core.model.PolicyLevel;
 import dev.catamesh.core.model.PolicyRule;

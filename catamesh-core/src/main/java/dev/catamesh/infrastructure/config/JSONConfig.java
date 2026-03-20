@@ -10,10 +10,14 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.Locale;
 
-public class JSONConfig {
+public final class JSONConfig {
     private static final String SCHEMA_DATA_PRODUCT_V1 = "schemas/data-product.v1.schema.json";
     private static final String SCHEMA_RESOURCE_V1 = "schemas/resource.v1.schema.json";
     private static final String SCHEMA_DEFINITION_BUCKET_V1 = "schemas/definition-bucket.v1.schema.json";
+
+    private JSONConfig() {
+        // do nothing
+    }
 
     public static ObjectMapper jsonMapper() {
         return new ObjectMapper();
@@ -29,7 +33,7 @@ public class JSONConfig {
         return schemaRegistry().getSchema(in);
     }
 
-    public static Schema bucketSchema(){
+    public static Schema bucketSchema() {
         InputStream in = JSONConfig.class.getClassLoader().getResourceAsStream(SCHEMA_DEFINITION_BUCKET_V1);
         return schemaRegistry().getSchema(in);
     }

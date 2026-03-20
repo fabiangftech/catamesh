@@ -54,6 +54,7 @@ public interface PlanStrategy {
             case UPDATE -> summary.plusUpdate();
             case DELETE -> summary.plusDelete();
             case NOOP -> summary.plusNoop();
+            default -> throw new IllegalArgumentException();
         }
     }
 

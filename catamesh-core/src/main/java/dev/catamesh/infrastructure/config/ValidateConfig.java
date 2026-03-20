@@ -7,7 +7,11 @@ import dev.catamesh.core.handler.ValidateDataProductContext;
 
 import javax.sql.DataSource;
 
-public class ValidateConfig {
+public final class ValidateConfig {
+    private ValidateConfig() {
+        // do nothing
+    }
+
     public static Factory<Void, Handler<ValidateDataProductContext>> validateDataProductChainFactory(DataSource dataSource) {
         return ValidateDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())

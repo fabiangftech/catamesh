@@ -11,7 +11,6 @@ import dev.catamesh.core.facade.TemplateFacade;
 import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import org.h2.jdbcx.JdbcDataSource;
-import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;

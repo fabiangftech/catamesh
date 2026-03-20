@@ -1,9 +1,7 @@
 package dev.catamesh.application.factory;
 
-import dev.catamesh.application.builder.DiffDataProductChainFactoryBuilder;
 import dev.catamesh.application.builder.PlanDataProductChainFactoryBuilder;
 import dev.catamesh.core.factory.Factory;
-import dev.catamesh.core.handler.DiffDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.PlanDataProductContext;
 

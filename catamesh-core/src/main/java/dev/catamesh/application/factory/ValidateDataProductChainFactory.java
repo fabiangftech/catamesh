@@ -3,7 +3,6 @@ package dev.catamesh.application.factory;
 import dev.catamesh.application.builder.ValidateDataProductChainFactoryBuilder;
 import dev.catamesh.core.factory.Factory;
 import dev.catamesh.core.handler.Handler;
-import dev.catamesh.core.handler.PlanDataProductContext;
 import dev.catamesh.core.handler.ValidateDataProductContext;
 
 import java.util.List;
