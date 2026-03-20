@@ -1,0 +1,13 @@
+stateDiagram-v2
+    yamlToDataProduct: YAML to Data Product
+    validateDataProductSchema: Validate Data Product Schema
+    validateResourceSchema: Validate Resources Schema
+    validateImmutability: Validate Immutability
+    validateBucketDefinitionSchemaHandler: Validate Bucket Definition Schema
+
+    [*] --> yamlToDataProduct
+    yamlToDataProduct --> validateDataProductSchema
+    validateDataProductSchema --> validateResourceSchema
+    validateResourceSchema --> validateImmutability
+    validateImmutability --> validateBucketDefinitionSchemaHandler
+    validateBucketDefinitionSchemaHandler --> [*]
