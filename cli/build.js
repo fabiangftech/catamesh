@@ -6,7 +6,7 @@ const {spawnSync} = require("node:child_process");
 
 const cliDir = __dirname;
 const repoDir = path.resolve(cliDir, "..");
-const coreDir = path.join(repoDir, "catamesh-core");
+const coreDir = path.join(repoDir, "core");
 const distDir = path.join(cliDir, "dist");
 const embeddedCoreDir = path.join(distDir, "core");
 const coreJarPath = path.join(coreDir, "build", "libs", "catamesh-core.jar");

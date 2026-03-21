@@ -38,6 +38,15 @@ class DataProductFacadeTest {
     }
 
     @Test
+    void testValidate() {
+        String yaml = appConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        DataProductFacade dataProductFacade = appConfig.dataProductFacade();
+        dataProductFacade.apply(yaml);
+        ValidateResult validateResult = dataProductFacade.validate(yaml);
+        Assertions.assertNotNull(validateResult);
+    }
+
+    @Test
     void testDiff() {
         String yaml = appConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
         DataProductFacade dataProductFacade = appConfig.dataProductFacade();
