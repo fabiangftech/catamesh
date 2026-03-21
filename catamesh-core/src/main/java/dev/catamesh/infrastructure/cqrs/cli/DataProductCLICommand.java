@@ -20,7 +20,8 @@ public class DataProductCLICommand {
             case VALIDATE:
                 yaml = args[1];
                 ValidateResult validateResult = appConfig.dataProductFacade().validate(yaml);
-                //todo validate-result to string
+                result = ValidateResultAdapter.toString(validateResult);
+                System.out.println(result);
                 break;
             case DIFF:
                 yaml = args[1];

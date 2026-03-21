@@ -11,17 +11,19 @@ public class CataMeshCoreCLICommand {
     public static final String GET = "get";
     public static final String PULL = "pull";
 
+    private static final String TYPE_DATA_PRODUCT="data-product";
+
     public static void main(String[] command) {
         try {
             switch (command[0]) {
                 case VALIDATE, DIFF, PLAN, APPLY, GET, PULL -> {
                     String[] auxCommand = CLIAdapter.removeKind(command);
-                    if (command[1].equals("data-product")) {
+                    if (command[1].equals(TYPE_DATA_PRODUCT)) {
                         DataProductCLICommand.main(auxCommand);
                     }
                 }
                 case INIT -> {
-                    if (command[1].equals("data-product")) {
+                    if (command[1].equals(TYPE_DATA_PRODUCT)) {
                         NewTemplateCLICommand.main(command);
                     }
                 }
