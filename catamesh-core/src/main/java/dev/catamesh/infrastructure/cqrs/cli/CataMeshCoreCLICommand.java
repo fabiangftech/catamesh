@@ -10,7 +10,6 @@ public class CataMeshCoreCLICommand {
     public static final String APPLY = "apply";
     public static final String GET = "get";
     public static final String PULL = "pull";
-
     private static final String TYPE_DATA_PRODUCT="data-product";
 
     public static void main(String[] command) {
