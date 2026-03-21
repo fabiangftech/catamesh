@@ -18,16 +18,20 @@ export class DefaultCataMeshFacade implements CataMeshFacade {
         await writeFile(fileName + ".yaml", result, "utf8");
     }
 
+    async validate(command: string[]): Promise<void> {
+        await this.execute(command);
+    }
+
     async diff(command: string[]): Promise<void> {
-        await this.execute(command)
+        await this.execute(command);
     }
 
     async plan(command: string[]): Promise<void> {
-        await this.execute(command)
+        await this.execute(command);
     }
 
     async apply(command: string[]): Promise<void> {
-        await this.execute(command)
+        await this.execute(command);
     }
 
     async get(command: string[]): Promise<void> {
