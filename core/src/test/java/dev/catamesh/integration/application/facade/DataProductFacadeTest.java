@@ -2,6 +2,7 @@ package dev.catamesh.integration.application.facade;
 
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.model.*;
+import dev.catamesh.infrastructure.adapter.ValidateResultAdapter;
 import dev.catamesh.infrastructure.config.AppConfig;
 import dev.catamesh.infrastructure.config.DataSourceConfig;
 import dev.catamesh.infrastructure.config.JSONConfig;
@@ -44,6 +45,32 @@ class DataProductFacadeTest {
         dataProductFacade.apply(yaml);
         ValidateResult validateResult = dataProductFacade.validate(yaml);
         Assertions.assertNotNull(validateResult);
+        Assertions.assertEquals(1, validateResult.getPolicyRules().size());
+
+        PolicyRule policyRule = validateResult.getPolicyRules().getFirst();
+        Assertions.assertEquals("spec.resources.my-first-component.definition.version", policyRule.path());
+        Assertions.assertEquals(PolicyLevel.ERROR, policyRule.level());
+        Assertions.assertTrue(policyRule.message().contains("0.0.1"));
+    }
+
+    @Test
+    void testValidateWithoutPublishedDefinitions() {
+        String yaml = exampleYaml("my-first-data-product-validate-empty");
+        DataProductFacade dataProductFacade = appConfig.dataProductFacade();
+        ValidateResult validateResult = dataProductFacade.validate(yaml);
+
+        Assertions.assertNotNull(validateResult);
+        Assertions.assertTrue(validateResult.getPolicyRules().isEmpty());
+    }
+
+    @Test
+    void testValidateConsoleOutputWithoutPolicyRules() {
+        String yaml = exampleYaml("my-first-data-product-validate-console");
+        DataProductFacade dataProductFacade = appConfig.dataProductFacade();
+        ValidateResult validateResult = dataProductFacade.validate(yaml);
+
+        Assertions.assertDoesNotThrow(() -> ValidateResultAdapter.toConsoleOutput(validateResult));
+        Assertions.assertEquals("", ValidateResultAdapter.toConsoleOutput(validateResult));
     }
 
     @Test
@@ -97,5 +124,11 @@ class DataProductFacadeTest {
         Assertions.assertNotNull(dataProduct);
         String json = JSONConfig.jsonMapper().writeValueAsString(dataProduct);
         Assertions.assertNotNull(json);
+    }
+
+    private String exampleYaml(String dataProductName) {
+        return appConfig.getFileFromResourceQuery()
+                .execute("examples/data-product.example.yaml")
+                .replace("name: my-first-data-product", "name: " + dataProductName);
     }
 }

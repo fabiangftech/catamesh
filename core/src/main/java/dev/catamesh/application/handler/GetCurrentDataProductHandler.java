@@ -38,7 +38,27 @@ public class GetCurrentDataProductHandler<C> extends Handler<C> {
         List<Resource> resources = allResourcesQuery.execute(dataProductName);
         resources.forEach(resource -> resource.setDefinition(getResourceDefinitionQuery.execute(resource.getKey())));
         currentDataProduct.setResources(resources);
-        dataProductContext.getDesiredDataProduct().getMetadata().setId(currentDataProduct.getMetadata().getId());
+        String currentDataProductId = currentDataProduct.getMetadata().getId();
+        dataProductContext.getDesiredDataProduct().getMetadata().setId(currentDataProductId);
+        reconcileDesiredResources(dataProductContext, resources, currentDataProductId);
         dataProductContext.setCurrentDataProduct(currentDataProduct);
+    }
+
+    private void reconcileDesiredResources(DataProductContext dataProductContext,
+                                           List<Resource> currentResources,
+                                           String currentDataProductId) {
+        for (Resource desiredResource : dataProductContext.getDesiredResources()) {
+            currentResources.stream()
+                    .filter(currentResource -> currentResource.getName().equals(desiredResource.getName()))
+                    .findFirst()
+                    .ifPresent(currentResource -> {
+                        desiredResource.setId(currentResource.getKey());
+                        if (currentResource.getDataProductId() != null) {
+                            desiredResource.setDataProductId(Key.create(currentResource.getDataProductId()));
+                        } else if (currentDataProductId != null) {
+                            desiredResource.setDataProductId(Key.create(currentDataProductId));
+                        }
+                    });
+        }
     }
 }

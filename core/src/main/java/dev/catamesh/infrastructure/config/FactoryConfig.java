@@ -14,21 +14,21 @@ public final class FactoryConfig {
     public static Factory<Void, Handler<ValidateDataProductContext>> validateDataProductChainFactory() {
         return ValidateDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())
-                .add(HandlerConfig.getCurrentDataProductHandler())
-                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
+                .add(HandlerConfig.getCurrentDataProductHandler())
+                .add(HandlerConfig.validateImmutabilityHandler())
                 .build();
     }
     public static Factory<Void, Handler<DiffDataProductContext>> diffDataProductChainFactory() {
         return DiffDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())
-                .add(HandlerConfig.getCurrentDataProductHandler())
-                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
+                .add(HandlerConfig.getCurrentDataProductHandler())
+                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.buildDiffDataProductHandler())
                 .build();
 
@@ -36,11 +36,11 @@ public final class FactoryConfig {
     public static Factory<Void, Handler<PlanDataProductContext>> planDataProductChainFactory() {
         return PlanDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())
-                .add(HandlerConfig.getCurrentDataProductHandler())
-                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
+                .add(HandlerConfig.getCurrentDataProductHandler())
+                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.buildDiffDataProductHandler())
                 .add(HandlerConfig.buildPlanDataProductHandler())
                 .build();
@@ -48,11 +48,11 @@ public final class FactoryConfig {
     public static Factory<Void, Handler<ApplyDataProductContext>> applyDataProductChainFactory() {
         return ApplyDataProductChainFactory.builder()
                 .add(HandlerConfig.yamlToDataProductHandler())
-                .add(HandlerConfig.getCurrentDataProductHandler())
-                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.validateDataProductSchemaHandler())
                 .add(HandlerConfig.validateResourceSchemaHandler())
                 .add(HandlerConfig.validateBucketDefinitionSchemaHandler())
+                .add(HandlerConfig.getCurrentDataProductHandler())
+                .add(HandlerConfig.validateImmutabilityHandler())
                 .add(HandlerConfig.buildDiffDataProductHandler())
                 .add(HandlerConfig.buildPlanDataProductHandler())
                 .add(HandlerConfig.initializeApplyDataProductHandler())
