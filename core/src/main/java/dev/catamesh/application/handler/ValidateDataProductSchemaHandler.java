@@ -7,6 +7,8 @@ import dev.catamesh.application.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.ValidateDataProductContext;
+import dev.catamesh.core.model.PolicyLevel;
+import dev.catamesh.core.model.PolicyRule;
 import dev.catamesh.infrastructure.adapter.SchemaPayloadAdapter;
 import tools.jackson.databind.ObjectMapper;
 
@@ -31,8 +33,7 @@ public class ValidateDataProductSchemaHandler<C> extends Handler<C> {
         if (!schemaErrors.isEmpty()) {
             String message = String.format("Error in data product with name=%s", validateDataProductContext.getDesiredDataProduct().getMetadata().getName());
             List<String> errors = SchemaAdapter.toList(schemaErrors);
-            //todo change exception to policy-rule
-            throw new SchemaException(message, errors);
+            validateDataProductContext.addPolicyRule(PolicyRule.create("", PolicyLevel.ERROR, message));
         }
     }
 }
