@@ -1,9 +1,10 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
 import dev.catamesh.infrastructure.adapter.CLIAdapter;
-
+@SuppressWarnings("java:S106")
 public class CataMeshCoreCLICommand {
     public static final String INIT = "init";
+    public static final String VALIDATE = "validate";
     public static final String DIFF = "diff";
     public static final String PLAN = "plan";
     public static final String APPLY = "apply";
@@ -13,7 +14,7 @@ public class CataMeshCoreCLICommand {
     public static void main(String[] command) {
         try {
             switch (command[0]) {
-                case DIFF, PLAN, APPLY, GET, PULL -> {
+                case VALIDATE, DIFF, PLAN, APPLY, GET, PULL -> {
                     String[] auxCommand = CLIAdapter.removeKind(command);
                     if (command[1].equals("data-product")) {
                         DataProductCLICommand.main(auxCommand);

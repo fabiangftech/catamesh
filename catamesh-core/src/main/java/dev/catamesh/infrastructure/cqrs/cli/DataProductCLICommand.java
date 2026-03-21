@@ -1,9 +1,6 @@
 package dev.catamesh.infrastructure.cqrs.cli;
 
-import dev.catamesh.core.model.ApplyResult;
-import dev.catamesh.core.model.DataProduct;
-import dev.catamesh.core.model.DiffResult;
-import dev.catamesh.core.model.PlanResult;
+import dev.catamesh.core.model.*;
 import dev.catamesh.infrastructure.adapter.*;
 import dev.catamesh.infrastructure.config.AppConfig;
 
@@ -20,6 +17,11 @@ public class DataProductCLICommand {
         String dataProductName;
         String result;
         switch (verb) {
+            case VALIDATE:
+                yaml = args[1];
+                ValidateResult validateResult = appConfig.dataProductFacade().validate(yaml);
+                //todo validate-result to string
+                break;
             case DIFF:
                 yaml = args[1];
                 DiffResult diffResult = appConfig.dataProductFacade().diff(yaml);

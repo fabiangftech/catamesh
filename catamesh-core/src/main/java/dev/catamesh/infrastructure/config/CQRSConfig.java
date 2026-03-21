@@ -9,7 +9,6 @@ import dev.catamesh.core.model.ResourceDefinition;
 import dev.catamesh.infrastructure.cqrs.db.*;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
 import dev.catamesh.infrastructure.dto.GetResourceDefinitionDTO;
-import tools.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.util.List;
