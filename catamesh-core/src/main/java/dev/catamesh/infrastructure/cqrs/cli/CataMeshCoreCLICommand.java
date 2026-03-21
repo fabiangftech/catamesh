@@ -25,9 +25,7 @@ public class CataMeshCoreCLICommand {
                         NewTemplateCLICommand.main(command);
                     }
                 }
-                default -> {
-                    throw new IllegalArgumentException();
-                }
+                default -> throw new IllegalArgumentException();
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
