@@ -10,6 +10,9 @@ if (require.main === module) {
         case "init":
             cataMeshFacade.init(command);
             break;
+        case "validate":
+            cataMeshFacade.validate(command);
+            break;
         case "diff":
             cataMeshFacade.diff(command);
             break;
