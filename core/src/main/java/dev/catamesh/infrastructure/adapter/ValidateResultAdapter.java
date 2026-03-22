@@ -3,6 +3,9 @@ package dev.catamesh.infrastructure.adapter;
 import dev.catamesh.core.model.PolicyRule;
 import dev.catamesh.core.model.ValidateResult;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ValidateResultAdapter {
 
     private ValidateResultAdapter() {
@@ -10,14 +13,23 @@ public final class ValidateResultAdapter {
     }
 
     public static String toConsoleOutput(ValidateResult validateResult) {
-        StringBuilder consoleOutput = new StringBuilder();
-        for (PolicyRule policyRule : validateResult.getPolicyRules()) {
-            consoleOutput
-                    .append(policyRule.path())
-                    .append("=")
-                    .append(policyRule.message())
-                    .append("\n");
+        if (validateResult == null) {
+            return "Validate: null";
         }
-        return consoleOutput.toString();
+
+        List<PolicyRule> policyRules = validateResult.getPolicyRules() == null ? List.of() : validateResult.getPolicyRules();
+        if (policyRules.isEmpty()) {
+            return "Validation passed";
+        }
+
+        List<String> lines = new ArrayList<>();
+        lines.add("Policy rules:");
+        for (PolicyRule policyRule : policyRules) {
+            if (policyRule != null) {
+                lines.add(ConsolePolicyRuleFormatter.formatPolicyRule(policyRule));
+            }
+        }
+
+        return String.join(System.lineSeparator(), lines);
     }
 }

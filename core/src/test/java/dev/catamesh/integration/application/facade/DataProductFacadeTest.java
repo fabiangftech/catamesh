@@ -81,7 +81,7 @@ class DataProductFacadeTest {
         ValidateResult validateResult = dataProductFacade.validate(yaml);
 
         Assertions.assertDoesNotThrow(() -> ValidateResultAdapter.toConsoleOutput(validateResult));
-        Assertions.assertEquals("", ValidateResultAdapter.toConsoleOutput(validateResult));
+        Assertions.assertEquals("Validation passed", ValidateResultAdapter.toConsoleOutput(validateResult));
     }
 
     @Test

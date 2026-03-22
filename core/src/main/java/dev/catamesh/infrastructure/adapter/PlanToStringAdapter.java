@@ -5,7 +5,6 @@ import dev.catamesh.core.model.PlanResult;
 import dev.catamesh.core.model.PlanStep;
 import dev.catamesh.core.model.PlanStepType;
 import dev.catamesh.core.model.PlanSummary;
-import dev.catamesh.core.model.PolicyLevel;
 import dev.catamesh.core.model.PolicyRule;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public final class PlanToStringAdapter {
             lines.add("Policy rules:");
             for (PolicyRule policyRule : policyRules) {
                 if (policyRule != null) {
-                    lines.add(formatPolicyRule(policyRule));
+                    lines.add(ConsolePolicyRuleFormatter.formatPolicyRule(policyRule));
                 }
             }
         }
@@ -80,19 +79,6 @@ public final class PlanToStringAdapter {
         };
     }
 
-    private static String formatPolicyRule(PolicyRule policyRule) {
-        String level = normalizeLevel(policyRule.level());
-        String path = normalizePath(policyRule.path());
-        String message = String.valueOf(policyRule.message());
-        String line = "! [" + level + "] " + path + " - " + message;
-
-        if (policyRule.level() == PolicyLevel.ERROR) {
-            return RED + line + RESET;
-        }
-
-        return line;
-    }
-
     private static String normalizePath(String path) {
         if (path == null || path.isBlank()) {
             return "<root>";
@@ -105,13 +91,6 @@ public final class PlanToStringAdapter {
             return "unknown";
         }
         return type.getValue();
-    }
-
-    private static String normalizeLevel(PolicyLevel level) {
-        if (level == null) {
-            return "unknown";
-        }
-        return level.getValue();
     }
 
     private static String stringify(Object value) {
