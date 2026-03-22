@@ -14,7 +14,7 @@ public final class ValidateResultAdapter {
         for (PolicyRule policyRule : validateResult.getPolicyRules()) {
             consoleOutput
                     .append(policyRule.path())
-                    .append(" : ")
+                    .append("=")
                     .append(policyRule.message())
                     .append("\n");
         }
