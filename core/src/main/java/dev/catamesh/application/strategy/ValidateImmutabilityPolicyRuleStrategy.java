@@ -26,7 +26,7 @@ public class ValidateImmutabilityPolicyRuleStrategy implements PolicyRuleStrateg
         context.getDesiredDataProduct().getSpec().getResources().forEach(resource -> {
             Optional<ResourceDefinition> optional
                     = optionalResourceDefinitionVersionQuery.execute(GetResourceDefinitionDTO.create(resource.getId(), resource.getDefinition().getVersion()));
-            if (optional.isPresent()) {
+            if (optional.isPresent() && !ResourceDefinition.isSameVersionContent(optional.get(), resource.getDefinition())) {
                 String path = "spec.resources." + resource.getName() + ".definition.version";
                 String message = String.format(
                         "Resource definition version '%s' already exists for resource '%s'. " +

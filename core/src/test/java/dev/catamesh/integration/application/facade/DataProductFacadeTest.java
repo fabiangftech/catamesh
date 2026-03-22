@@ -45,8 +45,19 @@ class DataProductFacadeTest {
         dataProductFacade.apply(yaml);
         ValidateResult validateResult = dataProductFacade.validate(yaml);
         Assertions.assertNotNull(validateResult);
-        Assertions.assertEquals(1, validateResult.getPolicyRules().size());
+        Assertions.assertTrue(validateResult.getPolicyRules().isEmpty());
+    }
 
+    @Test
+    void testValidateWhenPublishedDefinitionChangesWithoutVersionBump() {
+        String yaml = appConfig.getFileFromResourceQuery().execute("examples/data-product.example.yaml");
+        DataProductFacade dataProductFacade = appConfig.dataProductFacade();
+
+        dataProductFacade.apply(yaml);
+        ValidateResult validateResult = dataProductFacade.validate(yaml.replace("lifecycleDays: 30", "lifecycleDays: 31"));
+
+        Assertions.assertNotNull(validateResult);
+        Assertions.assertEquals(1, validateResult.getPolicyRules().size());
         PolicyRule policyRule = validateResult.getPolicyRules().getFirst();
         Assertions.assertEquals("spec.resources.my-first-component.definition.version", policyRule.path());
         Assertions.assertEquals(PolicyLevel.ERROR, policyRule.level());
