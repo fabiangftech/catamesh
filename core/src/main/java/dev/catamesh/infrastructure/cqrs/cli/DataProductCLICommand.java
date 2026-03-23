@@ -38,7 +38,7 @@ public class DataProductCLICommand {
             case APPLY:
                 yaml = args[1];
                 ApplyResult applyResult = appConfig.dataProductFacade().apply(yaml);
-                result = ApplyToStringAdapter.toString(applyResult);
+                result = ApplyResultAdapter.toString(applyResult);
                 System.out.println(result);
                 break;
             case GET, PULL:
