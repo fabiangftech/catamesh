@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class PlanToStringAdapterTest {
+class PlantResultAdapterTest {
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String CYAN = "\u001B[36m";
@@ -27,6 +27,6 @@ class PlanToStringAdapterTest {
                 CYAN + "Summary: 0 create, 0 update, 0 delete, 0 noop" + RESET
         );
 
-        Assertions.assertEquals(expected, PlanToStringAdapter.toString(planResult));
+        Assertions.assertEquals(expected, PlantResultAdapter.toString(planResult));
     }
 }

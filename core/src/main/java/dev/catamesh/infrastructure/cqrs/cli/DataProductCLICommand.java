@@ -32,7 +32,7 @@ public class DataProductCLICommand {
             case PLAN:
                 yaml = args[1];
                 PlanResult planResult = appConfig.dataProductFacade().plan(yaml);
-                result = PlanToStringAdapter.toString(planResult);
+                result = PlantResultAdapter.toString(planResult);
                 System.out.println(result);
                 break;
             case APPLY:
