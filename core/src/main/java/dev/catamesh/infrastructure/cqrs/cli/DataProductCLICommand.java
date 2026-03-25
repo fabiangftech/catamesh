@@ -26,7 +26,7 @@ public class DataProductCLICommand {
             case DIFF:
                 yaml = args[1];
                 DiffResult diffResult = appConfig.dataProductFacade().diff(yaml);
-                result = DiffToStringAdapter.toString(diffResult);
+                result = DiffResultAdapter.toString(diffResult);
                 System.out.println(result);
                 break;
             case PLAN:

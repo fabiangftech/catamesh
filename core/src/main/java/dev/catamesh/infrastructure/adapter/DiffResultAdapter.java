@@ -5,7 +5,7 @@ import dev.catamesh.core.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class DiffToStringAdapter {
+public final class DiffResultAdapter {
 
     private static final String RESET = "\u001B[0m";
     private static final String GREEN = "\u001B[32m";
@@ -13,7 +13,7 @@ public final class DiffToStringAdapter {
     private static final String RED = "\u001B[31m";
     private static final String CYAN = "\u001B[36m";
 
-    private DiffToStringAdapter(){
+    private DiffResultAdapter(){
         // do nothing
     }
 
