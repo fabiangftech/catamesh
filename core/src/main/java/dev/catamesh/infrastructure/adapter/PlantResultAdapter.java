@@ -47,7 +47,7 @@ public final class PlantResultAdapter {
             lines.add("Policy rules:");
             for (PolicyRule policyRule : policyRules) {
                 if (policyRule != null) {
-                    lines.add(ConsolePolicyRuleFormatter.formatPolicyRule(policyRule));
+                    lines.add(ConsoleFormatterAdapter.formatPolicyRule(policyRule));
                 }
             }
         }

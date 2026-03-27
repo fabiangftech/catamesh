@@ -3,11 +3,11 @@ package dev.catamesh.infrastructure.adapter;
 import dev.catamesh.core.model.PolicyLevel;
 import dev.catamesh.core.model.PolicyRule;
 
-final class ConsolePolicyRuleFormatter {
+final class ConsoleFormatterAdapter {
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
 
-    private ConsolePolicyRuleFormatter() {
+    private ConsoleFormatterAdapter() {
         // utility class
     }
 
