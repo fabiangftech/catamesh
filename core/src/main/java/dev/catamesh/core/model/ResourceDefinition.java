@@ -39,17 +39,4 @@ public class ResourceDefinition {
         return Objects.equals(current.getSchemaVersion(), candidate.getSchemaVersion())
                && Objects.equals(current.getConfig(), candidate.getConfig());
     }
-
-    public static List<String> immutableDifferences(ResourceDefinition current, ResourceDefinition candidate) {
-        List<String> differences = new ArrayList<>();
-
-        if (!Objects.equals(current.getSchemaVersion(), candidate.getSchemaVersion())) {
-            differences.add("schemaVersion");
-        }
-        if (!Objects.equals(current.getConfig(), candidate.getConfig())) {
-            differences.add("config");
-        }
-
-        return differences;
-    }
 }
