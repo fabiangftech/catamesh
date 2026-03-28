@@ -13,7 +13,7 @@ public class ValidateDataProductChainFactoryBuilder {
     private final List<Handler<ValidateDataProductContext>> handlers = new ArrayList<>();
 
     public ValidateDataProductChainFactoryBuilder add(Handler<ValidateDataProductContext> handler) {
-        Objects.requireNonNull(handler, "handler cannot be null");
+        Objects.requireNonNull(handler, "handler validate cannot be null");
         this.handlers.add(handler);
         return this;
     }

@@ -13,7 +13,7 @@ public class ApplyDataProductChainFactoryBuilder {
     private final List<Handler<ApplyDataProductContext>> handlers = new ArrayList<>();
 
     public ApplyDataProductChainFactoryBuilder add(Handler<ApplyDataProductContext> handler) {
-        Objects.requireNonNull(handler, "handler cannot be null");
+        Objects.requireNonNull(handler, "handler apply cannot be null");
         this.handlers.add(handler);
         return this;
     }

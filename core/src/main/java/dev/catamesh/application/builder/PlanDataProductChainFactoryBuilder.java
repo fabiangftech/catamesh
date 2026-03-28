@@ -13,7 +13,7 @@ public class PlanDataProductChainFactoryBuilder {
     private final List<Handler<PlanDataProductContext>> handlers = new ArrayList<>();
 
     public PlanDataProductChainFactoryBuilder add(Handler<PlanDataProductContext> handler) {
-        Objects.requireNonNull(handler, "handler cannot be null");
+        Objects.requireNonNull(handler, "handler plan cannot be null");
         this.handlers.add(handler);
         return this;
     }

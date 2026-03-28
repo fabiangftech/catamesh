@@ -13,7 +13,7 @@ public class DiffDataProductChainFactoryBuilder {
     private final List<Handler<DiffDataProductContext>> handlers = new ArrayList<>();
 
     public DiffDataProductChainFactoryBuilder add(Handler<DiffDataProductContext> handler) {
-        Objects.requireNonNull(handler, "handler cannot be null");
+        Objects.requireNonNull(handler, "handler diff cannot be null");
         this.handlers.add(handler);
         return this;
     }
