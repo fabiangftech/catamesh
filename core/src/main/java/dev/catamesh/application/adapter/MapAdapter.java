@@ -4,6 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class MapAdapter {
+
+    private MapAdapter(){
+        // do nothing
+    }
     public static Map<String, Object> asStringMap(Object value) {
         if (!(value instanceof Map<?, ?> map)) {
             return null;

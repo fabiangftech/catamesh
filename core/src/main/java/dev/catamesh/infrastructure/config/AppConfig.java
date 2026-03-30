@@ -3,15 +3,11 @@ package dev.catamesh.infrastructure.config;
 import dev.catamesh.application.facade.DefaultDataProductFacade;
 import dev.catamesh.application.facade.DefaultStartApplicationFacade;
 import dev.catamesh.application.facade.DefaultTemplateFacade;
-import dev.catamesh.core.cqrs.Command;
 import dev.catamesh.core.cqrs.Query;
 import dev.catamesh.core.facade.DataProductFacade;
 import dev.catamesh.core.facade.StartApplicationFacade;
 import dev.catamesh.core.facade.TemplateFacade;
-import dev.catamesh.infrastructure.cqrs.db.InitTablesDBCommand;
 import dev.catamesh.infrastructure.cqrs.io.GetFileFromResourceQuery;
-
-import javax.sql.DataSource;
 
 public class AppConfig {
     public AppConfig() {
