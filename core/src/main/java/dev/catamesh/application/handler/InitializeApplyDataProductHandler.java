@@ -1,5 +1,6 @@
 package dev.catamesh.application.handler;
 
+import dev.catamesh.application.adapter.ApplyStepAdapter;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.ApplyResult;
@@ -17,7 +18,7 @@ public class InitializeApplyDataProductHandler<C> extends Handler<C> {
                 applyDataProductContext.getPlanResult()
                         .getSteps()
                         .stream()
-                        .map(ApplyStep::from)
+                        .map(ApplyStepAdapter::from)
                         .toList()
         );
 

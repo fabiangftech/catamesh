@@ -23,16 +23,6 @@ public class ApplyStep {
         this.message = message;
     }
 
-    public static ApplyStep from(PlanStep planStep) {
-        return new ApplyStep(
-                planStep.getPath(),
-                planStep.getType(),
-                planStep.getAction(),
-                null,
-                null
-        );
-    }
-
     public String getPath() {
         return path;
     }
