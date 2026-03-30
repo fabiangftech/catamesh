@@ -15,7 +15,7 @@ public class BuildPlanDataProductHandler<C> extends Handler<C> {
     protected void doHandle(C context) {
         PlanDataProductContext planDataProductContext=(PlanDataProductContext)context;
         PlanResult planResult = planEngineFacade.plan(planDataProductContext.getDiffResult());
-        planResult.setPolicyRules(planDataProductContext.getPolicyRules());
+        planResult.setPolicyRules(planDataProductContext.getPlanResult().getPolicyRules());
         planDataProductContext.setPlanResult(planResult);
     }
 }

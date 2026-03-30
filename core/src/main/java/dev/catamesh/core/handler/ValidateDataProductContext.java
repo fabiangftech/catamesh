@@ -3,6 +3,8 @@ package dev.catamesh.core.handler;
 import dev.catamesh.core.model.PolicyRule;
 import dev.catamesh.core.model.ValidateResult;
 
+import java.util.Objects;
+
 public class ValidateDataProductContext extends DataProductContext {
 
     private final ValidateResult validateResult;
@@ -13,7 +15,7 @@ public class ValidateDataProductContext extends DataProductContext {
     }
 
     public ValidateResult getValidateResult() {
-        return validateResult;
+        return Objects.isNull(validateResult) ? new ValidateResult() : this.validateResult;
     }
 
     public void addPolicyRule(PolicyRule policyRule) {
