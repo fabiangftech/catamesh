@@ -9,6 +9,7 @@ import java.util.List;
 public final class DiffSupport {
 
     private DiffSupport() {
+        // do nothing
     }
 
     public static List<Field> getFields(Class<?> type) {
