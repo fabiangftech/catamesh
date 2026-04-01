@@ -52,7 +52,8 @@ public final class PlantResultAdapter {
                   + summary.getCreate() + " create, "
                   + summary.getUpdate() + " update, "
                   + summary.getDelete() + " delete, "
-                  + summary.getNoop() + " noop"
+                  + summary.getNoop() + " noop, "
+                  + policyRules.size() + " policy checks "
                   + RESET);
 
         return String.join(System.lineSeparator(), lines);
