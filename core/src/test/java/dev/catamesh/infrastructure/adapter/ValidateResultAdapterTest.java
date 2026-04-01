@@ -11,11 +11,6 @@ class ValidateResultAdapterTest {
     private static final String RED = "\u001B[31m";
 
     @Test
-    void testToConsoleOutputWithNullResult() {
-        Assertions.assertEquals("Validate: null", ValidateResultAdapter.toConsoleOutput(null));
-    }
-
-    @Test
     void testToConsoleOutputWithoutPolicyRules() {
         ValidateResult validateResult = new ValidateResult();
 

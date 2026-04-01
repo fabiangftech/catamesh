@@ -22,6 +22,10 @@ public final class ValidateResultAdapter {
             return "Validation passed";
         }
 
+        return toConsoleOutput(policyRules);
+    }
+
+    public static String toConsoleOutput( List<PolicyRule> policyRules) {
         List<String> lines = new ArrayList<>();
         lines.add("Policy rules:");
         for (PolicyRule policyRule : policyRules) {
