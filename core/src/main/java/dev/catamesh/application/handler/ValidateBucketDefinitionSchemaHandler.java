@@ -3,7 +3,7 @@ package dev.catamesh.application.handler;
 import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
-import dev.catamesh.application.adapter.SchemaAdapter;
+import dev.catamesh.infrastructure.adapter.SchemaAdapter;
 import dev.catamesh.core.exception.SchemaException;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.handler.DataProductContext;

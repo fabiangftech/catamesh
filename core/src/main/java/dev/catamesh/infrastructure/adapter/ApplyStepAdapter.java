@@ -1,4 +1,4 @@
-package dev.catamesh.application.adapter;
+package dev.catamesh.infrastructure.adapter;
 
 import dev.catamesh.core.model.ApplyStep;
 import dev.catamesh.core.model.PlanStep;

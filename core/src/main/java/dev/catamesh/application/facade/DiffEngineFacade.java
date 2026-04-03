@@ -1,7 +1,7 @@
 package dev.catamesh.application.facade;
 
 
-import dev.catamesh.core.builder.DiffEngineBuilder;
+import dev.catamesh.application.builder.DiffEngineBuilder;
 import dev.catamesh.core.facade.DiffFacade;
 import dev.catamesh.core.model.DiffResult;
 import dev.catamesh.core.model.DiffTreeNode;

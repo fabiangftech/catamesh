@@ -1,7 +1,7 @@
 package dev.catamesh.application.strategy;
 
-import dev.catamesh.application.adapter.DiffTreeAdapter;
-import dev.catamesh.application.adapter.MapAdapter;
+import dev.catamesh.infrastructure.adapter.DiffTreeAdapter;
+import dev.catamesh.infrastructure.adapter.MapAdapter;
 import dev.catamesh.core.model.DiffTreeNode;
 import dev.catamesh.core.model.PlanResult;
 import dev.catamesh.core.model.PlanStepType;

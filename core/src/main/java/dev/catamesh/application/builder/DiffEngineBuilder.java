@@ -1,4 +1,4 @@
-package dev.catamesh.core.builder;
+package dev.catamesh.application.builder;
 
 import dev.catamesh.application.strategy.DiffTreeNodeStrategy;
 import dev.catamesh.application.facade.DiffEngineFacade;
@@ -14,6 +14,7 @@ public class DiffEngineBuilder {
     private DiffStrategy<DiffTreeNode> strategy;
 
     public DiffEngineBuilder() {
+        // do nothing
     }
 
     public DiffEngineBuilder exclude(String ignored) {

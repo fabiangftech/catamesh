@@ -1,4 +1,4 @@
-package dev.catamesh.application.adapter;
+package dev.catamesh.infrastructure.adapter;
 
 import com.networknt.schema.Error;
 

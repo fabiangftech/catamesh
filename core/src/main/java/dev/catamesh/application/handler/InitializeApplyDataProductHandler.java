@@ -1,10 +1,9 @@
 package dev.catamesh.application.handler;
 
-import dev.catamesh.application.adapter.ApplyStepAdapter;
+import dev.catamesh.infrastructure.adapter.ApplyStepAdapter;
 import dev.catamesh.core.handler.ApplyDataProductContext;
 import dev.catamesh.core.handler.Handler;
 import dev.catamesh.core.model.ApplyResult;
-import dev.catamesh.core.model.ApplyStep;
 
 public class InitializeApplyDataProductHandler<C> extends Handler<C> {
 

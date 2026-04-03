@@ -1,6 +1,6 @@
 package dev.catamesh.core.strategy;
 
-import dev.catamesh.application.adapter.MapAdapter;
+import dev.catamesh.infrastructure.adapter.MapAdapter;
 import dev.catamesh.core.model.*;
 
 import java.util.LinkedHashMap;

@@ -1,4 +1,4 @@
-package dev.catamesh.application.adapter;
+package dev.catamesh.infrastructure.adapter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
